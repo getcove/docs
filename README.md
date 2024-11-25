@@ -20,7 +20,6 @@ https://cove-stage.vercel.app/screening?propertyId=673d144cec42f3c5005d5595
 
 *
 
-
 ***
 
 ### What You Need to Set Up
@@ -44,7 +43,6 @@ To interact with Cove’s API, you’ll need valid login credentials. Contact [c
 * Authenticate your requests by calling the `/login` endpoint with your credentials to generate a bearer token.
 
 * Use the token in the `Authorization` header for all subsequent API calls:
-
 
 ```makefile
 Authorization: Bearer <your_token>
@@ -82,8 +80,6 @@ The Cove API provides functionality to:
 
 #### Request
 
-
-
 ```http
 POST https://api-service-r7ykp.ondigitalocean.app/v1/auth/login
 Content-Type: application/json
@@ -93,8 +89,6 @@ Content-Type: application/json
   "password": "your_password"
 }
 ```
-
-
 
 #### Response
 

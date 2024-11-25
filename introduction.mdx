@@ -1,71 +1,60 @@
 ---
-title: Introduction
-description: 'Welcome to the home of your new documentation'
+title: "Introduction"
+description: "Welcome to the home of your new documentation"
 ---
 
-<img
-  className="block dark:hidden"
-  src="/images/hero-light.svg"
-  alt="Hero Light"
-/>
-<img
-  className="hidden dark:block"
-  src="/images/hero-dark.svg"
-  alt="Hero Dark"
-/>
+<img alt="Hero Light" classname="block dark:hidden" src="cove-flow.png" />
 
 ## Setting up
 
 The first step to world-class documentation is setting up your editing environments.
 
-<CardGroup cols={2}>
-  <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
-  >
-    Get your docs set up locally for easy development
-  </Card>
-  <Card
-    title="Preview Changes"
-    icon="image"
-    href="https://mintlify.com/docs/development"
-  >
-    Preview your changes before you push to make sure they're perfect
+<CardGroup cols="3">
+  <Card title="Sign Up / Log In" icon="pen-to-square" color="blue" href="https://app.getcove.co">
+    Make an account to run your first check!
   </Card>
 </CardGroup>
 
-## Make it yours
+### Get Started with Cove API
 
-Update your docs to your brand and add valuable content for the best user conversion.
+#### Introduction
 
-<CardGroup cols={2}>
-  <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
-  >
-    Customize your docs to your company's colors and brands
-  </Card>
-  <Card
-    title="Reference APIs"
-    icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
-  >
-    Automatically generate endpoints from an OpenAPI spec
-  </Card>
-  <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/components/accordion"
-  >
-    Build interactive features and designs to guide your users
-  </Card>
-  <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/customers"
-  >
-    Check out our showcase of our favorite documentation
-  </Card>
-</CardGroup>
+The Cove API empowers you to build, manage, and optimize rental verification processes with ease. Whether it's property management or applicant screening, Cove offers reliable, secure, and efficient tools for your business needs.
+
+#### **Sign Up or Log In**
+
+Begin your journey by contacting [concierge@getcove.co]() to request your login credentials for API (These credentials will allow you to authenticate and access the Cove API) or make an account on [**our console**](https://app.getcove.co/).
+
+### Simplify Rental Management with Cove
+
+Cove’s API is built to simplify every step of your rental operations. From verifying tenant information to managing property data, Cove provides the tools to streamline your processes.
+
+#### Core Steps to Get Started:
+
+1. **Authenticate Your Requests** Start by logging into the API through the `/login` endpoint to generate your access token. Use this token to securely make API calls.
+
+2. **Fetch or Manage Property Data** Use endpoints like `GET /property/{propertyId}` to retrieve property details or `POST /property` to create a new property record.
+
+3. **Send Screening Requests** Initiate applicant screenings using `POST /screening/send`, which provides your users with a secure link to complete verification steps.
+
+4. **Retrieve Screening Results** Access the results of completed screenings through endpoints like `GET /screening/data/{userId}`.
+
+5. **Receive Webhook Notifications** Set up a webhook to receive notifications in real time for every completed verification step.
+
+***
+
+### Enhanced Control with Cove
+
+At Cove, we prioritize giving you control over your rental operations. Our platform enables you to:
+
+* **Securely Authenticate API Calls** with a bearer token and HTTPS communication.
+
+* **Integrate Webhooks** to stay informed of completed actions instantly.
+
+* **Customize Verification Pages** to align with your brand’s design and experience.
+
+* **Monitor and Manage Requests** with detailed JSON responses and interactive documentation.
+
+Start building the future of rental management with Cove API. Dive in, customize, and bring your operations to life with reliable and efficient solutions.
+
+[📄 Get Started with Cove Now](#)
