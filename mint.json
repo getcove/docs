@@ -5,14 +5,14 @@
     "dark": "/dark.svg",
     "light": "/light.svg"
   },
-  "favicon": "/favicon.ico",
+  "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
+    "primary": "#5D6DBF",
+    "light": "#5D6DBF",
+    "dark": "#303F88",
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#5D6DBF",
+      "to": "#303F88"
     }
   },
   "topbarLinks": [
@@ -36,25 +36,13 @@
       "group": "Get Started",
       "pages": [
         "introduction",
-        "quickstart",
-        "development"
+        "quickstart"
       ]
     },
     {
-      "group": "essentials",
+      "group": "API Reference",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "Endpoints/images",
-        "Endpoints/settings",
-        "Endpoints/navigation",
-        "Endpoints/reusable-snippets"
-      ]
-    },
-    {
-      "group": "API Documentation",
-      "pages": [
-        "api-reference/introduction"
+        "api-reference/intro"
       ]
     },
     {
