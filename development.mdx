@@ -1,94 +1,206 @@
 ---
-title: "Development"
-description: "Learn how to preview changes locally"
+title: "Development Guide"
+description: "Welcome to the Cove API Development Guide! This page outlines best practices, tips, and tools to ensure a smooth development process when integrating with Cove's Verification as a Service platform."
 ---
 
-<Info>
-  **Prerequisite**: Please install Node.js (version 19 or higher) before proceeding.
-</Info>
+### 1. **Setup Your Development Environment**
 
-Step 1. Install Mintlify on your OS:
+#### Tools You'll Need:
 
-<CodeGroup>
-  ```bash npm
-  npm i -g mintlify
-  ```
+* **API Testing Tool:** Use [Postman](https://www.postman.com/) or cURL to test API requests during development.
 
-  ```bash yarn
-  yarn global add mintlify
-  ```
-</CodeGroup>
+* **Code Editor:** Tools like Visual Studio Code, JetBrains, or your preferred IDE.
 
-Step 2. Go to the docs are located (where you can find `mint.json`) and run the following command:
+* **HTTPS Configuration:** Ensure all requests are sent over HTTPS as the Cove API does not support unsecured HTTP.
 
-```bash
-mintlify dev
+#### Environment Configuration:
+
+* Set up separate environments for **Development**, **Testing (Sandbox)**, and **Production**. This avoids accidentally sending test data to your production environment.
+
+* Use environment variables for:
+
+  * `baseUrl` (e.g., [`https://api-service-r7ykp.ondigitalocean.app`)](https://api-service-r7ykp.ondigitalocean.app\))
+
+  * `apiKey`
+
+  * `webhookUrl`
+
+#### Example `.env` Configuration:
+
+```
+BASE_URL=https://api-service-r7ykp.ondigitalocean.app
+API_KEY=your_api_key
+WEBHOOK_URL=https://yourdomain.com/webhooks/cove
 ```
 
-The documentation website is now available at `http://localhost:3000`.
+***
 
-### Custom Ports
+### 2. **Using the Sandbox Environment**
 
-Mintlify uses port 3000 by default. You can use the `--port` flag to customize the port Mintlify runs on. For example, use this command to run in port 3333:
+The sandbox environment allows you to test your integration without affecting production data.
 
-```bash
-mintlify dev --port 3333
+* **Sandbox Base URL:** [`https://cove-stage.vercel.app/screening`](https://cove-stage.vercel.app/screening)
+
+* **Testing Scenarios:** Simulate verification steps, webhook responses, and property data without real-world impact.
+
+* **Validation:** Ensure all endpoints are functional, and responses match the expected structure.
+
+#### Example Sandbox API Call:
+
+```http
+POST https://cove-stage.vercel.app/screening/send
+Authorization: Bearer your_api_key
+Content-Type: application/json
+
+{
+  "checkType": "CHECK_TYPE_DEEP_CHECK",
+  "email": "test@example.com",
+  "propertyId": "test_property_id",
+  "payer": "PAYER_SELF"
+}
+
 ```
 
-You will see an error like this if you try to run Mintlify in a port that's already taken:
+***
 
-```md
-Error: listen EADDRINUSE: address already in use :::3000
+### 3. **Testing Your Integration**
+
+#### Mock Responses
+
+Use the sandbox API responses to create mock data in your development environment. This ensures your application can handle different scenarios (e.g., successful responses, errors, timeouts).
+
+#### Webhook Testing
+
+1. **Expose a Local Webhook URL:** Use tools like [ngrok](https://ngrok.com/) to expose your local webhook endpoint for testing.
+
+2. **Validate Webhook Payloads:** Ensure your application can parse and process webhook payloads correctly.
+
+3. **Log Incoming Data:** Log webhook requests to monitor and debug received data.
+
+***
+
+### 4. **Authentication Best Practices**
+
+* Authenticate your application by retrieving a bearer token using the `/login` endpoint.
+
+* Store tokens securely and refresh them when expired.
+
+* Example token storage:
+
+  * **Short-Term Storage:** In-memory storage for development.
+
+  * **Long-Term Storage:** Secure storage mechanisms like AWS Secrets Manager or Azure Key Vault for production.
+
+***
+
+### 5. **Error Handling and Debugging**
+
+#### Handle Common Errors
+
+The Cove API returns detailed error responses in JSON. Handle the following common errors gracefully:
+
+* **401 Unauthorized:** Ensure your API key or token is valid.
+
+* **404 Not Found:** Check if the requested resource exists.
+
+* **429 Too Many Requests:** Implement retries with exponential backoff.
+
+#### Retry Logic
+
+Use retry logic with exponential backoff for transient errors like network timeouts or rate limit breaches:&#x20;
+
+```python
+import time
+
+def retry_request(api_call, max_retries=3):
+    for attempt in range(max_retries):
+        try:
+            response = api_call()
+            if response.status_code == 200:
+                return response
+        except Exception as e:
+            time.sleep(2 ** attempt)
+    raise Exception("Max retries exceeded")
 ```
 
-## Mintlify Versions
+***
 
-Each CLI is linked to a specific version of Mintlify. Please update the CLI if your local website looks different than production.
+### 6. **Integration Checklist**
 
-<CodeGroup>
-  ```bash npm
-  npm i -g mintlify@latest
-  ```
+Before moving to production, verify:
 
-  ```bash yarn
-  yarn global upgrade mintlify
-  ```
-</CodeGroup>
+1. **Authentication:** Confirm you can successfully authenticate and retrieve a token.
 
-## Deployment
+2. **Endpoints:** Test all necessary API endpoints in the sandbox environment.
 
-<Tip>
-  Unlimited editors available under the [Pro
-  Plan](https://mintlify.com/pricing) and above.
-</Tip>
+3. **Webhook:** Ensure your webhook receives and processes notifications correctly.
 
-You should see the following if the deploy successfully went through:
+4. **Error Handling:** Validate that your application can gracefully handle errors.
 
-<Frame>
-  <img src="/images/checks-passed.png" style={{ borderRadius: '0.5rem' }} />
-</Frame>
+5. **Rate Limiting:** Ensure your requests adhere to the API rate limits.
 
-## Troubleshooting
+***
 
-Here's how to solve some common problems when working with the CLI.
+### 7. **Code Examples**
 
-<AccordionGroup>
-  <Accordion title="Mintlify is not loading">
-    Update to Node v18. Run `mintlify install` and try again.
-  </Accordion>
+#### Fetch Property Details
 
-  <Accordion title="No such file or directory on Windows">
-    Go to the `C:/Users/Username/.mintlify/` directory and remove the `mint`
-    folder. Then Open the Git Bash in this location and run `git clone
-    https://github.com/mintlify/mint.git`.
+```javascript
+const axios = require('axios');
 
-    Repeat step 3.
-  </Accordion>
+const fetchProperty = async (propertyId) => {
+  try {
+    const response = await axios.get(`${process.env.BASE_URL}/v1/property/${propertyId}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.API_KEY}`,
+        Accept: 'application/json',
+      },
+    });
+    console.log('Property Details:', response.data);
+  } catch (error) {
+    console.error('Error fetching property:', error.response?.data || error.message);
+  }
+};
 
-  <Accordion title="Getting an unknown error">
-    Try navigating to the root of your device and delete the \~/.mintlify folder.
-    Then run `mintlify dev` again.
-  </Accordion>
-</AccordionGroup>
+fetchProperty('example_property_id');
+```
 
-Curious about what changed in a CLI version? [Check out the CLI changelog.](/changelog/command-line)
+### Handle Webhooks
+
+```python
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/webhooks/cove', methods=['POST'])
+def webhook():
+    payload = request.json
+    print(f"Received webhook: {payload}")
+    # Process payload here
+    return jsonify({'status': 'success'}), 200
+
+if __name__ == '__main__':
+    app.run(port=5000)
+```
+
+***
+
+### 8. **Security Considerations**
+
+* **Secure API Keys:** Never expose your API key in client-side code or public repositories.
+
+* **HTTPS Only:** Ensure all requests use HTTPS to prevent data interception.
+
+* **Validate Webhooks:** Verify webhook payload signatures (if provided) to ensure data integrity and source authenticity.
+
+***
+
+### 9. **Moving to Production**
+
+Once your integration passes sandbox testing:
+
+1. Replace sandbox URLs with production URLs.
+
+2. Monitor initial traffic and webhook responses to ensure reliability.
+
+3. Continuously log errors and handle edge cases for robust performance.
