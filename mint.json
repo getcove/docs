@@ -41,10 +41,10 @@
       ]
     },
     {
-      "group": "Endpoints",
+      "group": "essentials",
       "pages": [
-        "Endpoints/markdown",
-        "Endpoints/code",
+        "essentials/markdown",
+        "essentials/code",
         "Endpoints/images",
         "Endpoints/settings",
         "Endpoints/navigation",
