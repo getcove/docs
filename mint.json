@@ -41,14 +41,14 @@
       ]
     },
     {
-      "group": "Essentials",
+      "group": "Endpoints",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
+        "Endpoints/markdown",
+        "Endpoints/code",
+        "Endpoints/images",
+        "Endpoints/settings",
+        "Endpoints/navigation",
+        "Endpoints/reusable-snippets"
       ]
     },
     {
