@@ -12,7 +12,7 @@ The Cove API enables efficient management of rental properties. This guide provi
 ## Base URL
 
 ```md
-https://api-service-r7ykp.ondigitalocean.app
+https://sandbox-api.getcove.co
 ```
 
 ## Detailed Workflow
@@ -55,7 +55,7 @@ This endpoint validates your username and password. If successful, it returns an
 #### Example
 
 ```sh
-curl -X POST https://api-service-r7ykp.ondigitalocean.app/v1/auth/login \
+curl -X POST https://sandbox-api.getcove.co/v1/auth/login \
 -H "Content-Type: application/json" \
 -H "Accept: application/json" \
 -d '{
@@ -124,7 +124,7 @@ Creates a new property record in the system.
 #### Example
 
 ```sh
-curl -X POST https://api-service-r7ykp.ondigitalocean.app/v1/property \
+curl -X POST https://sandbox-api.getcove.co/v1/property \
 -H "Authorization: your-access-token" \
 -H "Content-Type: application/json" \
 -H "Accept: application/json" \
@@ -193,7 +193,7 @@ Generates and sends a screening link to the applicant, enabling them to complete
 #### Example
 
 ```sh
-curl -X POST https://api-service-r7ykp.ondigitalocean.app/v1/screening/send \
+curl -X POST https://sandbox-api.getcove.co/v1/screening/send \
 -H "Authorization: your-access-token" \
 -H "Content-Type: application/json" \
 -H "Accept: application/json" \
@@ -250,7 +250,7 @@ Retrieves detailed screening results for a specific applicant.
 #### Example
 
 ```sh
-curl -X GET https://api-service-r7ykp.ondigitalocean.app/v1/screening/data/<userId> \
+curl -X GET https://sandbox-api.getcove.co/v1/screening/data/<userId> \
 -H "Authorization: your-access-token" \
 -H "Accept: application/json"
 ```
