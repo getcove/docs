@@ -81,7 +81,7 @@ The Cove API provides functionality to:
 #### Request
 
 ```http
-POST https://api-service-r7ykp.ondigitalocean.app/v1/auth/login
+POST https://sandbox-api.getcove.co/v1/auth/login
 Content-Type: application/json
 
 {
@@ -93,7 +93,7 @@ Content-Type: application/json
 #### Response
 
 ```json
-POST https://api-service-r7ykp.ondigitalocean.app/v1/auth/login
+POST https://sandbox-api.getcove.co/v1/auth/login
 Content-Type: application/json
 
 {
