@@ -20,7 +20,7 @@ Before creating a flow, you need to know what steps are available.
 
 ### **Endpoint**
 ```md
-GET /v1/flows/steps
+GET /v1/flows/steps/list
 ```
 
 ### **Description**
@@ -32,7 +32,7 @@ Retrieves all available steps that can be used in a flow.
 
 ### **Example Request**
 ```sh
-curl -X GET https://sandbox-api.getcove.co/v1/flows/steps \
+curl -X GET https://sandbox-api.getcove.co/v1/flows/steps/list \
 -H "Authorization: your-access-token" \
 -H "Accept: application/json"
 ```
