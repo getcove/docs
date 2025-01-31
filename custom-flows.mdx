@@ -10,8 +10,11 @@ description: "Learn how to create and use custom screening flows with the Cove A
 Flows allow you to create custom screening processes tailored to your specific needs. Instead of using predefined checks, you can define a sequence of steps and reuse them across multiple screenings.
 
 This guide walks you through:
+
 1. **Listing available steps**
+
 2. **Creating a flow**
+
 3. **Using a flow to send a screening request**
 
 ## **Step 1: List Available Steps**
@@ -19,26 +22,30 @@ This guide walks you through:
 Before creating a flow, you need to know what steps are available.
 
 ### **Endpoint**
+
 ```md
 GET /v1/flows/steps/list
 ```
 
 ### **Description**
+
 Retrieves all available steps that can be used in a flow.
 
 ### **Headers**
-- `Authorization`: `<API Key>`
-- `Accept`: `application/json`
+
+* `Authorization`: `<API Key>`
+
+* `Accept`: `application/json`
 
 ### **Example Request**
+
 ```sh
 curl -X GET https://sandbox-api.getcove.co/v1/flows/steps/list \
 -H "Authorization: your-access-token" \
 -H "Accept: application/json"
 ```
 
-- **Success (200):**
-  ```json
+* **Success (200):**```json
   {
     "steps": [
       { "id": "507f1f77bcf86cd799439011", "name": "Identity Verification" },
@@ -53,19 +60,25 @@ curl -X GET https://sandbox-api.getcove.co/v1/flows/steps/list \
 Once you have the list of steps, you can create a new flow by defining its name and sequence of steps.
 
 ### **Endpoint**
+
 ```md
 POST /v1/flows
 ```
 
 ### **Description**
+
 Creates a custom screening flow with the selected steps.
 
 ### **Headers**
-- `Authorization`: `<API Key>`
-- `Content-Type`: `application/json`
-- `Accept`: `application/json`
+
+* `Authorization`: `<API Key>`
+
+* `Content-Type`: `application/json`
+
+* `Accept`: `application/json`
 
 ### **Request Body**
+
 ```json
 {
   "flow": {
@@ -80,6 +93,7 @@ Creates a custom screening flow with the selected steps.
 ```
 
 ### **Example Request**
+
 ```sh
 curl -X POST https://sandbox-api.getcove.co/v1/flows \
 -H "Authorization: your-access-token" \
@@ -97,8 +111,7 @@ curl -X POST https://sandbox-api.getcove.co/v1/flows \
 }'
 ```
 
-- **Success (200):**
-  ```json
+* **Success (200):**```json
   {
     "flowId": "107f1f77bcf86cd799439011"
   }
@@ -109,19 +122,25 @@ curl -X POST https://sandbox-api.getcove.co/v1/flows \
 Now that you have a `flowId`, you can use it to send a screening request to an applicant.
 
 ### **Endpoint**
+
 ```md
 POST /v2/screening/send
 ```
 
 ### **Description**
+
 Sends a screening request using a predefined flow.
 
 ### **Headers**
-- `Authorization`: `<API Key>`
-- `Content-Type`: `application/json`
-- `Accept`: `application/json`
+
+* `Authorization`: `<API Key>`
+
+* `Content-Type`: `application/json`
+
+* `Accept`: `application/json`
 
 ### **Request Body**
+
 ```json
 {
   "flowId": "107f1f77bcf86cd799439011",
@@ -134,6 +153,7 @@ Sends a screening request using a predefined flow.
 ```
 
 ### **Example Request**
+
 ```sh
 curl -X POST https://sandbox-api.getcove.co/v2/screening/send \
 -H "Authorization: your-access-token" \
@@ -149,8 +169,7 @@ curl -X POST https://sandbox-api.getcove.co/v2/screening/send \
 }'
 ```
 
-- **Success (200):**
-  ```json
+* **Success (200):**```json
   {
     "userId": "007f1f77bcf86cd799439010",
     "message": "Screening link sent successfully."
@@ -162,4 +181,3 @@ curl -X POST https://sandbox-api.getcove.co/v2/screening/send \
 By following these steps, you can create a fully customized screening process that fits your specific requirements. This enables more flexible, reusable, and automated tenant screenings.
 
 For any questions, reach out to [concierge@getcove.co](mailto:concierge@getcove.co).
-
