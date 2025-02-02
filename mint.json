@@ -29,9 +29,7 @@
     {
       "name": "API Reference",
       "url": "api-reference",
-      "openapi": "/api-reference/screening.yaml",
-      "openapi": "/api-reference/rent-reporting.yaml",
-      "openapi": "/api-reference/flow.yaml"
+      "openapi": "/api-reference/screening.yaml"
     }
   ],
   "navigation": [
