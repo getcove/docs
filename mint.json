@@ -46,14 +46,6 @@
         "api-reference/intro"
       ]
     },
-    {
-      "group": "Endpoint Examples",
-      "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
-      ]
-    }
   ],
   "footerSocials": {
     "linkedin": "https://www.linkedin.com/company/getcove/",
