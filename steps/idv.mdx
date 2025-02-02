@@ -1,17 +1,9 @@
 ---
-title: 'ID Verification'
-description: 'The ID Verification Step'
+title: 'ID Verification Step'
+description: 'The ID verification step allows for automated verification of government-issued identification documents. It supports features such as selfie matching, liveness detection, and document expiration validation.'
 ---
 
-# ID Verification Step
-
-This document outlines the configuration and response format for the ID verification step in the verification workflow.
-
-## Description
-
-The ID verification step allows for automated verification of government-issued identification documents. It supports features such as selfie matching, liveness detection, and document expiration validation.
-
-# Input
+## Configuration
 
 ```json
 {
@@ -38,7 +30,7 @@ The ID verification step allows for automated verification of government-issued 
 }
 ```
 
-## Input Fields
+## Config Fields
 
 - `id`: Unique identifier for the verification step
 - `name`: Step type identifier (ID_VERIFICATION)
@@ -50,7 +42,7 @@ The ID verification step allows for automated verification of government-issued 
 - `control_flow`: Logic for the next step based on verification result
 - `provider`: The ID verification service provider configuration
 
-# Output
+## Example Response
 
 ```json
 {

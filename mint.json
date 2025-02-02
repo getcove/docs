@@ -58,7 +58,8 @@
       "group": "Verification Nodes",
       "pages": [
         "introduction",
-        "steps/idv"
+        "steps/idv",
+        "steps/employment"
       ]
     },
     {
