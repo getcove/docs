@@ -29,26 +29,14 @@
     {
       "name": "API Reference",
       "url": "api-reference",
-      "openapi": "/api-reference/screening.yaml"
+      "openapi": "/api-reference/openapi.yaml"
     }
   ],
   "anchors": [
     {
-        "name": "API References",
+        "name": "Postman Collection",
         "icon": "code",
-        "url": "flow",
-        "openapi": "/api-reference/flow.yaml"
-    },
-    {
-        "name": "Content",
-        "icon": "pencil",
-        "url": "flow",
-        "openapi": "/api-reference/rent-reporting.yaml"
-    },
-    {
-        "name": "Contact us",
-        "icon": "envelope",
-        "url": "https://mintlify.com/contact-us"
+        "url": "https://www.postman.com/getcove/external/collection/6lv6roh/cove-api"
     }
   ],
   "navigation": [
