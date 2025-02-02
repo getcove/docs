@@ -42,7 +42,8 @@
     {
       "group": "Custom Flows",
       "pages": [
-        "custom-flows"
+        "custom-flows",
+        "studio/providers"
       ]
     },
     {
