@@ -3,7 +3,7 @@ info:
   title: proto/rent_reporting/v1/rent_reporting.proto
   version: version not set
 servers:
-- url: /
+  - url: https://sandbox-api.getcove.co/
 tags:
 - name: RentReportingService
 paths:
