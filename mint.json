@@ -57,9 +57,12 @@
     {
       "group": "Verification Nodes",
       "pages": [
-        "introduction",
         "steps/idv",
-        "steps/employment"
+        "steps/personal-info",
+        "steps/employment",
+        "steps/bank-connect",
+        "steps/residence-history",
+        "steps/credit-report",
       ]
     },
     {

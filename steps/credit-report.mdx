@@ -1,0 +1,123 @@
+---
+title: "Credit Report"
+description: "The credit report step retrieves and analyzes an individual's credit history, including credit scores, payment history, and current credit obligations from major credit bureaus."
+---
+
+## Configuration
+
+```json
+{
+    "id": "6797e02da4c4910bc0f1d493",
+    "name": "CREDIT_REPORT",
+    "control_flow": {
+        "condition": {
+            "condition_operator": ">=",
+            "condition_field": "credit_score",
+            "condition_value": 700
+        },
+        "if_goto": "6797fe5e683fb1e8abe7d853",
+        "else_goto": "6797e02da4c4910bc0f1d493"
+    },
+    "provider": {
+        "name": "Equifax",
+        "fallback": "TransUnion"
+    }
+}
+```
+
+## Config Fields
+
+- `id`: Unique identifier for the verification step
+- `name`: Step type identifier (CREDIT_REPORT)
+- `control_flow`: Logic for the next step based on credit score
+  - `condition`: Defines the decision criteria
+    - `condition_operator`: Comparison operator for the credit score
+    - `condition_field`: Field to evaluate (credit_score)
+    - `condition_value`: Minimum required credit score
+  - `if_goto`: Next step if condition is met
+  - `else_goto`: Next step if condition is not met
+- `provider`: The credit report service provider configuration
+  - `name`: Primary credit bureau to use
+  - `fallback`: Secondary credit bureau if primary fails
+
+## Example Response
+
+```json
+{
+    "status": "completed",
+    "result": {
+        "verification_id": "cr_ver_456789",
+        "credit_score": 725,
+        "credit_summary": {
+            "total_accounts": 12,
+            "open_accounts": 8,
+            "closed_accounts": 4,
+            "delinquent_accounts": 0,
+            "total_balance": 125000.00,
+            "total_monthly_payment": 2500.00,
+            "credit_utilization": 22
+        },
+        "credit_accounts": [
+            {
+                "type": "credit_card",
+                "provider": "Chase Bank",
+                "account_number": "xxxx-xxxx-xxxx-1234",
+                "status": "current",
+                "opened_date": "2020-03-15",
+                "credit_limit": 15000.00,
+                "current_balance": 2500.00,
+                "payment_history": {
+                    "late_30_days": 0,
+                    "late_60_days": 0,
+                    "late_90_days": 0
+                }
+            }
+        ],
+        "inquiries": {
+            "hard_inquiries_24m": 2,
+            "recent_inquiries": [
+                {
+                    "date": "2024-12-15",
+                    "creditor": "Auto Finance Co"
+                }
+            ]
+        },
+        "public_records": {
+            "bankruptcies": 0,
+            "tax_liens": 0,
+            "civil_judgments": 0
+        },
+        "alerts": {
+            "fraud_alerts": false,
+            "security_freeze": false
+        }
+    },
+    "timestamp": "2025-02-02T18:13:30-05:00"
+}
+```
+
+## Output Fields
+
+- `status`: The completion status of the verification
+- `result`: The verification results containing:
+  - `verification_id`: Unique identifier for this credit report pull
+  - `credit_score`: Credit score from the primary bureau
+  - `credit_summary`: Overview of credit profile
+    - `total_accounts`: Total number of credit accounts
+    - `open_accounts`: Number of active accounts
+    - `closed_accounts`: Number of closed accounts
+    - `delinquent_accounts`: Number of past-due accounts
+    - `total_balance`: Sum of all credit balances
+    - `total_monthly_payment`: Sum of all monthly payments
+    - `credit_utilization`: Percentage of available credit used
+  - `credit_accounts`: List of credit accounts
+    - Account type and provider
+    - Account status and details
+    - Payment history
+  - `inquiries`: Recent credit inquiries
+    - Count of hard inquiries
+    - Details of recent inquiries
+  - `public_records`: Public record items
+    - Bankruptcies, liens, judgments
+  - `alerts`: Active alerts on credit file
+- `timestamp`: Time when the verification was completed
