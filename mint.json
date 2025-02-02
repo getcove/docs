@@ -55,6 +55,13 @@
       ]
     },
     {
+      "group": "Use Cases",
+      "pages": [
+        "flows/tenant-screening",
+        "flows/mortgage-application"
+      ]
+    },
+    {
       "group": "Verification Nodes",
       "pages": [
         "steps/idv",
