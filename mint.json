@@ -36,8 +36,20 @@
       "group": "Get Started",
       "pages": [
         "introduction",
-        "quickstart",
+        "quickstart"
+      ]
+    },
+    {
+      "group": "Custom Flows",
+      "pages": [
         "custom-flows"
+      ]
+    },
+    {
+      "group": "Webhooks",
+      "pages": [
+        "introduction",
+        "quickstart"
       ]
     },
     {
