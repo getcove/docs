@@ -29,7 +29,7 @@
     {
       "name": "API Reference",
       "url": "api-reference",
-      "openapi": "/path/to/openapi.json",
+      "openapi": "/api-reference/screening.swagger.yaml"
     }
   ],
   "navigation": [
