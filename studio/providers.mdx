@@ -1,0 +1,71 @@
+---
+title: 'Providers'
+description: 'Description of your new file.'
+---
+
+# Providers in Cove
+
+## Overview
+The `provider` object in Cove defines the external or internal service responsible for handling each verification step. Some steps may also include a `fallback_provider` to ensure redundancy if the primary provider fails.
+
+## Structure of `provider`
+Each step may contain a `provider` object with the following fields:
+
+### 1. `name`
+The primary service provider used for this step. Examples include:
+- `Persona` for ID verification and background checks.
+- `Equifax` for employment and credit reports.
+- `Plaid` for banking data connections.
+- `DocuSign` for document processing.
+
+### 2. `fallback_provider` (Optional)
+Some steps may have a secondary provider to ensure completion in case the primary provider is unavailable. For example:
+- `Equifax` uses `TransUnion` as a fallback for credit reports.
+- `Plaid` uses `Flinks` as a fallback for bank connections.
+
+## Example `provider` Objects
+
+### Example 1: ID Verification
+```json
+"provider": {
+    "name": "Persona"
+}
+```
+- The `Persona` service is responsible for ID verification.
+
+### Example 2: Credit Report with Fallback
+```json
+"provider": {
+    "name": "Equifax",
+    "fallback": "TransUnion"
+}
+```
+- The primary credit report provider is `Equifax`, but if unavailable, `TransUnion` will be used.
+
+### Example 3: Bank Connection with Fallback
+```json
+"provider": {
+    "name": "Plaid",
+    "fallback": "Flinks"
+}
+```
+- The primary provider for banking connections is `Plaid`, with `Flinks` as a backup.
+
+## List of Providers Available
+
+| Step Name           | Primary Provider | Fallback Provider |
+|---------------------|-----------------|-------------------|
+| ID Verification    | Persona         | None              |
+| Employment        | Equifax         | None              |
+| Residence History | None            | None              |
+| Background Check  | Persona         | None              |
+| Credit Report     | Equifax         | TransUnion        |
+| Personal Info     | Internal        | None              |
+| Assets           | Plaid           | None              |
+| Bank Connect     | Plaid           | Flinks            |
+| Income Verification | Argyle       | None              |
+| Document Processing | DocuSign     | None              |
+
+## Conclusion
+The `provider` system ensures that each step in the KYC process is handled by a reliable third-party or internal service. The use of `fallback_provider` in critical steps increases reliability and ensures smooth processing.
+
