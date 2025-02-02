@@ -1,0 +1,103 @@
+---
+title: 'ID Verification'
+description: 'The ID Verification Step'
+---
+
+# ID Verification Step
+
+This document outlines the configuration and response format for the ID verification step in the verification workflow.
+
+## Description
+
+The ID verification step allows for automated verification of government-issued identification documents. It supports features such as selfie matching, liveness detection, and document expiration validation.
+
+# Input
+
+```json
+{
+    "id": "6797df4ca4c4910bc0f1d48f",
+    "name": "ID_VERIFICATION",
+    "options": {
+        "require_selfie": true,
+        "enable_liveness_detection": true,
+        "require_id_back_side": true,
+        "check_id_expiration": true
+    },
+    "control_flow": {
+        "condition": {
+            "condition_operator": "==",
+            "condition_field": "id_valid",
+            "condition_value": true
+        },
+        "if_goto": "6797dfe7a4c4910bc0f1d492",
+        "else_goto": "manual_review"
+    },
+    "provider": {
+        "name": "Persona"
+    }
+}
+```
+
+## Input Fields
+
+- `id`: Unique identifier for the verification step
+- `name`: Step type identifier (ID_VERIFICATION)
+- `options`: Configuration options for the verification process
+  - `require_selfie`: Whether to require a selfie photo
+  - `enable_liveness_detection`: Whether to perform liveness checks
+  - `require_id_back_side`: Whether to require both sides of the ID
+  - `check_id_expiration`: Whether to validate ID expiration date
+- `control_flow`: Logic for the next step based on verification result
+- `provider`: The ID verification service provider configuration
+
+# Output
+
+```json
+{
+    "status": "completed",
+    "result": {
+        "id_valid": true,
+        "verification_id": "ver_12345",
+        "document_type": "drivers_license",
+        "expiration_date": "2027-05-15",
+        "document_number": "DL123456789",
+        "name": {
+            "first": "John",
+            "last": "Doe"
+        },
+        "date_of_birth": "1990-01-15",
+        "address": {
+            "street": "123 Main St",
+            "city": "Springfield",
+            "state": "IL",
+            "postal_code": "62701",
+            "country": "US"
+        },
+        "selfie_match": {
+            "match": true,
+            "confidence": 0.95
+        },
+        "liveness_check": {
+            "passed": true,
+            "score": 0.98
+        }
+    },
+    "timestamp": "2025-02-02T17:36:27-05:00"
+}
+```
+
+## Output Fields
+
+- `status`: The completion status of the verification
+- `result`: The verification results containing:
+  - `id_valid`: Whether the ID was successfully verified
+  - `verification_id`: Unique identifier for this verification attempt
+  - `document_type`: Type of ID document provided
+  - `expiration_date`: ID document expiration date
+  - `document_number`: ID document number
+  - `name`: Extracted name information
+  - `date_of_birth`: Extracted date of birth
+  - `address`: Extracted address information
+  - `selfie_match`: Results of selfie matching if enabled
+  - `liveness_check`: Results of liveness detection if enabled
+- `timestamp`: Time when the verification was completed
