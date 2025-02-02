@@ -32,6 +32,23 @@
       "openapi": "/api-reference/screening.yaml"
     }
   ],
+  "anchors": [
+    {
+        "name": "API References",
+        "icon": "code",
+      "openapi": "/api-reference/flow.yaml"
+    },
+    {
+        "name": "Content",
+        "icon": "pencil",
+        "openapi": "/api-reference/rent-reporting.yaml",
+    },
+    {
+        "name": "Contact us",
+        "icon": "envelope",
+        "url": "https://mintlify.com/contact-us"
+    }
+  ]
   "navigation": [
     {
       "group": "Get Started",
