@@ -1,6 +1,6 @@
 ---
-title: 'Employment Verification Step'
-description: 'The employment verification step validates an individuals current employment status and income information through authorized employment verification providers.'
+title: "Employment"
+description: "The employment verification step validates an individual's current employment status and income information through authorized employment verification providers."
 ---
 
 ## Configuration
@@ -32,23 +32,15 @@ description: 'The employment verification step validates an individuals current 
 
 ## Config Fields
 
-* `id`: Unique identifier for the verification step
-
-* `name`: Step type identifier (EMPLOYMENT)
-
-* `options`: Configuration options for the verification process
-
-  * `verify_income`: Whether to include income verification
-
-  * `minimum_employment_duration`: Required minimum duration of employment
-
-  * `require_current_employment`: Whether to require current active employment
-
-  * `include_employer_contact`: Whether to include employer contact information
-
-* `control_flow`: Logic for the next step based on verification result
-
-* `provider`: The employment verification service provider configuration
+- `id`: Unique identifier for the verification step
+- `name`: Step type identifier (EMPLOYMENT)
+- `options`: Configuration options for the verification process
+  - `verify_income`: Whether to include income verification
+  - `minimum_employment_duration`: Required minimum duration of employment
+  - `require_current_employment`: Whether to require current active employment
+  - `include_employer_contact`: Whether to include employer contact information
+- `control_flow`: Logic for the next step based on verification result
+- `provider`: The employment verification service provider configuration
 
 ## Example Response
 
@@ -96,40 +88,22 @@ description: 'The employment verification step validates an individuals current 
 
 ## Output Fields
 
-* `status`: The completion status of the verification
-
-* `result`: The verification results containing:
-
-  * `employment_status`: Whether the employment was successfully verified
-
-  * `verification_id`: Unique identifier for this verification attempt
-
-  * `employer`: Information about the employer
-
-    * `name`: Company name
-
-    * `address`: Company address details
-
-    * `contact`: HR or verification contact information
-
-  * `employment_details`: Details about the employment
-
-    * `start_date`: Employment start date
-
-    * `employment_type`: Type of employment (full-time, part-time, etc.)
-
-    * `job_title`: Current position
-
-    * `employment_duration`: Calculated duration of employment
-
-    * `active`: Whether currently employed
-
-  * `income`: Income information if requested
-
-    * `salary`: Base salary information
-
-    * `last_pay_date`: Date of most recent payment
-
-    * `pay_frequency`: Frequency of payments
-
-* `timestamp`: Time when the verification was completed
+- `status`: The completion status of the verification
+- `result`: The verification results containing:
+  - `employment_status`: Whether the employment was successfully verified
+  - `verification_id`: Unique identifier for this verification attempt
+  - `employer`: Information about the employer
+    - `name`: Company name
+    - `address`: Company address details
+    - `contact`: HR or verification contact information
+  - `employment_details`: Details about the employment
+    - `start_date`: Employment start date
+    - `employment_type`: Type of employment (full-time, part-time, etc.)
+    - `job_title`: Current position
+    - `employment_duration`: Calculated duration of employment
+    - `active`: Whether currently employed
+  - `income`: Income information if requested
+    - `salary`: Base salary information
+    - `last_pay_date`: Date of most recent payment
+    - `pay_frequency`: Frequency of payments
+- `timestamp`: Time when the verification was completed
