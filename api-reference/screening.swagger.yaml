@@ -1,4 +1,4 @@
-swagger: "2.0"
+swagger: "3.0"
 info:
   title: proto/screening/v1/screening.proto
   version: version not set
