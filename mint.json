@@ -55,6 +55,13 @@
       ]
     },
     {
+      "group": "Verification Nodes",
+      "pages": [
+        "introduction",
+        "steps/idv"
+      ]
+    },
+    {
       "group": "Webhooks",
       "pages": [
         "introduction",
