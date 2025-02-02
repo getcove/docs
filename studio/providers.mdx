@@ -6,7 +6,7 @@ description: 'Description of your new file.'
 # Providers in Cove
 
 ## Overview
-The `provider` object in Cove defines the external or internal service responsible for handling each verification step. Some steps may also include a `fallback_provider` to ensure redundancy if the primary provider fails.
+The `provider` object in Cove defines the external or internal service responsible for handling each verification step. Some steps may also include a `fallback` to ensure redundancy if the primary provider fails.
 
 ## Structure of `provider`
 Each step may contain a `provider` object with the following fields:
@@ -18,7 +18,7 @@ The primary service provider used for this step. Examples include:
 - `Plaid` for banking data connections.
 - `DocuSign` for document processing.
 
-### 2. `fallback_provider` (Optional)
+### 2. `fallback` (Optional)
 Some steps may have a secondary provider to ensure completion in case the primary provider is unavailable. For example:
 - `Equifax` uses `TransUnion` as a fallback for credit reports.
 - `Plaid` uses `Flinks` as a fallback for bank connections.
