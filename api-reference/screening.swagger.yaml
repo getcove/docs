@@ -1,0 +1,700 @@
+swagger: "2.0"
+info:
+  title: proto/screening/v1/screening.proto
+  version: version not set
+tags:
+  - name: ScreeningService
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /v1/screening/data/{userId}:
+    get:
+      summary: Get the screening data
+      description: Get the screening data
+      operationId: ScreeningService_GetScreeningData
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/v1GetScreeningDataResponse"
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: "#/definitions/rpcStatus"
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Screening
+      security:
+        - ApiTokenAuth: []
+  /v1/screening/report/{userId}:
+    get:
+      summary: Get the screening report
+      description: Get the screening report
+      operationId: ScreeningService_GetScreeningReport
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/v1GetScreeningReportResponse"
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: "#/definitions/rpcStatus"
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Screening
+      security:
+        - ApiTokenAuth: []
+  /v1/screening/send:
+    post:
+      summary: Send the screening link to the end user
+      description: Send the screening link
+      operationId: ScreeningService_SendScreening
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/screeningv1SendScreeningResponse"
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: "#/definitions/rpcStatus"
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/screeningv1SendScreeningRequest"
+      tags:
+        - Screening
+      security:
+        - ApiTokenAuth: []
+definitions:
+  ScreeningLandlordReview:
+    type: object
+    properties:
+      email:
+        type: string
+      phone:
+        type: string
+      wouldRentToThemAgain:
+        type: integer
+        format: int64
+      paysRentOnTime:
+        type: integer
+        format: int64
+      cleanliness:
+        type: integer
+        format: int64
+      didNotDamageProperty:
+        type: integer
+        format: int64
+      additionalDetails:
+        type: string
+  ScreeningMonthlyData:
+    type: object
+    properties:
+      averageBalance:
+        type: number
+        format: double
+      income:
+        type: number
+        format: double
+      month:
+        type: string
+      spending:
+        type: number
+        format: double
+  ScreeningRentTransaction:
+    type: object
+    properties:
+      id:
+        type: string
+      type:
+        type: string
+        title: '"DEBIT" or "CREDIT"'
+      amount:
+        type: number
+        format: double
+      isoCurrencyCode:
+        type: string
+      description:
+        type: string
+      date:
+        type: string
+        title: ISO 8601 date
+  UserCommonAddress:
+    type: object
+    properties:
+      line1:
+        type: string
+      line2:
+        type: string
+      city:
+        type: string
+      state:
+        type: string
+      postalCode:
+        type: string
+      country:
+        type: string
+  UserEmployer:
+    type: object
+    properties:
+      name:
+        type: string
+      address:
+        $ref: "#/definitions/UserCommonAddress"
+  UserEmployment:
+    type: object
+    properties:
+      employeeType:
+        type: string
+      employmentStatus:
+        type: string
+      jobTitle:
+        type: string
+      startDate:
+        type: string
+        format: date-time
+      minimumMonthsOfEmployment:
+        type: integer
+        format: int64
+      weeklyHours:
+        type: integer
+        format: int64
+      employer:
+        $ref: "#/definitions/UserEmployer"
+  UserEmploymentDetails:
+    type: object
+    properties:
+      identity:
+        $ref: "#/definitions/UserIdentity"
+      income:
+        $ref: "#/definitions/UserIncome"
+      employment:
+        $ref: "#/definitions/UserEmployment"
+      paystubs:
+        $ref: "#/definitions/protobufAny"
+  UserIdentity:
+    type: object
+    properties:
+      firstName:
+        type: string
+      lastName:
+        type: string
+      dateOfBirth:
+        type: string
+        format: date-time
+      email:
+        type: string
+      phone:
+        type: string
+      ssn:
+        type: string
+      address:
+        type: string
+      city:
+        type: string
+      state:
+        type: string
+      postalCode:
+        type: string
+  UserIdentityVerification:
+    type: object
+    properties:
+      source:
+        type: string
+      name:
+        $ref: "#/definitions/UserName"
+      phone:
+        type: string
+      email:
+        type: string
+      address:
+        $ref: "#/definitions/UserCommonAddress"
+      verifications:
+        $ref: "#/definitions/UserVerifications"
+      idNumber:
+        type: string
+      at:
+        type: string
+        format: date-time
+  UserIncome:
+    type: object
+    properties:
+      income:
+        type: number
+        format: double
+      incomeType:
+        type: string
+      annualIncome:
+        type: integer
+        format: int64
+      hourlyIncome:
+        type: number
+        format: double
+      netHourlyRate:
+        type: number
+        format: double
+      payCycle:
+        type: string
+      nextExpectedPayDate:
+        type: string
+        format: date-time
+      currentPayPeriodStart:
+        type: string
+        format: date-time
+      currentPayPeriodEnd:
+        type: string
+        format: date-time
+      unpaidHoursInPayPeriod:
+        type: integer
+        format: int64
+  UserName:
+    type: object
+    properties:
+      first:
+        type: string
+      last:
+        type: string
+  UserRentals:
+    type: object
+    properties:
+      address:
+        $ref: "#/definitions/v1UserCoveAddress"
+      start:
+        type: string
+      reasonForMoving:
+        type: string
+      rentAmount:
+        type: integer
+        format: int64
+      landlordName:
+        type: string
+      landlordEmail:
+        type: string
+      landlordPhone:
+        type: string
+      id:
+        type: string
+  UserVerifications:
+    type: object
+    properties:
+      liveness:
+        type: boolean
+      faceMatch:
+        type: boolean
+      nameMatch:
+        type: boolean
+  protobufAny:
+    type: object
+    properties:
+      "@type":
+        type: string
+        description: |-
+          A URL/resource name that uniquely identifies the type of the serialized
+          protocol buffer message. This string must contain at least
+          one "/" character. The last segment of the URL's path must represent
+          the fully qualified name of the type (as in
+          `path/google.protobuf.Duration`). The name should be in a canonical form
+          (e.g., leading "." is not accepted).
+
+          In practice, teams usually precompile into the binary all types that they
+          expect it to use in the context of Any. However, for URLs which use the
+          scheme `http`, `https`, or no scheme, one can optionally set up a type
+          server that maps type URLs to message definitions as follows:
+
+          * If no scheme is provided, `https` is assumed.
+          * An HTTP GET on the URL must yield a [google.protobuf.Type][]
+            value in binary format, or produce an error.
+          * Applications are allowed to cache lookup results based on the
+            URL, or have them precompiled into a binary to avoid any
+            lookup. Therefore, binary compatibility needs to be preserved
+            on changes to types. (Use versioned type names to manage
+            breaking changes.)
+
+          Note: this functionality is not currently available in the official
+          protobuf release, and it is not used for type URLs beginning with
+          type.googleapis.com. As of May 2023, there are no widely used type server
+          implementations and no plans to implement one.
+
+          Schemes other than `http`, `https` (or the empty scheme) might be
+          used with implementation specific semantics.
+    additionalProperties: {}
+    description: |-
+      `Any` contains an arbitrary serialized protocol buffer message along with a
+      URL that describes the type of the serialized message.
+
+      Protobuf library provides support to pack/unpack Any values in the form
+      of utility functions or additional generated methods of the Any type.
+
+      Example 1: Pack and unpack a message in C++.
+
+          Foo foo = ...;
+          Any any;
+          any.PackFrom(foo);
+          ...
+          if (any.UnpackTo(&foo)) {
+            ...
+          }
+
+      Example 2: Pack and unpack a message in Java.
+
+          Foo foo = ...;
+          Any any = Any.pack(foo);
+          ...
+          if (any.is(Foo.class)) {
+            foo = any.unpack(Foo.class);
+          }
+          // or ...
+          if (any.isSameTypeAs(Foo.getDefaultInstance())) {
+            foo = any.unpack(Foo.getDefaultInstance());
+          }
+
+       Example 3: Pack and unpack a message in Python.
+
+          foo = Foo(...)
+          any = Any()
+          any.Pack(foo)
+          ...
+          if any.Is(Foo.DESCRIPTOR):
+            any.Unpack(foo)
+            ...
+
+       Example 4: Pack and unpack a message in Go
+
+           foo := &pb.Foo{...}
+           any, err := anypb.New(foo)
+           if err != nil {
+             ...
+           }
+           ...
+           foo := &pb.Foo{}
+           if err := any.UnmarshalTo(foo); err != nil {
+             ...
+           }
+
+      The pack methods provided by protobuf library will by default use
+      'type.googleapis.com/full.type.name' as the type URL and the unpack
+      methods only use the fully qualified type name after the last '/'
+      in the type URL, for example "foo.bar.com/x/y.z" will yield type
+      name "y.z".
+
+      JSON
+      ====
+      The JSON representation of an `Any` value uses the regular
+      representation of the deserialized, embedded message, with an
+      additional field `@type` which contains the type URL. Example:
+
+          package google.profile;
+          message Person {
+            string first_name = 1;
+            string last_name = 2;
+          }
+
+          {
+            "@type": "type.googleapis.com/google.profile.Person",
+            "firstName": <string>,
+            "lastName": <string>
+          }
+
+      If the embedded message type is well-known and has a custom JSON
+      representation, that representation will be embedded adding a field
+      `value` which holds the custom JSON in addition to the `@type`
+      field. Example (for message [google.protobuf.Duration][]):
+
+          {
+            "@type": "type.googleapis.com/google.protobuf.Duration",
+            "value": "1.212s"
+          }
+  protobufNullValue:
+    type: string
+    enum:
+      - NULL_VALUE
+    default: NULL_VALUE
+    description: |-
+      `NullValue` is a singleton enumeration to represent the null value for the
+      `Value` type union.
+
+      The JSON representation for `NullValue` is JSON `null`.
+
+       - NULL_VALUE: Null value.
+  rpcStatus:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      details:
+        type: array
+        items:
+          type: object
+          $ref: "#/definitions/protobufAny"
+  screeningv1Payer:
+    type: string
+    enum:
+      - PAYER_UNSPECIFIED
+      - PAYER_SELF
+      - PAYER_APPLICANT
+    default: PAYER_UNSPECIFIED
+  screeningv1SendScreeningRequest:
+    type: object
+    properties:
+      checkType:
+        $ref: "#/definitions/v1CheckType"
+      email:
+        type: string
+      phone:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      propertyId:
+        type: string
+      payer:
+        $ref: "#/definitions/screeningv1Payer"
+  screeningv1SendScreeningResponse:
+    type: object
+    properties:
+      userId:
+        type: string
+      message:
+        type: string
+  v1CheckType:
+    type: string
+    enum:
+      - CHECK_TYPE_UNSPECIFIED
+      - CHECK_TYPE_LITE_CHECK
+      - CHECK_TYPE_DEEP_CHECK
+    default: CHECK_TYPE_UNSPECIFIED
+  v1GetScreeningDataResponse:
+    type: object
+    properties:
+      screening:
+        $ref: "#/definitions/v1Screening"
+      user:
+        $ref: "#/definitions/v1User"
+  v1GetScreeningReportResponse:
+    type: object
+    properties:
+      url:
+        type: string
+  v1Screening:
+    type: object
+    properties:
+      id:
+        type: string
+      autoLoansMonthlyPayments:
+        type: string
+      autoLoansTotalBalance:
+        type: string
+      checkType:
+        type: string
+      coveScore:
+        type: number
+        format: double
+      creditScore:
+        type: integer
+        format: int64
+      rent:
+        type: integer
+        format: int64
+      monthlyIncome:
+        type: number
+        format: double
+      monthlyDebt:
+        type: number
+        format: double
+      totalDebt:
+        type: number
+        format: double
+      debtLimit:
+        type: number
+        format: double
+      equifaxResult:
+        type: object
+      flinksAttributes:
+        type: object
+      flinksBankAccounts:
+        type: array
+        items:
+          type: object
+      greenFlags:
+        type: array
+        items:
+          type: string
+      incomeTransactions:
+        type: array
+        items:
+          type: object
+      landlordReviews:
+        type: array
+        items:
+          type: object
+          $ref: "#/definitions/ScreeningLandlordReview"
+      monthlyData:
+        type: array
+        items:
+          type: object
+          $ref: "#/definitions/ScreeningMonthlyData"
+      mortgageLoansMonthlyPayments:
+        type: string
+      mortgageLoansTotalBalance:
+        type: string
+      nonSufficientFunds:
+        type: array
+        items:
+          type: object
+      normBAB:
+        type: number
+        format: double
+      normCSC:
+        type: number
+        format: double
+      normECS:
+        type: number
+        format: double
+      normMI:
+        type: number
+        format: double
+      otherCreditMonthlyPayments:
+        type: string
+      otherCreditTotalBalance:
+        type: string
+      otherDebtsMonthlyPayments:
+        type: string
+      otherDebtsTotalBalance:
+        type: string
+      plaidItems:
+        type: array
+        items:
+          type: object
+      redFlags:
+        type: array
+        items:
+          type: object
+      reportStatus:
+        type: string
+      revolvingCreditMonthlyPayments:
+        type: string
+      revolvingCreditTotalBalance:
+        type: string
+      scanStatus:
+        type: object
+      studentLoansMonthlyPayments:
+        type: string
+      studentLoansTotalBalance:
+        type: string
+      totalCurrentBankBalance:
+        type: number
+        format: double
+      rentTransactions:
+        type: array
+        items:
+          type: object
+          $ref: "#/definitions/ScreeningRentTransaction"
+      updatedAt:
+        type: string
+        format: date-time
+  v1User:
+    type: object
+    properties:
+      id:
+        type: string
+      phoneNumber:
+        type: string
+      proofOfIncome:
+        type: array
+        items:
+          type: string
+      checkComplete:
+        type: boolean
+      idPhotoUrls:
+        type: array
+        items:
+          type: string
+      selfieUrls:
+        type: array
+        items:
+          type: string
+      rentals:
+        type: array
+        items:
+          type: object
+          $ref: "#/definitions/UserRentals"
+      addressOnId:
+        $ref: "#/definitions/v1UserCoveAddress"
+      currentAddress:
+        $ref: "#/definitions/v1UserCoveAddress"
+      dateOfBirth:
+        type: string
+      firstName:
+        type: string
+      identityVerification:
+        $ref: "#/definitions/UserIdentityVerification"
+      lastName:
+        type: string
+      email:
+        type: string
+      employmentAnnualSalary:
+        type: number
+        format: double
+      employmentCompanyName:
+        type: string
+      employmentCompanyPosition:
+        type: string
+      employmentReferenceFirstName:
+        type: string
+      employmentReferenceLastName:
+        type: string
+      employmentReferencePhoneNumber:
+        type: string
+      employmentReferenceWorkEmail:
+        type: string
+      employmentStartDate:
+        type: string
+      employmentStatus:
+        type: string
+      reasonForMoving:
+        type: string
+      residentialStatus:
+        type: string
+      employmentDetails:
+        $ref: "#/definitions/UserEmploymentDetails"
+  v1UserCoveAddress:
+    type: object
+    properties:
+      street:
+        type: string
+      city:
+        type: string
+      provinceState:
+        type: string
+      country:
+        type: string
+      postalCode:
+        type: string
+      fullAddress:
+        type: string
+securityDefinitions:
+  ApiTokenAuth:
+    type: apiKey
+    description: API authentication token
+    name: Authorization
+    in: header
+security:
+  - ApiTokenAuth: []
