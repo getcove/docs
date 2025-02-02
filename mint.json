@@ -36,12 +36,14 @@
     {
         "name": "API References",
         "icon": "code",
-      "openapi": "/api-reference/flow.yaml"
+        "url": "flow",
+        "openapi": "/api-reference/flow.yaml"
     },
     {
         "name": "Content",
         "icon": "pencil",
-        "openapi": "/api-reference/rent-reporting.yaml",
+        "url": "flow",
+        "openapi": "/api-reference/rent-reporting.yaml"
     },
     {
         "name": "Contact us",
