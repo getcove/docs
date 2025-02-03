@@ -1,279 +1,165 @@
 ---
 title: "Tenant Screening Flow"
-description: "A comprehensive guide to implementing the tenant screening flow using Cove's API nodes."
+description: "A comprehensive tenant screening flow that includes identity verification, employment verification, credit assessment, and rental history verification to evaluate tenant eligibility."
 ---
 
 ## Overview
 
-The tenant screening flow API enables property managers to conduct thorough background checks on potential tenants. This guide explains how to implement each verification node in the screening process.
+The tenant screening flow is a thorough verification process designed to assess an applicant's eligibility as a tenant. This flow combines multiple verification steps to evaluate creditworthiness, verify income sources, and assess rental history.
 
-## Base URL
+## Flow Steps
 
-```bash
-https://sandbox-api.getcove.co/v1/flows/tenant-screening
-```
+### 1. Identity Verification
+Verifies the applicant's identity using government-issued documents.
+- Legal first and last name
+- Date of birth
+- Government-issued ID verification
+- Selfie verification with liveness detection
+- Identity verification record
 
-## Steps
+[View IDV Step Details](/steps/idv)
 
-### 1. ID Verification Node
+### 2. Employment Verification
+Validates current employment and income through Argyle or Atomic.
+- Employment status verification
+- Current salary verification
+- Income stability assessment
+- Manual document verification option
 
-#### Request Body
+[View Employment Step Details](/steps/employment)
 
-```json
-{
-  "node_id": "id_verification_v1",
-  "provider": "Persona",
-  "options": {
-    "require_selfie": true,
-    "enable_liveness_detection": true,
-    "require_id_back_side": true,
-    "check_id_expiration": true
-  }
-}
-```
+### 3. Bank Connection
+Verifies income sources and financial stability:
+- Primary providers: Plaid, Flinks
+- Secondary providers: MX, Fincity
+- Account balance verification
+- Income stream verification
+- Manual bank statement upload option
 
-#### Response
+[View Bank Connect Step Details](/steps/bank-connect)
 
-```json
-{
-  "status": "completed",
-  "result": {
-    "verification_id": "ver_123456",
-    "id_valid": true,
-    "identity": {
-      "first_name": "John",
-      "last_name": "Doe",
-      "date_of_birth": "1990-01-01"
-    }
-  }
-}
-```
+### 4. Credit Report
+Performs a soft credit check to assess financial responsibility:
+- Credit score verification
+- Payment history review
+- Outstanding debt assessment
+- Previous evictions check
+- Bankruptcy history
 
-[View IDV Node Details](/steps/idv)
+[View Credit Report Step Details](/steps/credit-report)
 
-### 2. Personal Information Node
+### 5. Residence History
+Verifies rental history and landlord references:
+- Previous addresses
+- Landlord contact information
+- Payment history verification
+- Property condition reports
+- Eviction history check
 
+[View Residence History Step Details](/steps/residence-history)
 
-#### Request Body
+### 6. Assets
+Verifies financial assets and stability:
+- Bank account balances
+- Investment accounts
+- Retirement accounts
+- Other liquid assets
+- Asset ownership verification
 
-```json
-{
-  "node_id": "personal_info_v1",
-  "data": {
-    "email": "string",
-    "citizenship": "string",
-    "marital_status": "string",
-    "sin": "string"
-  }
-}
-```
+[View Assets Step Details](/steps/assets)
 
-### 3. Employment Node
-
-#### Request Body
-
-```json
-{
-  "node_id": "employment_v1",
-  "provider": "Argyle",
-  "fallback_provider": "Atomic",
-  "options": {
-    "verification_period_years": 3,
-    "require_advisor_review": true
-  }
-}
-```
-
-[View Employment Node Details](/steps/employment)
-
-### 4. Bank Connect Node
-
-#### Request Body
-
-```json
-{
-  "node_id": "bank_connect_v1",
-  "providers": ["Plaid", "Flinks"],
-  "fallback_providers": ["MX", "Fincity", "Inverite"],
-  "options": {
-    "verify_account_balance": true,
-    "analyze_transactions": true,
-    "verify_account_ownership": true
-  }
-}
-```
-
-[View Bank Connect Node Details](/steps/bank-connect)
-
-### 5. Residence History Node
-
-#### Request Body
-
-```json
-{
-  "node_id": "residence_history_v1",
-  "options": {
-    "history_years": 3,
-    "require_documentation": true
-  }
-}
-```
-
-[View Residence History Node Details](/steps/residence-history)
-
-### 6. Assets Node
-
-#### Request Body
-
-```json
-{
-  "node_id": "assets_v1",
-  "provider": "Plaid",
-  "options": {
-    "verify_account_balance": true,
-    "analyze_transactions": true
-  }
-}
-```
-
-[View Assets Node Details](/steps/assets)
-
-### 7. Credit Report Node
-
-#### Request Body
-
-```json
-{
-  "node_id": "credit_report_v1",
-  "provider": "Equifax",
-  "fallback_provider": "TransUnion",
-  "options": {
-    "check_bankruptcies": true,
-    "verify_liabilities": true
-  }
-}
-```
-
-[View Credit Report Node Details](/steps/credit-report)
-
-### 8. Background Check Node
-
-#### Request Body
-
-```json
-{
-  "node_id": "background_check_v1",
-  "provider": "Persona",
-  "options": {
-    "watchlist_check": true,
-    "sanctions_check": true
-  }
-}
-```
-
-## Complete Flow Implementation
-
-### Create Flow
-
-#### Request Body
+## Flow Configuration
 
 ```json
 {
   "flow_id": "tenant_screening_v1",
-  "nodes": [
+  "name": "Tenant Screening Flow",
+  "steps": [
     {
-      "node": "ID_VERIFICATION",
+      "step": "ID_VERIFICATION",
       "required": true,
-      "provider": "Persona"
+      "provider": "Persona",
+      "options": {
+        "require_selfie": true,
+        "enable_liveness_detection": true,
+        "require_id_back_side": true,
+        "check_id_expiration": true
+      }
     },
     {
-      "node": "PERSONAL_INFO",
-      "required": true
-    },
-    {
-      "node": "EMPLOYMENT",
+      "step": "EMPLOYMENT",
       "required": true,
       "provider": "Argyle",
-      "fallback_provider": "Atomic"
+      "fallback_provider": "Atomic",
+      "options": {
+        "verify_current_employment": true,
+        "verify_income": true,
+        "require_pay_stubs": true
+      }
     },
     {
-      "node": "BANK_CONNECT",
+      "step": "BANK_CONNECT",
       "required": true,
-      "providers": ["Plaid", "Flinks", "MX", "Fincity", "Inverite"]
+      "providers": ["Plaid", "Flinks"],
+      "fallback_providers": ["MX", "Fincity"],
+      "options": {
+        "verify_account_balance": true,
+        "analyze_transactions": true,
+        "verify_account_ownership": true
+      }
     },
     {
-      "node": "RESIDENCE_HISTORY",
-      "required": true
-    },
-    {
-      "node": "ASSETS",
-      "required": true,
-      "provider": "Plaid"
-    },
-    {
-      "node": "CREDIT_REPORT",
+      "step": "CREDIT_REPORT",
       "required": true,
       "provider": "Equifax",
-      "fallback_provider": "TransUnion"
+      "fallback_provider": "TransUnion",
+      "options": {
+        "check_eviction_history": true,
+        "check_bankruptcies": true,
+        "verify_liabilities": true
+      }
     },
     {
-      "node": "BACKGROUND_CHECK",
+      "step": "RESIDENCE_HISTORY",
       "required": true,
-      "provider": "Persona"
+      "options": {
+        "history_years": 3,
+        "require_documentation": true,
+        "verify_landlord_references": true
+      }
+    },
+    {
+      "step": "ASSETS",
+      "required": true,
+      "provider": "Plaid",
+      "options": {
+        "verify_account_balance": true,
+        "analyze_transactions": true,
+        "verify_asset_ownership": true
+      }
     }
   ]
 }
 ```
 
-### Get Flow Status
+## Success Criteria
 
-#### Endpoint
+A successful tenant screening requires:
+1. Verified identity with valid government-issued ID
+2. Stable employment with income meeting minimum requirements
+3. Clean credit history with acceptable credit score
+4. Positive rental history with no evictions
+5. Sufficient income-to-rent ratio
+6. Verified assets and financial stability
+7. All required documentation validated
 
-```bash
-GET /flows/tenant-screening/{flow_id}
-```
+## Risk Assessment
 
-#### Response
+The flow includes automatic risk assessment based on:
+- Income-to-rent ratio calculation
+- Credit score thresholds
+- Employment stability metrics
+- Rental history analysis
+- Asset verification
+- Income stream consistency
 
-```json
-{
-  "flow_id": "tenant_screening_v1",
-  "status": "in_progress",
-  "completed_nodes": ["ID_VERIFICATION", "PERSONAL_INFO"],
-  "current_node": "EMPLOYMENT",
-  "remaining_nodes": [
-    "BANK_CONNECT",
-    "RESIDENCE_HISTORY",
-    "ASSETS",
-    "CREDIT_REPORT",
-    "BACKGROUND_CHECK"
-  ]
-}
-```
-
-## Error Handling
-
-All API endpoints return standard HTTP status codes:
-
-- `200`: Success
-- `400`: Bad Request
-- `401`: Unauthorized
-- `403`: Forbidden
-- `404`: Not Found
-- `429`: Too Many Requests
-- `500`: Internal Server Error
-
-Error responses include detailed messages:
-
-```json
-{
-  "error": {
-    "code": "invalid_request",
-    "message": "Invalid provider configuration",
-    "details": {
-      "field": "provider",
-      "reason": "Unsupported provider for this node type"
-    }
-  }
-}
-```
