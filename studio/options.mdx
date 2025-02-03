@@ -1,4 +1,75 @@
 ---
 title: "Options"
-description: "Learn how to configure options for a verification node."
+description: "Learn how to configure options at both node and flow levels."
 ---
+# Options
+
+A screening flow supports options at two distinct levels:
+
+## 1. Node Options
+
+Each verification node has two types of options:
+
+1. The universal `skippable` option, which every node supports:
+```json
+{
+    "options": {
+        "skippable": true    // Allow this verification step to be skipped
+    }
+}
+```
+
+2. Node-specific options that control what verifications and features are enabled for that particular step. These vary by node type and provider capabilities:
+
+### ID Verification
+```json
+{
+    "options": {
+        "skippable": true,                // Universal node option
+        "require_selfie": true,           // Require a selfie photo
+        "enable_liveness_detection": true, // Check if the person is real
+        "require_id_back_side": true,     // Require both sides of ID
+        "check_id_expiration": true       // Verify ID is not expired
+    }
+}
+```
+
+### Employment Verification
+```json
+{
+    "options": {
+        "skippable": true,              // Universal node option
+        "bank_statement_analysis": true, // Analyze bank statements
+        "require_pay_slips": true,      // Request pay stubs
+        "tax_return_verification": true, // Verify against tax returns
+        "employer_confirmation": true    // Contact employer
+    }
+}
+```
+
+### Bank Connect
+```json
+{
+    "options": {
+        "skippable": true,                  // Universal node option
+        "verify_account_balance": true,      // Check current balance
+        "analyze_transactions": true,        // Review transaction history
+        "verify_account_ownership": true,    // Verify account ownership
+        "enable_instant_verification": true  // Enable instant verification
+    }
+}
+```
+
+## 2. Flow Options
+
+Flow options configure the overall screening process behavior. These are set at the root level of the flow configuration:
+
+```json
+{
+    "options": {
+        "sendEmails": true    // Send email notifications during screening
+    }
+}
+```
+
+Note: While each node can be configured as skippable or not, this is a node-level option and is not available at the flow level.
