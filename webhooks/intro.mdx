@@ -1,0 +1,103 @@
+# Webhooks
+
+## Overview
+
+Webhooks provide real-time notifications about important events in your screening process. Instead of requiring you to continuously poll our API for updates, webhooks push notifications directly to your specified endpoint whenever there's a change in status or new information becomes available.
+
+## Getting Started
+
+### 1. Register Your Webhook Endpoint
+
+To start receiving webhook notifications, please provide your webhook endpoint URL to: `concierge@cove.co`
+
+Your endpoint should be:
+
+- Publicly accessible over HTTPS
+- Capable of handling POST requests
+- Able to respond with a 2xx status code
+
+### 2. Security
+
+All webhook requests will:
+
+- Be sent over HTTPS
+- Include a signature header for verification
+- Contain a unique webhook ID
+- Include a timestamp of when the event occurred
+
+## Event Types
+
+Our webhooks notify you about the following screening status changes:
+
+### Screening Status Updates
+
+- `screening.started`: A new screening process has begun
+- `screening.updated`: New information has been added to the screening
+- `screening.completed`: The screening process has been completed
+- `screening.error`: An error occurred during the screening process
+
+### Verification Updates
+
+- `verification.employment`: Employment verification status changes
+- `verification.assets`: Asset verification status changes
+- `verification.residence`: Residence history verification changes
+- `verification.bank`: Bank connection status changes
+
+## Webhook Payload
+
+Each webhook notification includes a JSON payload with the following structure:
+
+```json
+{
+    "id": "whk_123456789",
+    "event": "screening.updated",
+    "created": "2025-02-03T12:04:23-05:00",
+    "data": {
+        "screening_id": "scr_987654321",
+        "status": "in_progress",
+        "verification_type": "employment",
+        "completion_percentage": 75,
+        "updated_fields": ["employment_status", "income_verification"],
+        "metadata": {
+            "applicant_id": "app_123456",
+            "property_id": "prop_789012"
+        }
+    }
+}
+```
+
+### Payload Fields
+
+- `id`: Unique identifier for the webhook notification
+- `event`: The type of event that triggered the webhook
+- `created`: Timestamp when the event occurred
+- `data`: Object containing event-specific information
+  - `screening_id`: ID of the associated screening
+  - `status`: Current status of the screening
+  - `verification_type`: Type of verification being updated (if applicable)
+  - `completion_percentage`: Overall completion percentage
+  - `updated_fields`: Array of fields that were updated
+  - `metadata`: Additional context about the screening
+
+## Best Practices
+
+1. **Acknowledge Quickly**: Return a 2xx response as soon as you receive the webhook. Process the data asynchronously if needed.
+
+2. **Implement Retry Logic**: Your endpoint should be able to handle duplicate events. Use the webhook `id` to prevent double-processing.
+
+3. **Monitor Failures**: If we receive consecutive failed delivery attempts, we'll notify the email address on file.
+
+4. **Store Raw Payload**: Save the raw webhook data before processing it, in case you need to debug issues later.
+
+## Testing
+
+You can use our test environment to simulate webhook events and verify your integration. Contact our support team at <concierge@cove.co> to enable test mode for your webhook endpoint.
+
+## Support
+
+If you have any questions or need assistance with webhook integration, please contact:
+
+- Email: <concierge@cove.co>
+- Documentation: [API Reference](https://docs.cove.co/api-reference)
+
+We aim to respond to all webhook-related inquiries within one business day.
