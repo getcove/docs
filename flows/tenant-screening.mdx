@@ -1,5 +1,141 @@
 ---
-title: 'Tenant Screening'
-description: ''
+title: "Tenant Screening Flow"
+description: "A comprehensive tenant screening flow that includes identity verification, employment history, bank connections, residence history, assets, credit reports, and background checks."
 ---
 
+## Overview
+
+The tenant screening flow is a comprehensive verification process that helps property managers and landlords make informed decisions about potential tenants. The flow combines multiple verification steps to create a complete profile of an applicant.
+
+## Flow Steps
+
+### 1. Identity Verification
+Verifies the applicant's identity using government-issued documents.
+- Legal first and last name
+- Date of birth
+- Identity verification record (FINTRAC Guide compliant)
+- Selfie matching and liveness detection
+
+[View IDV Step Details](/steps/idv)
+
+### 2. Personal Information
+Collects essential personal information:
+- Email address
+- Citizenship
+- Marital status
+- Social Insurance Number (SIN)
+
+### 3. Employment Verification
+Verifies three years of employment history using Argyle or Atomic.
+- Employment status
+- Salary data
+- Manual document verification by advisor
+
+[View Employment Step Details](/steps/employment)
+
+### 4. Bank Connection
+Verifies additional income sources using multiple providers:
+- Primary: Plaid, Flinks
+- Fallback: MX, Fincity, Inverite
+- Manual document verification for additional income (e.g., child support)
+
+[View Bank Connect Step Details](/steps/bank-connect)
+
+### 5. Residence History
+Validates three years of residence history.
+- Previous addresses
+- Manual verification through documentation
+- Advisor review process
+
+[View Residence History Step Details](/steps/residence-history)
+
+### 6. Assets Verification
+Evaluates financial assets and property ownership.
+- Total asset value calculation
+- Property ownership verification
+- Mortgage and HELOC verification
+- Net worth determination
+
+[View Assets Step Details](/steps/assets)
+
+### 7. Credit Report
+Pulls comprehensive credit information from Equifax and TransUnion.
+- Credit score
+- Payment history
+- Active liabilities
+- Bankruptcy records
+- Consumer proposals
+
+[View Credit Report Step Details](/steps/credit-report)
+
+### 8. Background Check
+Performs comprehensive background screening via Persona.
+- Watchlist verification
+- Sanctions check
+
+## Flow Configuration
+
+```json
+{
+  "flow_id": "tenant_screening_v1",
+  "name": "Tenant Screening Flow",
+  "steps": [
+    {
+      "step": "ID_VERIFICATION",
+      "required": true,
+      "provider": "Persona"
+    },
+    {
+      "step": "PERSONAL_INFO",
+      "required": true
+    },
+    {
+      "step": "EMPLOYMENT",
+      "required": true,
+      "provider": "Argyle",
+      "fallback_provider": "Atomic"
+    },
+    {
+      "step": "BANK_CONNECT",
+      "required": true,
+      "providers": ["Plaid", "Flinks", "MX", "Fincity", "Inverite"]
+    },
+    {
+      "step": "RESIDENCE_HISTORY",
+      "required": true
+    },
+    {
+      "step": "ASSETS",
+      "required": true,
+      "provider": "Plaid"
+    },
+    {
+      "step": "CREDIT_REPORT",
+      "required": true,
+      "provider": "Equifax",
+      "fallback_provider": "TransUnion"
+    },
+    {
+      "step": "BACKGROUND_CHECK",
+      "required": true,
+      "provider": "Persona"
+    }
+  ]
+}
+```
+
+## Success Criteria
+
+A successful tenant screening requires:
+1. Verified identity matching government-issued documents
+2. Confirmed employment history with stable income
+3. Verified residence history
+4. Satisfactory credit score and payment history
+5. Clear background check results
+6. Sufficient assets for required payments
+
+## Error Handling
+
+- If any required step fails, the flow will pause and request manual review
+- Multiple provider options ensure redundancy for critical verifications
+- Manual document upload fallback available for all automated steps
