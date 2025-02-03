@@ -1,122 +1,276 @@
 ---
 title: "Tenant Screening Flow"
-description: "A comprehensive tenant screening flow that includes identity verification, employment history, bank connections, residence history, assets, credit reports, and background checks."
+description: "A comprehensive guide to implementing the tenant screening flow using Cove's API nodes."
 ---
 
 ## Overview
 
-The tenant screening flow is a comprehensive verification process that helps property managers and landlords make informed decisions about potential tenants. The flow combines multiple verification steps to create a complete profile of an applicant.
+The tenant screening flow API enables property managers to conduct thorough background checks on potential tenants. This guide explains how to implement each verification node in the screening process.
 
-## Flow Steps
+## Base URL
 
-### 1. Identity Verification
-Verifies the applicant's identity using government-issued documents.
-- Legal first and last name
-- Date of birth
-- Identity verification record (FINTRAC Guide compliant)
-- Selfie matching and liveness detection
+```bash
+https://sandbox-api.getcove.co/v1/flows/tenant-screening
+```
 
-[View IDV Step Details](/steps/idv)
+## Node Implementation
 
-### 2. Personal Information
-Collects essential personal information:
-- Email address
-- Citizenship
-- Marital status
-- Social Insurance Number (SIN)
+### 1. ID Verification Node
 
-### 3. Employment Verification
-Verifies three years of employment history using Argyle or Atomic.
-- Employment status
-- Salary data
-- Manual document verification by advisor
+#### Endpoint
 
-[View Employment Step Details](/steps/employment)
+```bash
+POST /nodes/idv
+```
 
-### 4. Bank Connection
-Verifies additional income sources using multiple providers:
-- Primary: Plaid, Flinks
-- Fallback: MX, Fincity, Inverite
-- Manual document verification for additional income (e.g., child support)
+#### Request Body
 
-[View Bank Connect Step Details](/steps/bank-connect)
+```json
+{
+  "node_id": "id_verification_v1",
+  "provider": "Persona",
+  "options": {
+    "require_selfie": true,
+    "enable_liveness_detection": true,
+    "require_id_back_side": true,
+    "check_id_expiration": true
+  }
+}
+```
 
-### 5. Residence History
-Validates three years of residence history.
-- Previous addresses
-- Manual verification through documentation
-- Advisor review process
+#### Response
 
-[View Residence History Step Details](/steps/residence-history)
+```json
+{
+  "status": "completed",
+  "result": {
+    "verification_id": "ver_123456",
+    "id_valid": true,
+    "identity": {
+      "first_name": "John",
+      "last_name": "Doe",
+      "date_of_birth": "1990-01-01"
+    }
+  }
+}
+```
 
-### 6. Assets Verification
-Evaluates financial assets and property ownership.
-- Total asset value calculation
-- Property ownership verification
-- Mortgage and HELOC verification
-- Net worth determination
+[View IDV Node Details](/steps/idv)
 
-[View Assets Step Details](/steps/assets)
+### 2. Personal Information Node
 
-### 7. Credit Report
-Pulls comprehensive credit information from Equifax and TransUnion.
-- Credit score
-- Payment history
-- Active liabilities
-- Bankruptcy records
-- Consumer proposals
+#### Endpoint
 
-[View Credit Report Step Details](/steps/credit-report)
+```bash
+POST /nodes/personal-info
+```
 
-### 8. Background Check
-Performs comprehensive background screening via Persona.
-- Watchlist verification
-- Sanctions check
+#### Request Body
 
-## Flow Configuration
+```json
+{
+  "node_id": "personal_info_v1",
+  "data": {
+    "email": "string",
+    "citizenship": "string",
+    "marital_status": "string",
+    "sin": "string"
+  }
+}
+```
+
+### 3. Employment Node
+
+#### Endpoint
+
+```bash
+POST /nodes/employment
+```
+
+#### Request Body
+
+```json
+{
+  "node_id": "employment_v1",
+  "provider": "Argyle",
+  "fallback_provider": "Atomic",
+  "options": {
+    "verification_period_years": 3,
+    "require_advisor_review": true
+  }
+}
+```
+
+[View Employment Node Details](/steps/employment)
+
+### 4. Bank Connect Node
+
+#### Endpoint
+
+```bash
+POST /nodes/bank-connect
+```
+
+#### Request Body
+
+```json
+{
+  "node_id": "bank_connect_v1",
+  "providers": ["Plaid", "Flinks"],
+  "fallback_providers": ["MX", "Fincity", "Inverite"],
+  "options": {
+    "verify_account_balance": true,
+    "analyze_transactions": true,
+    "verify_account_ownership": true
+  }
+}
+```
+
+[View Bank Connect Node Details](/steps/bank-connect)
+
+### 5. Residence History Node
+
+#### Endpoint
+
+```bash
+POST /nodes/residence-history
+```
+
+#### Request Body
+
+```json
+{
+  "node_id": "residence_history_v1",
+  "options": {
+    "history_years": 3,
+    "require_documentation": true
+  }
+}
+```
+
+[View Residence History Node Details](/steps/residence-history)
+
+### 6. Assets Node
+
+#### Endpoint
+
+```bash
+POST /nodes/assets
+```
+
+#### Request Body
+
+```json
+{
+  "node_id": "assets_v1",
+  "provider": "Plaid",
+  "options": {
+    "verify_account_balance": true,
+    "analyze_transactions": true
+  }
+}
+```
+
+[View Assets Node Details](/steps/assets)
+
+### 7. Credit Report Node
+
+#### Endpoint
+
+```bash
+POST /nodes/credit-report
+```
+
+#### Request Body
+
+```json
+{
+  "node_id": "credit_report_v1",
+  "provider": "Equifax",
+  "fallback_provider": "TransUnion",
+  "options": {
+    "check_bankruptcies": true,
+    "verify_liabilities": true
+  }
+}
+```
+
+[View Credit Report Node Details](/steps/credit-report)
+
+### 8. Background Check Node
+
+#### Endpoint
+
+```bash
+POST /nodes/background-check
+```
+
+#### Request Body
+
+```json
+{
+  "node_id": "background_check_v1",
+  "provider": "Persona",
+  "options": {
+    "watchlist_check": true,
+    "sanctions_check": true
+  }
+}
+```
+
+## Complete Flow Implementation
+
+### Create Flow
+
+#### Endpoint
+
+```bash
+POST /flows/tenant-screening
+```
+
+#### Request Body
 
 ```json
 {
   "flow_id": "tenant_screening_v1",
-  "name": "Tenant Screening Flow",
-  "steps": [
+  "nodes": [
     {
-      "step": "ID_VERIFICATION",
+      "node": "ID_VERIFICATION",
       "required": true,
       "provider": "Persona"
     },
     {
-      "step": "PERSONAL_INFO",
+      "node": "PERSONAL_INFO",
       "required": true
     },
     {
-      "step": "EMPLOYMENT",
+      "node": "EMPLOYMENT",
       "required": true,
       "provider": "Argyle",
       "fallback_provider": "Atomic"
     },
     {
-      "step": "BANK_CONNECT",
+      "node": "BANK_CONNECT",
       "required": true,
       "providers": ["Plaid", "Flinks", "MX", "Fincity", "Inverite"]
     },
     {
-      "step": "RESIDENCE_HISTORY",
+      "node": "RESIDENCE_HISTORY",
       "required": true
     },
     {
-      "step": "ASSETS",
+      "node": "ASSETS",
       "required": true,
       "provider": "Plaid"
     },
     {
-      "step": "CREDIT_REPORT",
+      "node": "CREDIT_REPORT",
       "required": true,
       "provider": "Equifax",
       "fallback_provider": "TransUnion"
     },
     {
-      "step": "BACKGROUND_CHECK",
+      "node": "BACKGROUND_CHECK",
       "required": true,
       "provider": "Persona"
     }
@@ -124,18 +278,55 @@ Performs comprehensive background screening via Persona.
 }
 ```
 
-## Success Criteria
+### Get Flow Status
 
-A successful tenant screening requires:
-1. Verified identity matching government-issued documents
-2. Confirmed employment history with stable income
-3. Verified residence history
-4. Satisfactory credit score and payment history
-5. Clear background check results
-6. Sufficient assets for required payments
+#### Endpoint
+
+```bash
+GET /flows/tenant-screening/{flow_id}
+```
+
+#### Response
+
+```json
+{
+  "flow_id": "tenant_screening_v1",
+  "status": "in_progress",
+  "completed_nodes": ["ID_VERIFICATION", "PERSONAL_INFO"],
+  "current_node": "EMPLOYMENT",
+  "remaining_nodes": [
+    "BANK_CONNECT",
+    "RESIDENCE_HISTORY",
+    "ASSETS",
+    "CREDIT_REPORT",
+    "BACKGROUND_CHECK"
+  ]
+}
+```
 
 ## Error Handling
 
-- If any required step fails, the flow will pause and request manual review
-- Multiple provider options ensure redundancy for critical verifications
-- Manual document upload fallback available for all automated steps
+All API endpoints return standard HTTP status codes:
+
+- `200`: Success
+- `400`: Bad Request
+- `401`: Unauthorized
+- `403`: Forbidden
+- `404`: Not Found
+- `429`: Too Many Requests
+- `500`: Internal Server Error
+
+Error responses include detailed messages:
+
+```json
+{
+  "error": {
+    "code": "invalid_request",
+    "message": "Invalid provider configuration",
+    "details": {
+      "field": "provider",
+      "reason": "Unsupported provider for this node type"
+    }
+  }
+}
+```

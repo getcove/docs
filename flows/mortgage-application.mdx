@@ -1,5 +1,190 @@
 ---
-title: "Mortgage Application"
-description: ""
+title: "Mortgage Application Flow"
+description: "A comprehensive mortgage application flow that includes identity verification, financial assessment, employment verification, and background checks to evaluate mortgage eligibility."
 ---
 
+## Overview
+
+The mortgage application flow is a thorough verification process designed to assess an applicant's eligibility for a mortgage. This flow combines multiple verification steps to evaluate creditworthiness, verify income sources, and assess financial stability.
+
+## Flow Steps
+
+### 1. Identity Verification
+Verifies the applicant's identity according to FINTRAC Guidelines.
+- Legal first and last name
+- Date of birth
+- Government-issued ID verification
+- Identity verification record
+
+[View IDV Step Details](/steps/idv)
+
+### 2. Personal Information
+Collects essential personal information:
+- Email address
+- Citizenship status
+- Marital status
+- Social Insurance Number (SIN)
+
+### 3. Employment Verification
+Validates three years of employment history through Argyle or Atomic.
+- Employment status verification
+- Salary history
+- Income stability assessment
+- Manual document verification by advisor
+
+[View Employment Step Details](/steps/employment)
+
+### 4. Bank Connection
+Verifies income sources and financial stability using multiple providers:
+- Primary providers: Plaid, Flinks
+- Secondary providers: MX, Fincity, Inverite
+- Additional income verification (e.g., child support)
+- Manual document verification by advisor
+
+[View Bank Connect Step Details](/steps/bank-connect)
+
+### 5. Residence History
+Documents three years of residence history.
+- Previous addresses
+- Manual verification through documentation
+- Advisor review and validation
+- Rental or ownership status
+
+[View Residence History Step Details](/steps/residence-history)
+
+### 6. Assets Assessment
+Evaluates financial assets for down payment and closing costs.
+- Total asset value calculation
+- Down payment source verification
+- Existing property ownership
+- Mortgage and HELOC liabilities
+- Net worth determination
+
+[View Assets Step Details](/steps/assets)
+
+### 7. Credit Report
+Comprehensive credit analysis from Equifax and TransUnion.
+- Credit score evaluation
+- Payment history analysis
+- Current debt obligations
+- Bankruptcy records
+- Consumer proposals
+- Debt service ratio calculation
+
+[View Credit Report Step Details](/steps/credit-report)
+
+### 8. Background Check
+Security screening via Persona.
+- Watchlist verification
+- Sanctions check
+- Anti-money laundering compliance
+
+## Flow Configuration
+
+```json
+{
+  "flow_id": "mortgage_application_v1",
+  "name": "Mortgage Application Flow",
+  "steps": [
+    {
+      "step": "ID_VERIFICATION",
+      "required": true,
+      "provider": "Persona",
+      "options": {
+        "fintrac_compliant": true
+      }
+    },
+    {
+      "step": "PERSONAL_INFO",
+      "required": true
+    },
+    {
+      "step": "EMPLOYMENT",
+      "required": true,
+      "provider": "Argyle",
+      "fallback_provider": "Atomic",
+      "options": {
+        "verification_period_years": 3,
+        "require_advisor_review": true
+      }
+    },
+    {
+      "step": "BANK_CONNECT",
+      "required": true,
+      "providers": ["Plaid", "Flinks"],
+      "fallback_providers": ["MX", "Fincity", "Inverite"],
+      "options": {
+        "transaction_history_months": 24,
+        "verify_additional_income": true
+      }
+    },
+    {
+      "step": "RESIDENCE_HISTORY",
+      "required": true,
+      "options": {
+        "history_years": 3,
+        "require_documentation": true
+      }
+    },
+    {
+      "step": "ASSETS",
+      "required": true,
+      "provider": "Plaid",
+      "options": {
+        "verify_down_payment": true,
+        "check_closing_costs": true,
+        "verify_property_ownership": true
+      }
+    },
+    {
+      "step": "CREDIT_REPORT",
+      "required": true,
+      "provider": "Equifax",
+      "fallback_provider": "TransUnion",
+      "options": {
+        "check_bankruptcies": true,
+        "verify_liabilities": true,
+        "calculate_debt_ratios": true
+      }
+    },
+    {
+      "step": "BACKGROUND_CHECK",
+      "required": true,
+      "provider": "Persona",
+      "options": {
+        "watchlist_check": true,
+        "sanctions_check": true
+      }
+    }
+  ]
+}
+```
+
+## Success Criteria
+
+A successful mortgage application requires:
+1. Verified identity meeting FINTRAC requirements
+2. Stable employment history with verified income
+3. Sufficient assets for down payment and closing costs
+4. Acceptable debt service ratio
+5. Satisfactory credit history and score
+6. Clear background check
+7. Verified residence history
+8. All required documentation validated by advisor
+
+## Risk Assessment
+
+The flow includes automatic risk assessment based on:
+- Debt service ratio calculation
+- Credit score thresholds
+- Income stability metrics
+- Asset liquidity analysis
+- Property valuation (if applicable)
+
+## Error Handling
+
+- Failed verifications trigger manual review process
+- Multiple provider options ensure verification redundancy
+- Automatic fallback to secondary providers when primary fails
+- Manual document upload available for all automated steps
+- Advisor review required for critical verification steps
