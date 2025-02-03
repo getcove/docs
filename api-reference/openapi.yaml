@@ -277,6 +277,35 @@ paths:
               schema:
                 $ref: "#/components/schemas/rpcStatus"
       x-codegen-request-body-name: body
+  /v2/screening/send:
+    post:
+      tags:
+      - Screening
+      summary: Send the screening link to the end user
+      description: Send the screening link
+      operationId: ScreeningService_SendScreening
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/screeningv2SendScreeningRequest'
+        required: true
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/screeningv2SendScreeningResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpcStatus'
+      security:
+      - ApiTokenAuth: []
+      x-codegen-request-body-name: body
 components:
   schemas:
     protobufAny:
@@ -1111,6 +1140,35 @@ components:
         postalCode:
           type: string
         fullAddress:
+          type: string
+    screeningv2Payer:
+      type: string
+      default: PAYER_UNSPECIFIED
+      enum:
+      - PAYER_UNSPECIFIED
+      - PAYER_SELF
+      - PAYER_APPLICANT
+    screeningv2SendScreeningRequest:
+      type: object
+      properties:
+        flowId:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        payer:
+          $ref: '#/components/schemas/screeningv2Payer'
+    screeningv2SendScreeningResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+        message:
           type: string
   securitySchemes:
     ApiTokenAuth:
