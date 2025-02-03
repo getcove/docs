@@ -51,7 +51,9 @@
       "group": "Custom Flows",
       "pages": [
         "studio/custom-flows",
-        "studio/providers"
+        "studio/providers",
+        "studio/options",
+        "studio/control-flow"
       ]
     },
     {
