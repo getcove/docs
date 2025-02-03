@@ -41,10 +41,10 @@ Each webhook notification includes a JSON payload with the following structure:
 
 ```json
 {
-    "time": "2025-02-03T12:12:29-05:00",
+    "time": "2025-02-03T12:26:56-05:00",
     "applicant": {
         "id": "app_123456789",
-        "status": "completed"
+        "status": "USER_COMPLETED"
     },
     "org": {
         "id": "org_987654321"
@@ -63,22 +63,13 @@ Each webhook notification includes a JSON payload with the following structure:
 - `time`: Timestamp when the event occurred
 - `applicant`: Information about the applicant
   - `id`: Unique identifier for the applicant
-  - `status`: Current status of the screening
+  - `status`: Current status of the screening (see [Status Values](/webhooks/status))
 - `org`: Organization information
   - `id`: Organization identifier
 - `property`: Property information
   - `id`: Property identifier
 - `listor`: Listor information
   - `id`: Listor identifier
-
-### Status Values
-
-The `applicant.status` field will be one of:
-
-- `pending`: The screening is waiting to begin
-- `in_progress`: The screening is currently being processed
-- `completed`: The screening has been completed
-- `failed`: The screening encountered an error
 
 ## Best Practices
 
