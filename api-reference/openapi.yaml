@@ -9,105 +9,6 @@ security:
 tags:
   - name: ScreeningService
 paths:
-  /v1/flows:
-    get:
-      tags:
-      - Flow
-      summary: List flows
-      description: List your flows
-      operationId: FlowService_ListFlows
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1ListFlowsResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/rpcStatus'
-      security:
-      - ApiTokenAuth: []
-    post:
-      tags:
-      - Property
-      summary: Create a new flow
-      description: Create a new screening flow
-      operationId: FlowService_CreateFlow
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/v1CreateFlowRequest'
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1CreateFlowResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/rpcStatus'
-      security:
-      - ApiTokenAuth: []
-      x-codegen-request-body-name: body
-  /v1/flows/steps/list:
-    get:
-      tags:
-      - Step
-      summary: List steps
-      description: List steps
-      operationId: FlowService_ListSteps
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1ListStepsResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/rpcStatus'
-      security: []
-  /v1/flows/{flowId}:
-    get:
-      tags:
-      - Property
-      summary: Get a single flow
-      description: Get a single flow
-      operationId: FlowService_GetFlow
-      parameters:
-      - name: flowId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1GetFlowResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/rpcStatus'
-      security:
-      - ApiTokenAuth: []
   /v1/screening/data/{userId}:
     get:
       tags:
@@ -383,18 +284,6 @@ components:
               "@type": "type.googleapis.com/google.protobuf.Duration",
               "value": "1.212s"
             }
-    rpcStatus:
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-        details:
-          type: array
-          items:
-            $ref: '#/components/schemas/protobufAny'
     protorent_reportingv1CoveAddress:
       type: object
       properties:
@@ -408,77 +297,18 @@ components:
           type: string
         postalCode:
           type: string
-
-    flowv1Flow:
+    rpcStatus:
       type: object
       properties:
-        id:
+        code:
+          type: integer
+          format: int32
+        message:
           type: string
-        name:
-          type: string
-        steps:
+        details:
           type: array
           items:
-            $ref: '#/components/schemas/v1Step'
-    v1CreateFlowRequest:
-      type: object
-      properties:
-        flow:
-          $ref: '#/components/schemas/v1FlowCreationDTO'
-    v1CreateFlowResponse:
-      type: object
-      properties:
-        flowId:
-          type: string
-    v1FlowCreationDTO:
-      type: object
-      properties:
-        name:
-          type: string
-        steps:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1StepCreationDTO'
-    v1GetFlowResponse:
-      type: object
-      properties:
-        flow:
-          $ref: '#/components/schemas/flowv1Flow'
-    v1ListFlowsResponse:
-      type: object
-      properties:
-        flows:
-          type: array
-          items:
-            $ref: '#/components/schemas/flowv1Flow'
-    v1ListStepsResponse:
-      type: object
-      properties:
-        steps:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1Step'
-    v1Options:
-      type: object
-      properties:
-        skippable:
-          type: boolean
-    v1Step:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        options:
-          $ref: '#/components/schemas/v1Options'
-    v1StepCreationDTO:
-      type: object
-      properties:
-        id:
-          type: string
-        options:
-          $ref: '#/components/schemas/v1Options'
+            $ref: "#/components/schemas/protobufAny"
     v1AccountStatus:
       type: string
       default: ACCOUNT_STATUS_UNSPECIFIED
