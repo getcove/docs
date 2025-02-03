@@ -74,6 +74,13 @@
       ]
     },
     {
+      "group": "Screening Result",
+      "pages": [
+        "screening-result/data",
+        "screening-result/pdf",
+      ]
+    },
+    {
       "group": "Webhooks",
       "pages": [
         "webhooks/intro",
