@@ -1,6 +1,6 @@
 ---
 title: "Employment"
-description: "The employment verification step validates an individual's current employment status and income information through authorized employment verification providers."
+description: "The employment verification step validates an individual's current employment status and income information through payroll providers."
 ---
 
 ## Configuration
@@ -10,10 +10,10 @@ description: "The employment verification step validates an individual's current
     "id": "6797df82a4c4910bc0f1d490",
     "name": "EMPLOYMENT",
     "options": {
-        "verify_income": true,
-        "minimum_employment_duration": "6_months",
-        "require_current_employment": true,
-        "include_employer_contact": true
+        "bank_statement_analysis": true,
+        "require_pay_slips": true,
+        "tax_return_verification": true,
+        "employer_confirmation": true
     },
     "control_flow": {
         "condition": {
@@ -22,10 +22,10 @@ description: "The employment verification step validates an individual's current
             "condition_value": "verified"
         },
         "if_goto": "6797dfb4a4c4910bc0f1d491",
-        "else_goto": "request_additional_info"
+        "else_goto": "6797fd5e683fb54e8abe7d852"
     },
     "provider": {
-        "name": "Equifax"
+        "name": "Argyle"
     }
 }
 ```
@@ -35,12 +35,19 @@ description: "The employment verification step validates an individual's current
 - `id`: Unique identifier for the verification step
 - `name`: Step type identifier (EMPLOYMENT)
 - `options`: Configuration options for the verification process
-  - `verify_income`: Whether to include income verification
-  - `minimum_employment_duration`: Required minimum duration of employment
-  - `require_current_employment`: Whether to require current active employment
-  - `include_employer_contact`: Whether to include employer contact information
+  - `bank_statement_analysis`: Whether to analyze bank statements for income verification
+  - `require_pay_slips`: Whether to require pay slip documentation
+  - `tax_return_verification`: Whether to verify against tax returns
+  - `employer_confirmation`: Whether to require direct employer confirmation
 - `control_flow`: Logic for the next step based on verification result
+  - `condition`: Defines the decision criteria
+    - `condition_operator`: Comparison operator (==)
+    - `condition_field`: Field to evaluate (employment_status)
+    - `condition_value`: Required verification status (verified)
+  - `if_goto`: Next step if verification is successful
+  - `else_goto`: Next step if verification fails
 - `provider`: The employment verification service provider configuration
+  - `name`: Provider name (Argyle)
 
 ## Example Response
 
@@ -52,37 +59,97 @@ description: "The employment verification step validates an individual's current
         "verification_id": "emp_ver_789012",
         "employer": {
             "name": "Tech Corporation Inc.",
+            "employer_id": "emp_123456",
+            "ein": "12-3456789",
             "address": {
                 "street": "456 Corporate Plaza",
                 "city": "San Francisco",
                 "state": "CA",
                 "postal_code": "94105",
                 "country": "US"
-            },
-            "contact": {
-                "department": "HR",
-                "phone": "+1-415-555-0123",
-                "email": "hr@techcorp.example.com"
             }
         },
         "employment_details": {
             "start_date": "2023-03-15",
             "employment_type": "full_time",
             "job_title": "Senior Software Engineer",
-            "employment_duration": "1 year, 10 months",
-            "active": true
+            "employment_status": "active",
+            "last_payroll_date": "2025-02-01"
+        },
+        "verification_sources": {
+            "payroll_provider": {
+                "name": "ADP",
+                "verified": true,
+                "last_verified": "2025-02-03T11:45:06-05:00"
+            },
+            "bank_statements": {
+                "verified": true,
+                "analyzed_months": 3,
+                "last_statement_date": "2025-01-31"
+            },
+            "pay_slips": {
+                "verified": true,
+                "documents": [
+                    {
+                        "document_id": "doc_123",
+                        "pay_period": "2025-01-16 to 2025-01-31",
+                        "verified": true
+                    }
+                ]
+            },
+            "tax_returns": {
+                "verified": true,
+                "tax_year": "2024",
+                "document_id": "tax_789"
+            },
+            "employer_confirmation": {
+                "verified": true,
+                "confirmation_date": "2025-02-02",
+                "confirmation_method": "phone"
+            }
         },
         "income": {
-            "salary": {
+            "base_salary": {
                 "amount": 150000.00,
                 "currency": "USD",
                 "frequency": "yearly"
             },
-            "last_pay_date": "2025-01-30",
-            "pay_frequency": "bi_weekly"
+            "year_to_date": {
+                "gross_pay": 12500.00,
+                "net_pay": 8750.00,
+                "period_start": "2025-01-01",
+                "period_end": "2025-02-01"
+            },
+            "recent_payments": [
+                {
+                    "pay_date": "2025-02-01",
+                    "pay_period": {
+                        "start_date": "2025-01-16",
+                        "end_date": "2025-01-31"
+                    },
+                    "gross_amount": 6250.00,
+                    "net_amount": 4375.00,
+                    "earnings": {
+                        "regular": 5769.23,
+                        "overtime": 480.77
+                    },
+                    "deductions": {
+                        "federal_tax": 1250.00,
+                        "state_tax": 375.00,
+                        "social_security": 187.50,
+                        "medicare": 62.50
+                    }
+                }
+            ]
+        },
+        "verification_metadata": {
+            "provider": "Argyle",
+            "verification_time": "2025-02-03T11:45:06-05:00",
+            "verification_method": "multi_source",
+            "data_refresh_date": "2025-02-03"
         }
     },
-    "timestamp": "2025-02-02T17:51:56-05:00"
+    "timestamp": "2025-02-03T11:45:06-05:00"
 }
 ```
 
@@ -93,17 +160,30 @@ description: "The employment verification step validates an individual's current
   - `employment_status`: Whether the employment was successfully verified
   - `verification_id`: Unique identifier for this verification attempt
   - `employer`: Information about the employer
-    - `name`: Company name
-    - `address`: Company address details
-    - `contact`: HR or verification contact information
+    - Company name and identifier
+    - Employer Identification Number (EIN)
+    - Address details
   - `employment_details`: Details about the employment
-    - `start_date`: Employment start date
-    - `employment_type`: Type of employment (full-time, part-time, etc.)
-    - `job_title`: Current position
-    - `employment_duration`: Calculated duration of employment
-    - `active`: Whether currently employed
-  - `income`: Income information if requested
-    - `salary`: Base salary information
-    - `last_pay_date`: Date of most recent payment
-    - `pay_frequency`: Frequency of payments
+    - Start date and employment type
+    - Job title and status
+    - Last payroll date
+  - `verification_sources`: Details of each verification method
+    - Payroll provider verification
+    - Bank statement analysis
+    - Pay slip verification
+    - Tax return verification
+    - Employer confirmation
+  - `income`: Detailed income information
+    - Base salary and frequency
+    - Year-to-date earnings
+    - Recent payment details including:
+      - Pay period information
+      - Gross and net amounts
+      - Earnings breakdown
+      - Deduction details
+  - `verification_metadata`: Information about the verification process
+    - Provider used
+    - Verification timestamp
+    - Multi-source verification method
+    - Last data refresh date
 - `timestamp`: Time when the verification was completed
