@@ -50,7 +50,7 @@
     {
       "group": "Custom Flows",
       "pages": [
-        "custom-flows",
+        "studio/custom-flows",
         "studio/providers"
       ]
     },
