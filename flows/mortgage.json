@@ -1,0 +1,193 @@
+{
+    "steps" : [
+        {
+            "id": "6797df4ca4c4910bc0f1d48f",
+            "name": "ID_VERIFICATION",
+            "options": {
+                "require_selfie": true,
+                "enable_liveness_detection": true,
+                "require_id_back_side": true,
+                "check_id_expiration": true
+            },
+            "control_flow": {
+                "condition": {
+                    "condition_operator": "==",
+                    "condition_field": "id_valid",
+                    "condition_value": true
+                },
+                "if_goto": "6797dfe7a4c4910bc0f1d492",
+                "else_goto": "6797fd5e683fb54e8abe7d852"
+            },
+            "provider": {
+                "name": "Persona"
+            }
+        },
+        {
+            "id": "6797df82a4c4910bc0f1d490",
+            "name": "EMPLOYMENT",
+            "control_flow": {
+                "condition": {
+                    "condition_operator": "==",
+                    "condition_field": "employment_status",
+                    "condition_value": "verified"
+                },
+                "if_goto": "6797dfb4a4c4910bc0f1d491",
+                "else_goto": "6797fd5e683fb54e8abe7d852"
+            },
+            "provider": {
+                "name": "Argyle"
+            }
+        },
+        {
+            "id": "6798005e683fb1e8abe7d854",
+            "name": "EMPLOYMENT",
+            "options": {
+                "bank_statement_analysis": true,
+                "require_pay_slips": true,
+                "tax_return_verification": true,
+                "employer_confirmation": true
+            },
+            "control_flow": {
+                "condition": {
+                    "condition_operator": "==",
+                    "condition_field": "income_verified",
+                    "condition_value": true
+                },
+                "if_goto": "6798015e683fb1e8abe7d855",
+                "else_goto": "6797fd5e683fb54e8abe7d852"
+            },
+            "provider": {
+                "name": "Argyle"
+            }
+        },
+        {
+            "id": "6797dfb4a4c4910bc0f1d491",
+            "name": "RESIDENCE_HISTORY",
+            "control_flow": {
+                "condition": {
+                    "condition_operator": "==",
+                    "condition_field": "residence_verified",
+                    "condition_value": true
+                },
+                "if_goto": "6797dfe7a4c4910bc0f1d492",
+                "else_goto": "6797fd5e683fb54e8abe7d852"
+            },
+            "provider": {
+                "name": "None"
+            }
+        },
+        {
+            "id": "6797dfe7a4c4910bc0f1d492",
+            "name": "BACKGROUND_CHECK",
+            "options": {
+                "criminal_record_check": true,
+                "credit_history_check": true,
+                "employment_verification": true,
+                "education_verification": true
+            },
+            "control_flow": {
+                "condition": {
+                    "condition_operator": "==",
+                    "condition_field": "background_clear",
+                    "condition_value": true
+                },
+                "if_goto": "6797e02da4c4910bc0f1d493",
+                "else_goto": "6797e02da4c4910bc0f1d493"
+            },
+            "provider": {
+                "name": "Persona"
+            }
+        },
+        {
+            "id": "6797e02da4c4910bc0f1d493",
+            "name": "CREDIT_REPORT",
+            "control_flow": {
+                "condition": {
+                    "condition_operator": ">=",
+                    "condition_field": "credit_score",
+                    "condition_value": 700
+                },
+                "if_goto": "6797fe5e683fb1e8abe7d853",
+                "else_goto": "6797e02da4c4910bc0f1d493"
+            },
+            "provider": {
+                "name": "Equifax",
+                "fallback": "TransUnion"
+            }
+        },
+        {
+            "id": "6797e086a4c4910bc0f1d495",
+            "name": "PERSONAL_INFO",
+            "control_flow": {
+                "condition": {
+                    "condition_operator": "==",
+                    "condition_field": "personal_info_complete",
+                    "condition_value": true
+                },
+                "if_goto": "6797fd5e683fb1e8abe7d852",
+                "else_goto": "6797fd5e683fb54e8abe7d852"
+            },
+            "provider": {
+                "name": "Internal"
+            }
+        },
+        {
+            "id": "6797fd5e683fb1e8abe7d852",
+            "name": "ASSETS",
+            "control_flow": {
+                "condition": {
+                    "condition_operator": "==",
+                    "condition_field": "assets_verified",
+                    "condition_value": true
+                },
+                "if_goto": "6798005e683fb1e8abe7d854",
+                "else_goto": "6797fd5e683fb54e8abe7d852"
+            },
+            "provider": {
+                "name": "Plaid"
+            }
+        },
+        {
+            "id": "6797fe5e683fb1e8abe7d853",
+            "name": "BANK_CONNECT",
+            "options": {
+                "verify_account_balance": true,
+                "analyze_transactions": true,
+                "verify_account_ownership": true,
+                "enable_instant_verification": true
+            },
+            "control_flow": {
+                "condition": {
+                    "condition_operator": ">",
+                    "condition_field": "account_balance",
+                    "condition_value": 500
+                },
+                "if_goto": "6798015e683fb1e8abe7d855",
+                "else_goto": "6797fd5e683fb54e8abe7d852"
+            },
+            "provider": {
+                "name": "Plaid",
+                "fallback": "Flinks"
+            }
+        },
+        {
+            "id": "6798015e683fb1e8abe7d855",
+            "name": "DOCUMENT_PROCESSING",
+            "options": {
+                "enable_ocr_processing": true,
+                "require_digital_signature": true,
+                "enable_document_retention": true,
+                "enforce_format_standards": true
+            },
+            "control_flow": {
+                 "end": true
+            },
+            "provider": {
+                "name": "DocuSign"
+            }
+        }
+    ],
+    "options":{
+        "sendEmails": true
+    }
+}
