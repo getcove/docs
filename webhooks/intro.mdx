@@ -5,7 +5,7 @@ description: "Webhooks introduction"
 
 ## Overview
 
-Webhooks provide real-time notifications about important events in your screening process. Instead of requiring you to continuously poll our API for updates, webhooks push notifications directly to your specified endpoint whenever there's a change in status or new information becomes available.
+Webhooks provide real-time notifications about screening status changes in your application process. Instead of requiring you to continuously poll our API for updates, webhooks push notifications directly to your specified endpoint whenever there's a change in an applicant's screening status.
 
 ## Getting Started
 
@@ -13,38 +13,27 @@ Webhooks provide real-time notifications about important events in your screenin
 
 To start receiving webhook notifications, please provide your webhook endpoint URL to: `concierge@cove.co`
 
+You will receive:
+
+- A webhook endpoint configuration
+- A webhook secret for security verification
+
 Your endpoint should be:
 
 - Publicly accessible over HTTPS
 - Capable of handling POST requests
-- Able to respond with a 2xx status code
+- Able to respond with a 200 OK status code
 
 ### 2. Security
 
 All webhook requests will:
 
 - Be sent over HTTPS
-- Include a signature header for verification
-- Contain a unique webhook ID
-- Include a timestamp of when the event occurred
+- Include an HMAC signature in the `X-HMAC-SIGNATURE` header
+- Be signed using your webhook secret
+- Have `Content-Type: application/json` header
 
-## Event Types
-
-Our webhooks notify you about the following screening status changes:
-
-### Screening Status Updates
-
-- `screening.started`: A new screening process has begun
-- `screening.updated`: New information has been added to the screening
-- `screening.completed`: The screening process has been completed
-- `screening.error`: An error occurred during the screening process
-
-### Verification Updates
-
-- `verification.employment`: Employment verification status changes
-- `verification.assets`: Asset verification status changes
-- `verification.residence`: Residence history verification changes
-- `verification.bank`: Bank connection status changes
+To verify webhook authenticity, compute the HMAC signature of the raw request body using your webhook secret and compare it with the `X-HMAC-SIGNATURE` header value.
 
 ## Webhook Payload
 
@@ -52,49 +41,58 @@ Each webhook notification includes a JSON payload with the following structure:
 
 ```json
 {
-    "id": "whk_123456789",
-    "event": "screening.updated",
-    "created": "2025-02-03T12:04:23-05:00",
-    "data": {
-        "screening_id": "scr_987654321",
-        "status": "in_progress",
-        "verification_type": "employment",
-        "completion_percentage": 75,
-        "updated_fields": ["employment_status", "income_verification"],
-        "metadata": {
-            "applicant_id": "app_123456",
-            "property_id": "prop_789012"
-        }
+    "time": "2025-02-03T12:12:29-05:00",
+    "applicant": {
+        "id": "app_123456789",
+        "status": "completed"
+    },
+    "org": {
+        "id": "org_987654321"
+    },
+    "property": {
+        "id": "prop_123456"
+    },
+    "listor": {
+        "id": "lst_789012"
     }
 }
 ```
 
 ### Payload Fields
 
-- `id`: Unique identifier for the webhook notification
-- `event`: The type of event that triggered the webhook
-- `created`: Timestamp when the event occurred
-- `data`: Object containing event-specific information
-  - `screening_id`: ID of the associated screening
+- `time`: Timestamp when the event occurred
+- `applicant`: Information about the applicant
+  - `id`: Unique identifier for the applicant
   - `status`: Current status of the screening
-  - `verification_type`: Type of verification being updated (if applicable)
-  - `completion_percentage`: Overall completion percentage
-  - `updated_fields`: Array of fields that were updated
-  - `metadata`: Additional context about the screening
+- `org`: Organization information
+  - `id`: Organization identifier
+- `property`: Property information
+  - `id`: Property identifier
+- `listor`: Listor information
+  - `id`: Listor identifier
+
+### Status Values
+
+The `applicant.status` field will be one of:
+
+- `pending`: The screening is waiting to begin
+- `in_progress`: The screening is currently being processed
+- `completed`: The screening has been completed
+- `failed`: The screening encountered an error
 
 ## Best Practices
 
-1. **Acknowledge Quickly**: Return a 2xx response as soon as you receive the webhook. Process the data asynchronously if needed.
+1. **Verify Signatures**: Always verify the HMAC signature using your webhook secret before processing the payload.
 
-2. **Implement Retry Logic**: Your endpoint should be able to handle duplicate events. Use the webhook `id` to prevent double-processing.
+2. **Respond Quickly**: Return a 200 OK response as soon as you receive and verify the webhook. Process the data asynchronously if needed.
 
-3. **Monitor Failures**: If we receive consecutive failed delivery attempts, we'll notify the email address on file.
+3. **Handle Retries**: Your endpoint should be idempotent as the same webhook may be sent multiple times in case of delivery failures.
 
 4. **Store Raw Payload**: Save the raw webhook data before processing it, in case you need to debug issues later.
 
 ## Testing
 
-You can use our test environment to simulate webhook events and verify your integration. Contact our support team at <concierge@cove.co> to enable test mode for your webhook endpoint.
+You can test your webhook integration by providing a test endpoint to <concierge@cove.co>. We'll help you simulate webhook events to verify your integration.
 
 ## Support
 
