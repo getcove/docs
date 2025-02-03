@@ -2,3 +2,80 @@
 title: "Control Flow"
 description: "Learn how to create and use control flows with the Cove API."
 ---
+
+
+## Overview
+The `control_flow` object in our platform defines how each step in the verification process transitions based on specific conditions. It enables dynamic decision-making by supporting conditional logic, allowing the flow to branch based on predefined criteria. If `control_flow` is not provided for a step, the process will run sequentially to the next step.
+
+## Structure of `control_flow`
+Each step contains a `control_flow` object with the following fields:
+
+### 1. `condition`
+Defines the logic for evaluating a decision. The condition consists of:
+- `condition_operator`: The operator used to compare values (e.g., `==`, `>`, `<`, `>=`, `<=`, `!=`).
+- `condition_field`: The data field being evaluated.
+- `condition_value`: The expected value used for comparison.
+
+### 2. `if_goto`
+Specifies the next step to transition to if the condition evaluates to `true`.
+
+### 3. `else_goto` (Optional)
+Specifies the next step to transition to if the condition evaluates to `false`.
+
+### 4. `end` (Optional)
+If set to `true`, it indicates that the process terminates at this step if reached.
+
+## Execution Flow
+- If a step has a `control_flow`, the conditions determine the next step.
+- If a step does not have a `control_flow`, the process continues sequentially to the next step in the list.
+
+## Example `control_flow` Objects
+
+### Example 1: ID Verification
+```json
+"control_flow": {
+    "condition": {
+        "condition_operator": "==",
+        "condition_field": "id_valid",
+        "condition_value": true
+    },
+    "if_goto": "6797dfe7a4c4910bc0f1d492",
+    "else_goto": "6797dfe7a4c4910bc0f1d434"
+}
+```
+- If `id_valid` is `true`, the process moves to `BACKGROUND_CHECK`.
+- Otherwise, it moves to `manual_review`.
+
+### Example 2: Credit Report
+```json
+"control_flow": {
+    "condition": {
+        "condition_operator": ">=",
+        "condition_field": "credit_score",
+        "condition_value": 700
+    },
+    "if_goto": "6797fe5e683fb1e8abe7d853",
+    "else_goto": "6797fe5e683fb1e8abe7d882"
+}
+```
+- If `credit_score` is `700` or above, the process continues to `BANK_CONNECT`.
+- Otherwise, it moves to `request_credit_report_again`.
+
+### Example 3: Process Completion
+```json
+"control_flow": {
+    "end": true
+}
+```
+- This step marks the end of the process.
+
+## Operators Supported
+| Operator | Meaning |
+|----------|---------|
+| `==`     | Equal to |
+| `!=`     | Not equal to |
+| `>`      | Greater than |
+| `<`      | Less than |
+| `>=`     | Greater than or equal to |
+| `<=`     | Less than or equal to |
+
