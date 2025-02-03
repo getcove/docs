@@ -33,7 +33,7 @@ paths:
       - ApiTokenAuth: []
     post:
       tags:
-      - Property
+      - Flow
       summary: Create a new flow
       description: Create a new screening flow
       operationId: FlowService_CreateFlow
@@ -83,7 +83,7 @@ paths:
   /v1/flows/{flowId}:
     get:
       tags:
-      - Property
+      - Flow
       summary: Get a single flow
       description: Get a single flow
       operationId: FlowService_GetFlow
@@ -100,6 +100,63 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/v1GetFlowResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpcStatus'
+      security:
+      - ApiTokenAuth: []
+  /v1/property:
+    post:
+      tags:
+      - Property
+      summary: Create a property
+      description: Create a property
+      operationId: PropertyService_CreateProperty
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v1CreatePropertyRequest'
+        required: true
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1CreatePropertyResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpcStatus'
+      security:
+      - ApiTokenAuth: []
+      x-codegen-request-body-name: body
+  /v1/property/{propertyId}:
+    get:
+      tags:
+      - Property
+      summary: Get the property
+      description: Get the property
+      operationId: PropertyService_GetProperty
+      parameters:
+      - name: propertyId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1GetPropertyResponse'
         default:
           description: An unexpected error response.
           content:
@@ -395,6 +452,48 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/protobufAny'
+    protopropertyv1CoveAddress:
+      type: object
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        provinceState:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        fullAddress:
+          type: string
+    v1CreatePropertyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        rent:
+          type: integer
+          format: int32
+        address:
+          $ref: '#/components/schemas/protopropertyv1CoveAddress'
+    v1CreatePropertyResponse:
+      type: object
+      properties:
+        propertyId:
+          type: string
+    v1GetPropertyResponse:
+      type: object
+      properties:
+        propertyId:
+          type: string
+        name:
+          type: string
+        rent:
+          type: integer
+          format: int32
+        address:
+          $ref: '#/components/schemas/protopropertyv1CoveAddress'
     protorent_reportingv1CoveAddress:
       type: object
       properties:
@@ -408,7 +507,6 @@ components:
           type: string
         postalCode:
           type: string
-
     flowv1Flow:
       type: object
       properties:

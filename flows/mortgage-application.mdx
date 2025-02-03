@@ -9,182 +9,196 @@ The mortgage application flow is a thorough verification process designed to ass
 
 ## Flow Steps
 
-### 1. Identity Verification
-Verifies the applicant's identity according to FINTRAC Guidelines.
-- Legal first and last name
-- Date of birth
-- Government-issued ID verification
-- Identity verification record
+### 1. Identity Verification (ID_VERIFICATION)
+Verifies the applicant's identity using Persona:
+- Selfie verification with liveness detection
+- Government-issued ID verification (front side required)
+- Background check including watchlist and sanctions
+- Automatic validation with conditional routing
 
 [View IDV Step Details](/steps/idv)
 
-### 2. Personal Information
+### 2. Personal Information (PERSONAL_INFO)
 Collects essential personal information:
-- Email address
-- Citizenship status
-- Marital status
-- Social Insurance Number (SIN)
+- Email address (required)
+- Citizenship status (required)
+- Marital status (required)
+- Social Insurance Number (required)
+- Credit score threshold validation (≥700)
 
-### 3. Employment Verification
-Validates three years of employment history through Argyle or Atomic.
+### 3. Employment Verification (EMPLOYMENT)
+Validates employment through Atomic or Argyle:
+- Pay slips verification (required)
+- Employer confirmation (required)
 - Employment status verification
-- Salary history
-- Income stability assessment
-- Manual document verification by advisor
+- Automatic routing based on verification status
 
 [View Employment Step Details](/steps/employment)
 
-### 4. Bank Connection
-Verifies income sources and financial stability using multiple providers:
-- Primary providers: Plaid, Flinks
-- Secondary providers: MX, Fincity, Inverite
-- Additional income verification (e.g., child support)
-- Manual document verification by advisor
+### 4. Bank Connection (BANK_CONNECT)
+Verifies financial stability through Plaid or Flinks:
+- Account ownership verification
+- Transaction analysis
+- Minimum balance verification (>$500)
+- Automatic routing based on balance
 
 [View Bank Connect Step Details](/steps/bank-connect)
 
-### 5. Residence History
-Documents three years of residence history.
+### 5. Residence History (RESIDENCE_HISTORY)
+Documents residence history:
 - Previous addresses
-- Manual verification through documentation
-- Advisor review and validation
-- Rental or ownership status
+- Residence verification status
+- Automatic routing based on verification
 
 [View Residence History Step Details](/steps/residence-history)
 
-### 6. Assets Assessment
-Evaluates financial assets for down payment and closing costs.
-- Total asset value calculation
-- Down payment source verification
-- Existing property ownership
-- Mortgage and HELOC liabilities
-- Net worth determination
+### 6. Assets (PERSONAL_ASSETS)
+Evaluates financial assets:
+- Asset verification status
+- Automatic routing based on verification
 
 [View Assets Step Details](/steps/assets)
-
-### 7. Credit Report
-Comprehensive credit analysis from Equifax and TransUnion.
-- Credit score evaluation
-- Payment history analysis
-- Current debt obligations
-- Bankruptcy records
-- Consumer proposals
-- Debt service ratio calculation
-
-[View Credit Report Step Details](/steps/credit-report)
-
-### 8. Background Check
-Security screening via Persona.
-- Watchlist verification
-- Sanctions check
-- Anti-money laundering compliance
 
 ## Flow Configuration
 
 ```json
 {
-  "flow_id": "mortgage_application_v1",
-  "name": "Mortgage Application Flow",
-  "steps": [
-    {
-      "step": "ID_VERIFICATION",
-      "required": true,
-      "provider": "Persona",
-      "options": {
-        "fintrac_compliant": true
-      }
-    },
-    {
-      "step": "PERSONAL_INFO",
-      "required": true
-    },
-    {
-      "step": "EMPLOYMENT",
-      "required": true,
-      "provider": "Argyle",
-      "fallback_provider": "Atomic",
-      "options": {
-        "verification_period_years": 3,
-        "require_advisor_review": true
-      }
-    },
-    {
-      "step": "BANK_CONNECT",
-      "required": true,
-      "providers": ["Plaid", "Flinks"],
-      "fallback_providers": ["MX", "Fincity", "Inverite"],
-      "options": {
-        "transaction_history_months": 24,
-        "verify_additional_income": true
-      }
-    },
-    {
-      "step": "RESIDENCE_HISTORY",
-      "required": true,
-      "options": {
-        "history_years": 3,
-        "require_documentation": true
-      }
-    },
-    {
-      "step": "ASSETS",
-      "required": true,
-      "provider": "Plaid",
-      "options": {
-        "verify_down_payment": true,
-        "check_closing_costs": true,
-        "verify_property_ownership": true
-      }
-    },
-    {
-      "step": "CREDIT_REPORT",
-      "required": true,
-      "provider": "Equifax",
-      "fallback_provider": "TransUnion",
-      "options": {
-        "check_bankruptcies": true,
-        "verify_liabilities": true,
-        "calculate_debt_ratios": true
-      }
-    },
-    {
-      "step": "BACKGROUND_CHECK",
-      "required": true,
-      "provider": "Persona",
-      "options": {
-        "watchlist_check": true,
-        "sanctions_check": true
-      }
+    "steps": [
+        {
+            "id": "6797df4ca4c4910bc0f1d48f",
+            "name": "ID_VERIFICATION",
+            "options": {
+                "require_selfie": true,
+                "enable_liveness_detection": true,
+                "require_id_back_side": false,
+                "run_background_check": {
+                    "watchlist_check": true,
+                    "sanctions_check": true
+                }
+            },
+            "control_flow": {
+                "condition": {
+                    "condition_operator": "==",
+                    "condition_field": "id_valid",
+                    "condition_value": true
+                },
+                "if_goto": "6797dfe7a4c4910bc0f1d492",
+                "else_goto": "6797fd5e683fb54e8abe7d852"
+            },
+            "provider": ["Persona"]
+        },
+        {
+            "id": "6797e086a4c4910bc0f1d495",
+            "name": "PERSONAL_INFO",
+            "options": {
+                "require_email": true,
+                "require_citizenship": true,
+                "require_marital_status": true,
+                "require_social_insurance_number": true
+            },
+            "control_flow": {
+                "condition": {
+                    "condition_operator": ">=",
+                    "condition_field": "credit_score",
+                    "condition_value": 700
+                },
+                "if_goto": "6797fd5e683fb1e8abe7d852",
+                "else_goto": "6797fd5e683fb54e8abe7d852"
+            },
+            "provider": []
+        },
+        {
+            "id": "6798005e683fb1e8abe7d854",
+            "name": "EMPLOYMENT",
+            "options": {
+                "require_pay_slips": true,
+                "employer_confirmation": true
+            },
+            "control_flow": {
+                "condition": {
+                    "condition_operator": "==",
+                    "condition_field": "employment_status",
+                    "condition_value": "verified"
+                },
+                "if_goto": "6798015e683fb1e8abe7d855",
+                "else_goto": "6797fd5e683fb54e8abe7d852"
+            },
+            "provider": ["Atomic", "Argyle"]
+        },
+        {
+            "id": "6797fe5e683fb1e8abe7d853",
+            "name": "BANK_CONNECT",
+            "options": {
+                "analyze_transactions": true,
+                "verify_account_ownership": true
+            },
+            "control_flow": {
+                "condition": {
+                    "condition_operator": ">",
+                    "condition_field": "account_balance",
+                    "condition_value": 500
+                },
+                "if_goto": "6798015e683fb1e8abe7d855",
+                "else_goto": "6797fd5e683fb54e8abe7d852"
+            },
+            "provider": ["Plaid", "Flinks"]
+        },
+        {
+            "id": "6797dfb4a4c4910bc0f1d491",
+            "name": "RESIDENCE_HISTORY",
+            "control_flow": {
+                "condition": {
+                    "condition_operator": "==",
+                    "condition_field": "residence_verified",
+                    "condition_value": true
+                },
+                "if_goto": "6797dfe7a4c4910bc0f1d492",
+                "else_goto": "6797fd5e683fb54e8abe7d852"
+            },
+            "provider": []
+        },
+        {
+            "id": "6797fd5e683fb1e8abe7d852",
+            "name": "PERSONAL_ASSETS",
+            "control_flow": {
+                "condition": {
+                    "condition_operator": "==",
+                    "condition_field": "assets_verified",
+                    "condition_value": true
+                },
+                "if_goto": "6798005e683fb1e8abe7d854",
+                "else_goto": "6797fd5e683fb54e8abe7d852"
+            },
+            "provider": []
+        }
+    ],
+    "options": {
+        "send_emails": true,
+        "run_credit_check": {
+            "fetch_debt_data": true,
+            "provider": ["Equifax", "TransUnion"]
+        }
     }
-  ]
 }
 ```
 
 ## Success Criteria
 
 A successful mortgage application requires:
-1. Verified identity meeting FINTRAC requirements
-2. Stable employment history with verified income
-3. Sufficient assets for down payment and closing costs
-4. Acceptable debt service ratio
-5. Satisfactory credit history and score
-6. Clear background check
-7. Verified residence history
-8. All required documentation validated by advisor
+1. Valid government ID with liveness verification
+2. Complete personal information with credit score ≥700
+3. Verified employment with required documentation
+4. Bank connection with minimum balance >$500
+5. Verified residence history
+6. Verified personal assets
 
 ## Risk Assessment
 
 The flow includes automatic risk assessment based on:
-- Debt service ratio calculation
-- Credit score thresholds
-- Income stability metrics
-- Asset liquidity analysis
-- Property valuation (if applicable)
-
-## Error Handling
-
-- Failed verifications trigger manual review process
-- Multiple provider options ensure verification redundancy
-- Automatic fallback to secondary providers when primary fails
-- Manual document upload available for all automated steps
-- Advisor review required for critical verification steps
+- Identity verification results
+- Credit score threshold
+- Employment verification status
+- Bank account balance
+- Residence history verification
+- Asset verification status
+- Credit check data from Equifax and TransUnion
