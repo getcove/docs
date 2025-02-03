@@ -1,5 +1,42 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: 'Statuses'
+description: 'The screening status values and what they notify you about'
 ---
 
+The `status` field in webhook notifications indicates the current state of an applicant's screening. This document details all possible status values and their meanings.
+
+## Status Values
+
+### SENT
+
+Initial state when a screening request is created and sent to the applicant. You'll receive this status when a new screening is initiated.
+
+### IN_PROGRESS
+
+The applicant has begun the screening process. This status indicates they are actively working through the verification steps.
+
+### USER_COMPLETED
+
+The applicant has finished submitting all required information. The system is now processing their submissions through various verification services.
+
+### COMPLETE
+
+All verification processes have finished. The screening results are ready for review and decision-making.
+
+### ACCEPTED
+
+A positive decision has been made on the screening. The applicant has been approved.
+
+### REJECTED
+
+A negative decision has been made on the screening. The applicant has not been approved.
+
+## Typical Flow
+
+A screening progresses through these states sequentially:
+
+```txt
+SENT → IN_PROGRESS → USER_COMPLETED → COMPLETE → (ACCEPTED or REJECTED)
+```
+
+For webhook configuration and security details, see the [Webhooks Introduction](/webhooks/intro).
