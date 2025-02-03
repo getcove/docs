@@ -1,0 +1,185 @@
+---
+title: "Residence History"
+description: "The residence history step verifies an individual's residential addresses for the past three years through manual document verification by an advisor."
+---
+
+## Configuration
+
+```json
+{
+    "id": "6797dfb4a4c4910bc0f1d491",
+    "name": "RESIDENCE_HISTORY",
+    "options": {
+        "length_years": 3
+    },
+    "control_flow": {
+        "condition": {
+            "condition_operator": "==",
+            "condition_field": "residence_verified",
+            "condition_value": true
+        },
+        "if_goto": "6797dfe7a4c4910bc0f1d492",
+        "else_goto": "6797fd5e683fb54e8abe7d852"
+    },
+    "provider": {
+        "name": "None"
+    }
+}
+```
+
+## Config Fields
+
+- `id`: Unique identifier for the verification step
+- `name`: Step type identifier (RESIDENCE_HISTORY)
+- `options`: Configuration options for residence history verification
+  - `length_years`: Required years of residence history (3)
+- `control_flow`: Logic for the next step based on verification status
+  - `condition`: Defines the decision criteria
+    - `condition_operator`: Comparison operator (==)
+    - `condition_field`: Field to evaluate (residence_verified)
+    - `condition_value`: Required verification status
+  - `if_goto`: Next step if verification is successful
+  - `else_goto`: Next step if verification fails
+- `provider`: The verification service provider configuration
+  - `name`: Provider name (None for manual verification)
+
+## Example Response
+
+```json
+{
+    "status": "completed",
+    "result": {
+        "residence_verified": true,
+        "verification_id": "res_ver_123456",
+        "addresses": [
+            {
+                "address_id": "addr_001",
+                "type": "current",
+                "residence": {
+                    "street": "123 Main Street",
+                    "unit": "Apt 4B",
+                    "city": "Portland",
+                    "state": "OR",
+                    "postal_code": "97201",
+                    "country": "USA"
+                },
+                "duration": {
+                    "start_date": "2023-01-15",
+                    "end_date": null,
+                    "months": 13
+                },
+                "ownership_status": "rent",
+                "verification": {
+                    "verified": true,
+                    "verification_date": "2025-02-03",
+                    "verified_by": "advisor_789",
+                    "documents": [
+                        {
+                            "type": "lease_agreement",
+                            "document_id": "doc_456",
+                            "issue_date": "2023-01-10",
+                            "verified": true
+                        },
+                        {
+                            "type": "utility_bill",
+                            "document_id": "doc_457",
+                            "issue_date": "2025-01-15",
+                            "verified": true
+                        }
+                    ]
+                }
+            },
+            {
+                "address_id": "addr_002",
+                "type": "previous",
+                "residence": {
+                    "street": "456 Oak Avenue",
+                    "city": "Seattle",
+                    "state": "WA",
+                    "postal_code": "98101",
+                    "country": "USA"
+                },
+                "duration": {
+                    "start_date": "2021-06-01",
+                    "end_date": "2022-12-31",
+                    "months": 19
+                },
+                "ownership_status": "own",
+                "verification": {
+                    "verified": true,
+                    "verification_date": "2025-02-03",
+                    "verified_by": "advisor_789",
+                    "documents": [
+                        {
+                            "type": "property_deed",
+                            "document_id": "doc_458",
+                            "issue_date": "2021-05-25",
+                            "verified": true
+                        }
+                    ]
+                }
+            },
+            {
+                "address_id": "addr_003",
+                "type": "previous",
+                "residence": {
+                    "street": "789 Pine Street",
+                    "city": "San Francisco",
+                    "state": "CA",
+                    "postal_code": "94101",
+                    "country": "USA"
+                },
+                "duration": {
+                    "start_date": "2020-01-01",
+                    "end_date": "2021-05-31",
+                    "months": 17
+                },
+                "ownership_status": "rent",
+                "verification": {
+                    "verified": true,
+                    "verification_date": "2025-02-03",
+                    "verified_by": "advisor_789",
+                    "documents": [
+                        {
+                            "type": "lease_agreement",
+                            "document_id": "doc_459",
+                            "issue_date": "2019-12-15",
+                            "verified": true
+                        }
+                    ]
+                }
+            }
+        ],
+        "verification_summary": {
+            "total_addresses": 3,
+            "total_months_verified": 49,
+            "gaps_in_history": false,
+            "current_address_verified": true,
+            "verifying_advisor": "advisor_789",
+            "verification_notes": "Complete 3-year history verified with supporting documentation"
+        }
+    },
+    "timestamp": "2025-02-03T11:34:51-05:00"
+}
+```
+
+## Output Fields
+
+- `status`: The completion status of the verification
+- `result`: The verification results containing:
+  - `residence_verified`: Whether all addresses were successfully verified
+  - `verification_id`: Unique identifier for this verification
+  - `addresses`: List of verified addresses
+    - Address details and duration
+    - Ownership status (rent/own)
+    - Verification details including:
+      - Verification date and advisor
+      - Supporting documents
+      - Document verification status
+  - `verification_summary`: Summary of verification process
+    - Total addresses and months verified
+    - Gaps in history check
+    - Current address verification status
+    - Verifying advisor information
+    - Additional verification notes
+- `timestamp`: Time when the verification was completed
