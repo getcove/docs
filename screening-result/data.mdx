@@ -2,3 +2,178 @@
 title: "Screening Data"
 description: "Retrieve detailed screening results for a specific applicant."
 ---
+
+# Screening Data API
+
+The Screening Data API allows you to retrieve comprehensive screening results for an applicant, including credit information, bank account details, income verification, and landlord reviews.
+
+View the OpenAPI specification for this endpoint at [Get Screening Data](/api-reference/screening/get-the-screening-data).
+
+## Endpoint
+
+```http
+GET /v1/screening/data/{userId}
+```
+
+## Authentication
+
+All requests must include an API token in the Authorization header.
+
+## Path Parameters
+
+| Parameter | Type   | Description                                      |
+|-----------|--------|--------------------------------------------------|
+| userId    | string | The unique identifier of the applicant to screen |
+
+## Response
+
+The response includes two main objects:
+
+### Screening Object
+
+Contains the comprehensive screening results including:
+
+- Credit and financial information
+- Income and debt analysis
+- Bank account details
+- Landlord reviews
+- Risk assessment flags
+
+```json
+{
+  "id": "string",
+  "checkType": "string",
+  "coveScore": "number",
+  "creditScore": "integer",
+  "rent": "integer",
+  "monthlyIncome": "number",
+  "monthlyDebt": "number",
+  "totalDebt": "number",
+  "debtLimit": "number",
+  "landlordReviews": [
+    {
+      "email": "string",
+      "phone": "string",
+      "wouldRentToThemAgain": "integer",
+      "paysRentOnTime": "integer",
+      "cleanliness": "integer",
+      "didNotDamageProperty": "integer",
+      "additionalDetails": "string"
+    }
+  ],
+  "monthlyData": [
+    {
+      "averageBalance": "number",
+      "income": "number",
+      "month": "string",
+      "spending": "number"
+    }
+  ],
+  "greenFlags": ["string"],
+  "redFlags": ["object"],
+  "rentTransactions": [
+    {
+      "id": "string",
+      "type": "string", // "DEBIT" or "CREDIT"
+      "amount": "number",
+      "isoCurrencyCode": "string",
+      "description": "string",
+      "date": "string" // ISO 8601 date
+    }
+  ],
+  "updatedAt": "string" // date-time
+}
+```
+
+### User Object
+
+Contains the applicant's personal information and submitted documentation:
+
+```json
+{
+  "id": "string",
+  "phoneNumber": "string",
+  "email": "string",
+  "firstName": "string",
+  "lastName": "string",
+  "dateOfBirth": "string",
+  "checkComplete": "boolean",
+  "currentAddress": {
+    "line1": "string",
+    "line2": "string",
+    "city": "string",
+    "state": "string",
+    "postalCode": "string",
+    "country": "string"
+  },
+  "employmentDetails": {
+    "identity": {
+      "firstName": "string",
+      "lastName": "string",
+      "dateOfBirth": "string",
+      "email": "string",
+      "phone": "string",
+      "ssn": "string",
+      "address": "string",
+      "city": "string",
+      "state": "string",
+      "postalCode": "string"
+    },
+    "income": {
+      "income": "number",
+      "incomeType": "string",
+      "annualIncome": "integer",
+      "hourlyIncome": "number",
+      "netHourlyRate": "number",
+      "payCycle": "string"
+    },
+    "employment": {
+      "employeeType": "string",
+      "employmentStatus": "string",
+      "jobTitle": "string",
+      "startDate": "string",
+      "minimumMonthsOfEmployment": "integer",
+      "weeklyHours": "integer",
+      "employer": {
+        "name": "string",
+        "address": {
+          "line1": "string",
+          "line2": "string",
+          "city": "string",
+          "state": "string",
+          "postalCode": "string",
+          "country": "string"
+        }
+      }
+    }
+  },
+  "rentals": [
+    {
+      "address": {
+        "line1": "string",
+        "line2": "string",
+        "city": "string",
+        "state": "string",
+        "postalCode": "string",
+        "country": "string"
+      },
+      "start": "string",
+      "reasonForMoving": "string",
+      "rentAmount": "integer",
+      "landlordName": "string",
+      "landlordEmail": "string",
+      "landlordPhone": "string",
+      "id": "string"
+    }
+  ]
+}
+```
+
+## Error Responses
+
+| Status Code | Description                                                  |
+|-------------|--------------------------------------------------------------|
+| 400         | Bad Request - Invalid userId or malformed request            |
+| 401         | Unauthorized - Missing or invalid API token                   |
+| 404         | Not Found - Screening data not found for the specified user  |
+| 500         | Internal Server Error - Something went wrong on our end      |

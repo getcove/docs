@@ -2,3 +2,60 @@
 title: "PDF Report"
 description: "Generate a PDF report of the screening results for a specific applicant."
 ---
+
+# Screening PDF Report API
+
+The Screening PDF Report API allows you to generate and retrieve a PDF report containing the comprehensive screening results for an applicant. This report includes all the screening data in a formatted, printable document.
+
+View the OpenAPI specification for this endpoint at [Get Screening Report](/api-reference/screening/get-the-screening-report).
+
+## Endpoint
+
+```http
+GET /v1/screening/report/{userId}
+```
+
+## Authentication
+
+All requests must include an API token in the Authorization header.
+
+## Path Parameters
+
+| Parameter | Type   | Description                                      |
+|-----------|--------|--------------------------------------------------|
+| userId    | string | The unique identifier of the applicant to screen |
+
+## Response
+
+The response includes a URL to download the generated PDF report.
+
+```json
+{
+  "url": "string"  // URL to download the PDF report
+}
+```
+
+The generated PDF report typically includes:
+- Applicant's personal information
+- Credit score and financial analysis
+- Income verification details
+- Employment history
+- Rental history and landlord reviews
+- Bank account information
+- Risk assessment flags
+- Transaction history
+
+## Error Responses
+
+| Status Code | Description                                                  |
+|-------------|--------------------------------------------------------------|
+| 400         | Bad Request - Invalid userId or malformed request            |
+| 401         | Unauthorized - Missing or invalid API token                   |
+| 404         | Not Found - Report not found for the specified user          |
+| 500         | Internal Server Error - Something went wrong on our end      |
+
+## Usage Notes
+
+1. The PDF report URL is typically valid for a limited time. Make sure to download the report soon after receiving the URL.
+2. The report generation may take a few seconds depending on the amount of data to process.
+3. The PDF is formatted for standard letter size (8.5" x 11") paper.
