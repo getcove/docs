@@ -77,7 +77,7 @@
       "group": "Screening Result",
       "pages": [
         "screening-result/data",
-        "screening-result/pdf",
+        "screening-result/pdf"
       ]
     },
     {
