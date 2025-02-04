@@ -9,6 +9,11 @@ description: "The assets verification step validates an individual's financial a
 {
     "id": "6797fd5e683fb1e8abe7d852",
     "name": "ASSETS",
+    "options": {
+        "verify_net_worth": true,
+        "verify_property_ownership": true,
+        "validate_closing_costs": true
+    },
     "control_flow": {
         "condition": {
             "condition_operator": "==",
@@ -28,6 +33,11 @@ description: "The assets verification step validates an individual's financial a
 - `id`: Unique identifier for the verification step
 - `name`: Step type identifier (ASSETS)
 
+### Options
+- `verify_net_worth`: Whether to verify net worth
+- `verify_property_ownership`: Whether to verify property ownership
+- `validate_closing_costs`: Whether to validate closing costs
+
 ### Control Flow
 Determines the next step based on verification results:
 - If `assets_verified` is `true`, proceeds to step `6798005e683fb1e8abe7d854`
@@ -44,6 +54,13 @@ Determines the next step based on verification results:
     "assets": {
         "status": "COMPLETED",
         "assets_verified": true,
+        "net_worth": 500000,
+        "down_payment": 100000,
+        "properties": [{
+            "address": "456 Oak St, Toronto, ON",
+            "value": 800000,
+        }],
+        "closing_costs_covered": true,
         "account_balances": [
             {
                 "id": "acc_12345",
@@ -91,6 +108,19 @@ Determines the next step based on verification results:
 ### Status Information
 - `status`: Current status of the verification (e.g., "COMPLETED")
 - `assets_verified`: Whether all assets were successfully verified
+
+### Net Worth and Down Payment
+- `net_worth`: Total net worth
+- `down_payment`: Total down payment
+
+### Property Information
+- `properties`: List of properties
+  - Property address
+  - Property value
+  - HELOC
+
+### Closing Costs
+- `closing_costs_covered`: Whether closing costs are covered
 
 ### Account Information
 - `account_balances`: List of connected bank accounts

@@ -31,6 +31,8 @@ Validates employment through Atomic or Argyle:
 - Pay slips verification (required)
 - Employer confirmation (required)
 - Employment status verification
+- Three-year employment history verification (required)
+- Advisor verification (required)
 - Automatic routing based on verification status
 
 [View Employment Step Details](/steps/employment)
@@ -48,6 +50,8 @@ Verifies financial stability through Plaid or Flinks:
 Documents residence history:
 - Previous addresses
 - Residence verification status
+- Three-year residence history verification (required)
+- Advisor verification (required)
 - Automatic routing based on verification
 
 [View Residence History Step Details](/steps/residence-history)
@@ -55,6 +59,11 @@ Documents residence history:
 ### 6. Assets (PERSONAL_ASSETS)
 Evaluates financial assets:
 - Asset verification status
+- Net worth verification (required)
+- Down payment verification (required)
+- Property ownership verification (required)
+- Mortgages and HELOC verification (required)
+- Closing costs validation (required)
 - Automatic routing based on verification
 
 [View Assets Step Details](/steps/assets)
@@ -112,7 +121,9 @@ Evaluates financial assets:
             "name": "EMPLOYMENT",
             "options": {
                 "require_pay_slips": true,
-                "employer_confirmation": true
+                "employer_confirmation": true,
+                "length_required": 3,
+                "require_advisor_verification": true
             },
             "control_flow": {
                 "condition": {
@@ -146,6 +157,10 @@ Evaluates financial assets:
         {
             "id": "6797dfb4a4c4910bc0f1d491",
             "name": "RESIDENCE_HISTORY",
+            "options": {
+                "length_required": 3,
+                "require_advisor_verification": true
+            },
             "control_flow": {
                 "condition": {
                     "condition_operator": "==",
@@ -160,6 +175,11 @@ Evaluates financial assets:
         {
             "id": "6797fd5e683fb1e8abe7d852",
             "name": "PERSONAL_ASSETS",
+            "options": {
+                "verify_net_worth": true,
+                "verify_property_ownership": true,
+                "validate_closing_costs": true
+            },
             "control_flow": {
                 "condition": {
                     "condition_operator": "==",
@@ -176,6 +196,9 @@ Evaluates financial assets:
         "send_emails": true,
         "run_credit_check": {
             "fetch_debt_data": true,
+            "fetch_payment_history": true,
+            "fetch_bankruptcies": true,
+            "fetch_consumer_proposals": true,
             "provider": ["Equifax", "TransUnion"]
         }
     }
@@ -202,43 +225,61 @@ Evaluates financial assets:
         "verifications": {
             "liveness": true,
             "faceMatch": true,
-            "nameMatch": true
+            "nameMatch": true,
+            "watchlist": "clear",
+            "sanctions": "clear"
         },
         "idNumber": "XXXXXXXXX",
         "at": "2025-02-03T20:10:37-05:00"
     },
-    "income": {
+    "employment": {
         "annualIncome": 120000,
         "incomeType": "EMPLOYMENT",
         "payCycle": "BI_WEEKLY",
-        "nextExpectedPayDate": "2025-02-15T00:00:00Z"
+        "nextExpectedPayDate": "2025-02-15T00:00:00Z",
+        "history": {
+            "length": 3,
+            "verified": true,
+            "advisor_verified": true
+        }
     },
-    "bank": {
-        "averageBalance": 75000,
-        "verified": true
-    },
-    "rentals": [
-        {
+    "residence": {
+        "history": {
+            "length": 3,
+            "verified": true,
+            "advisor_verified": true
+        },
+        "current": {
             "address": {
                 "street": "123 Main St",
                 "city": "Toronto",
                 "provinceState": "ON",
                 "postalCode": "M5V 2T6"
             },
-            "start": "2022-02-01",
-            "rentAmount": 2500,
-            "landlordName": "Jane Smith",
-            "landlordEmail": "jane.smith@example.com",
-            "landlordPhone": "+14165551234"
+            "start": "2022-02-01"
         }
-    ],
+    },
     "assets": {
         "verified": true,
-        "total": 250000
+        "net_worth": 500000,
+        "down_payment": 100000,
+        "properties": [{
+            "address": "456 Oak St, Toronto, ON",
+            "value": 800000,
+            "mortgages": [{
+                "type": "PRIMARY",
+                "balance": 600000
+            }],
+            "heloc": null
+        }],
+        "closing_costs_covered": true
     },
     "credit": {
-        "provider": "Equifax",
+        "provider": ["Equifax", "TransUnion"],
         "score": 750,
+        "payment_history": "good",
+        "bankruptcies": [],
+        "consumer_proposals": [],
         "debt": {
             "total": 15000,
             "monthly": 500

@@ -11,7 +11,9 @@ description: "The employment verification step validates an individual's current
     "name": "EMPLOYMENT",
     "options": {
         "require_pay_slips": true,
-        "employer_confirmation": true
+        "employer_confirmation": true,
+        "length_required": 3,
+        "require_advisor_verification": true
     },
     "control_flow": {
         "condition": {
@@ -35,6 +37,8 @@ description: "The employment verification step validates an individual's current
 ### Options
 - `require_pay_slips`: Whether to require recent pay slip documentation
 - `employer_confirmation`: Whether to verify employment directly with the employer
+- `length_required`: Minimum length of employment history required
+- `require_advisor_verification`: Whether to require advisor verification of employment history
 
 ### Control Flow
 Determines the next step based on verification results:

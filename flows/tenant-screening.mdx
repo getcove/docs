@@ -110,111 +110,138 @@ Verifies an individual's residential history through document verification:
       }
     }
   ],
-  "options":{
-      "send_emails": true,
-      "run_credit_check": {
-          "fetch_debt_data": true,
-          "provider": ["Equifax", "TransUnion"]
-      }
-  }
-}
-```
-
-## Example Response
-
-```json
-{
-  "tenant_screening": {
-    "status": "COMPLETED",
-    "applicant": {
-      "name": {
-        "first": "John",
-        "last": "Doe"
-      },
-      "phone": "123-456-7890",
-      "email": "john.doe@example.com",
-      "address": {
-        "line1": "123 Main St",
-        "city": "Anytown",
-        "state": "CA",
-        "postalCode": "12345"
-      }
-    },
-    "verifications": {
-      "identity": {
-        "status": "COMPLETED",
-        "source": "Cove",
-        "verifications": {
-          "liveness": true,
-          "faceMatch": true,
-          "nameMatch": true
-        },
-        "idNumber": "A123456789",
-        "at": "2025-02-03T20:25:05-05:00"
-      },
-      "employment": {
-        "status": "COMPLETED",
-        "employment_status": "verified",
-        "jobTitle": "Software Engineer",
-        "employer": {
-          "name": "Tech Company",
-          "address": {
-            "line1": "456 Tech Ave",
-            "city": "Tech City",
-            "state": "CA",
-            "postalCode": "67890"
-          }
-        }
-      },
-      "bank_connect": {
-        "status": "COMPLETED",
-        "account_balance": 750.00,
-        "transactions": [
-          {
-            "id": "txn_1",
-            "amount": 100.00,
-            "date": "2025-01-01",
-            "description": "Deposit"
-          }
-        ]
-      },
-      "credit_report": {
-        "status": "COMPLETED",
-        "credit_score": 725,
-        "report": [
-          {
-            "account": "Credit Card",
-            "balance": 2000.00,
-            "status": "Good"
-          }
-        ]
-      },
-      "residence_history": {
-        "status": "COMPLETED",
-        "residences": [
-          {
-            "address": "789 Elm St",
-            "start": "2020-01-01",
-            "end": "2021-01-01",
-            "landlordName": "Jane Smith",
-            "landlordEmail": "jane.smith@example.com",
-            "landlordPhone": "987-654-3210"
-          }
-        ]
-      }
+  "options": {
+    "send_emails": true,
+    "run_credit_check": {
+      "fetch_debt_data": true,
+      "provider": ["Equifax", "TransUnion"]
     }
   }
 }
 ```
 
-## Output Fields
+## Response
 
-### Status Information
-- `status`: Overall status of the tenant screening process (e.g., "COMPLETED")
+The response will include the screening results and user information. Here's an example response:
 
-### Verification Details
-- `identity`: Results of identity verification
-- `employment`: Results of employment verification
-- `bank_connect`: Results of bank account verification
-- `credit_report`: Results of credit report verification
-- `residence_history`: Results of residence history verification
+```json
+{
+  "screening": {
+    "id": "scr_123",
+    "checkType": "CHECK_TYPE_DEEP_CHECK",
+    "coveScore": 85.5,
+    "creditScore": 725,
+    "rent": 2000,
+    "monthlyIncome": 10000.00,
+    "monthlyDebt": 1500.00,
+    "totalDebt": 15000.00,
+    "debtLimit": 50000.00,
+    "monthlyData": [
+      {
+        "month": "2024-01",
+        "averageBalance": 5000.00,
+        "income": 10000.00,
+        "spending": 4000.00
+      }
+    ],
+    "landlordReviews": [
+      {
+        "email": "landlord@email.com",
+        "phone": "+1987654321",
+        "wouldRentToThemAgain": 5,
+        "paysRentOnTime": 5,
+        "cleanliness": 4,
+        "didNotDamageProperty": 5,
+        "additionalDetails": "Excellent tenant"
+      }
+    ],
+    "greenFlags": [
+      "INCOME_VERIFIED",
+      "EMPLOYMENT_VERIFIED",
+      "IDENTITY_VERIFIED"
+    ]
+  },
+  "user": {
+    "id": "usr_123",
+    "identity": {
+      "source": "Persona",
+      "name": {
+        "first": "John",
+        "last": "Doe"
+      },
+      "phone": "+1234567890",
+      "email": "john.doe@example.com",
+      "address": {
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "San Francisco",
+        "state": "CA",
+        "postalCode": "94105",
+        "country": "US"
+      },
+      "verifications": {
+        "liveness": true,
+        "faceMatch": true,
+        "nameMatch": true
+      },
+      "at": "2025-02-03T21:37:00-05:00"
+    },
+    "employment": {
+      "employeeType": "FULL_TIME",
+      "employmentStatus": "ACTIVE",
+      "jobTitle": "Software Engineer",
+      "startDate": "2020-01-01T00:00:00Z",
+      "weeklyHours": 40,
+      "employer": {
+        "name": "Acme Corp",
+        "address": {
+          "line1": "456 Market St",
+          "city": "San Francisco",
+          "state": "CA",
+          "postalCode": "94105",
+          "country": "US"
+        }
+      }
+    },
+    "rentals": [
+      {
+        "id": "rnt_123",
+        "address": {
+          "street": "789 Pine St",
+          "city": "San Francisco",
+          "provinceState": "CA",
+          "postalCode": "94105",
+          "country": "US"
+        },
+        "start": "2020-01-01",
+        "rentAmount": 2000,
+        "landlordName": "Jane Smith",
+        "landlordEmail": "jane@email.com",
+        "landlordPhone": "+1987654321"
+      }
+    ]
+  }
+}
+```
+
+## Response Fields
+
+### Screening Object
+- `id`: Unique identifier for the screening
+- `checkType`: Type of screening check performed
+- `coveScore`: Cove's proprietary scoring
+- `creditScore`: Credit score if available
+- `rent`: Monthly rent amount
+- `monthlyIncome`: Monthly income
+- `monthlyDebt`: Monthly debt obligations
+- `totalDebt`: Total debt amount
+- `debtLimit`: Maximum debt limit
+- `monthlyData`: Array of monthly financial data
+- `landlordReviews`: Array of previous landlord reviews
+- `greenFlags`: Array of positive verification flags
+
+### User Object
+- `id`: Unique identifier for the user
+- `identity`: Identity verification information
+- `employment`: Employment verification details
+- `rentals`: Previous rental history
