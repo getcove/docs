@@ -1,0 +1,78 @@
+---
+title: "Personal Information"
+description: "The personal information step collects and validates essential applicant details required for mortgage applications."
+---
+
+## Configuration
+
+```json
+{
+    "id": "6797e086a4c4910bc0f1d495",
+    "name": "PERSONAL_INFO",
+    "options": {
+        "require_email": true,
+        "require_citizenship": true,
+        "require_marital_status": true,
+        "require_sin": true
+    },
+    "control_flow": {
+        "condition": {
+            "condition_operator": "==",
+            "condition_field": "form",
+            "condition_value": true
+        },
+        "if_goto": "6797e02da4c4910bc0f1d493",
+        "else_goto": "6797e086a4c4910bc0f1d495"
+    }
+}
+```
+
+## Config Fields
+
+### Required Fields
+- `id`: Unique identifier for the verification step
+- `name`: Step type identifier (PERSONAL_INFO)
+
+### Options
+- `require_email`: Require email address validation
+- `require_citizenship`: Require citizenship status
+- `require_marital_status`: Require marital status
+- `require_sin`: Require Social Insurance Number
+
+### Control Flow
+Determines the next step based on form validation:
+- If all required fields are valid, proceeds to step `6797e02da4c4910bc0f1d493`
+- Otherwise, stays on current step until valid
+
+## Response Data
+
+The personal information will be included in the flow response under the `user` object:
+
+```json
+{
+    "user": {
+        "id": "usr_6797df4ca4c4910bc0f1d48f",
+        "name": {
+            "first": "John",
+            "last": "Doe"
+        },
+        "phone": "+14165550123",
+        "email": "john.doe@example.com",
+        "citizenship": "CANADIAN",
+        "marital_status": "SINGLE",
+        "sin": "XXXXXXXXX"
+    }
+}
+```
+
+## Response Fields
+
+- `id`: Unique identifier for the user
+- `name`: User's name information
+  - `first`: First name
+  - `last`: Last name
+- `phone`: Contact phone number
+- `email`: Contact email address
+- `citizenship`: Citizenship status
+- `marital_status`: Marital status
+- `sin`: Masked Social Insurance Number

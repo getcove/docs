@@ -1,152 +1,61 @@
 ---
 title: "Credit Report"
-description: "The credit report step retrieves and analyzes an individual's credit history from major credit bureaus."
+description: "Credit report is a flow option that retrieves and analyzes an individual's credit history from major credit bureaus."
 ---
 
-## Configuration
+## Flow Option Configuration
 
 ```json
 {
-    "id": "6797e02da4c4910bc0f1d493",
-    "name": "CREDIT_REPORT",
-    "control_flow": {
-        "condition": {
-            "condition_operator": ">=",
-            "condition_field": "credit_score",
-            "condition_value": 700
-        },
-        "if_goto": "6797fe5e683fb1e8abe7d853",
-        "else_goto": "6797e02da4c4910bc0f1d493"
-    },
-    "provider": ["Equifax", "TransUnion"]
+    "provider": "Equifax",
+    "include_credit_report": true,
+    "include_mortgages": true
 }
 ```
 
 ## Config Fields
 
 ### Required Fields
-- `id`: Unique identifier for the verification step
-- `name`: Step type identifier (CREDIT_REPORT)
+- `provider`: Credit report provider (currently supports Equifax)
+- `include_credit_report`: Boolean flag to include credit report in the flow response
+- `include_mortgages`: Boolean flag to include mortgage information in the flow response
 
-### Control Flow
-Determines the next step based on credit score:
-- If `credit_score` is greater than or equal to 700, proceeds to step `6797fe5e683fb1e8abe7d853`
-- Otherwise, goes to step `6797e02da4c4910bc0f1d493`
+## Response Data
 
-### Providers
-- Primary: Equifax for credit report and score
-- Fallback: TransUnion as secondary provider if Equifax fails
-
-## Example Response
+The credit report data will be included in the flow response under the `credit` object:
 
 ```json
 {
-    "credit_report": {
-        "status": "COMPLETED",
-        "credit_score": 725,
-        "summary": {
-            "accounts": {
-                "total": 12,
-                "open": 8,
-                "closed": 4,
-                "delinquent": 0
-            },
-            "balances": {
-                "total": 125000.00,
-                "monthly_payment": 2500.00
-            },
-            "utilization": {
-                "total_percentage": 22,
-                "total_available": 45000.00,
-                "total_used": 9900.00
-            }
+    "credit": {
+        "provider": "Equifax",
+        "score": 750,
+        "payment_history": "good",
+        "bankruptcies": [],
+        "consumer_proposals": [],
+        "debt": {
+            "total": 15000,
+            "monthly": 500
         },
-        "accounts": [
-            {
-                "type": "CREDIT_CARD",
-                "institution": {
-                    "name": "Royal Bank of Canada",
-                    "institution_id": "RBC"
-                },
-                "account_number_last4": "1234",
-                "status": "CURRENT",
-                "opened_date": "2020-03-15",
-                "balance": {
-                    "credit_limit": 15000.00,
-                    "current": 2500.00,
-                    "as_of": "2025-02-03T20:25:05-05:00"
-                },
-                "payment_history": {
-                    "late_payments": {
-                        "30_days": 0,
-                        "60_days": 0,
-                        "90_days": 0
-                    },
-                    "on_time_percentage": 100
-                }
-            }
-        ],
-        "inquiries": {
-            "hard_inquiries": {
-                "total_24m": 2,
-                "recent": [
-                    {
-                        "date": "2024-12-15",
-                        "creditor": "Auto Finance Corp"
-                    }
-                ]
-            }
-        },
-        "public_records": {
-            "bankruptcies": 0,
-            "tax_liens": 0,
-            "civil_judgments": 0
-        },
-        "alerts": {
-            "fraud_alerts": false,
-            "security_freeze": false
-        },
-        "verification": {
-            "provider": "Equifax",
-            "verified_at": "2025-02-03T20:25:05-05:00"
-        }
+        "mortgages": [{
+            "type": "PRIMARY",
+            "balance": 600000,
+            "property": "456 Oak St, Toronto, ON"
+        }]
     }
 }
 ```
 
-## Output Fields
+## Response Fields
 
-### Status Information
-- `status`: Current status of the verification (e.g., "COMPLETED")
-- `credit_score`: Current credit score (300-850)
-
-### Credit Summary
-- `summary`: Overview of credit accounts and balances
-  - `accounts`: Count of total, open, closed, and delinquent accounts
-  - `balances`: Total balance and monthly payment obligations
-  - `utilization`: Credit utilization statistics
-
-### Account Information
-- `accounts`: List of credit accounts
-  - `type`: Type of credit account
-  - `institution`: Financial institution details
-  - `status`: Current account status
-  - `balance`: Credit limit and current balance
-  - `payment_history`: Payment history including late payments
-
-### Credit Inquiries
-- `inquiries`: Information about credit inquiries
-  - `hard_inquiries`: Hard inquiries in the last 24 months
-
-### Public Records
-- `public_records`: Public record items
-  - Count of bankruptcies, tax liens, and civil judgments
-
-### Alerts
-- `alerts`: Active alerts on credit file
-  - Presence of fraud alerts or security freezes
-
-### Verification Details
-- `verification`: Information about the verification process
-  - `provider`: Which provider performed the verification
-  - `verified_at`: When verification was completed
+- `provider`: Credit report provider used
+- `score`: Credit score from the provider
+- `payment_history`: Summary of payment history
+- `bankruptcies`: List of bankruptcy records
+- `consumer_proposals`: List of consumer proposal records
+- `debt`: Current debt information
+  - `total`: Total debt amount
+  - `monthly`: Monthly debt payments
+- `mortgages`: List of current mortgages (if `include_mortgages` is true)
+  - `type`: Type of mortgage
+  - `balance`: Current balance
+  - `property`: Associated property address
