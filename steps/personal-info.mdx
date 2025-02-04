@@ -3,7 +3,7 @@ title: "Personal Information"
 description: "The personal information step collects and validates essential applicant details required for mortgage applications."
 ---
 
-## Configuration
+## Configuration 
 
 ```json
 {
@@ -30,19 +30,28 @@ description: "The personal information step collects and validates essential app
 ## Config Fields
 
 ### Required Fields
-- `id`: Unique identifier for the verification step
-- `name`: Step type identifier (PERSONAL_INFO)
+
+* `id`: Unique identifier for the verification step
+
+* `name`: Step type identifier (PERSONAL\_INFO)
 
 ### Options
-- `require_email`: Require email address validation
-- `require_citizenship`: Require citizenship status
-- `require_marital_status`: Require marital status
-- `require_sin`: Require Social Insurance Number
+
+* `require_email`: Require email address validation
+
+* `require_citizenship`: Require citizenship status
+
+* `require_marital_status`: Require marital status
+
+* `require_sin`: Require Social Insurance Number
 
 ### Control Flow
+
 Determines the next step based on form validation:
-- If all required fields are valid, proceeds to step `6797e02da4c4910bc0f1d493`
-- Otherwise, stays on current step until valid
+
+* If all required fields are valid, proceeds to step `6797e02da4c4910bc0f1d493`
+
+* Otherwise, stays on current step until valid
 
 ## Response Data
 
@@ -67,12 +76,20 @@ The personal information will be included in the flow response under the `user` 
 
 ## Response Fields
 
-- `id`: Unique identifier for the user
-- `name`: User's name information
-  - `first`: First name
-  - `last`: Last name
-- `phone`: Contact phone number
-- `email`: Contact email address
-- `citizenship`: Citizenship status
-- `marital_status`: Marital status
-- `sin`: Masked Social Insurance Number
+* `id`: Unique identifier for the user
+
+* `name`: User's name information
+
+  * `first`: First name
+
+  * `last`: Last name
+
+* `phone`: Contact phone number
+
+* `email`: Contact email address
+
+* `citizenship`: Citizenship status
+
+* `marital_status`: Marital status
+
+* `sin`: Masked Social Insurance Number
