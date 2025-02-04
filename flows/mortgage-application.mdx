@@ -60,9 +60,7 @@ Documents residence history:
 Evaluates financial assets:
 - Asset verification status
 - Net worth verification (required)
-- Down payment verification (required)
 - Property ownership verification (required)
-- Mortgages and HELOC verification (required)
 - Closing costs validation (required)
 - Automatic routing based on verification
 
@@ -205,106 +203,106 @@ Evaluates financial assets:
 }
 ```
 
-## Example Response
+## Response
 
-#### Success (200)
+### Endpoint
+
+```md
+GET /v1/screening/data/{userId}
+```
+
+### Description
+
+Retrieves the mortgage screening data for a specific user.
+
+### Headers
+
+- `Authorization`: `<API Key>`
+- `Content-Type`: `application/json`
+- `Accept`: `application/json`
+
+### Response
+
+#### Success Response (200)
 
 ```json
 {
-    "user": {
-        "id": "usr_6797df4ca4c4910bc0f1d48f",
-        "name": {
-            "first": "John",
-            "last": "Doe"
-        },
-        "phone": "+14165550123",
-        "email": "john.doe@example.com"
+  "user": {
+    "id": "usr_6797df4ca4c4910bc0f1d48f",
+    "name": {
+      "first": "John",
+      "last": "Doe"
     },
-    "identity": {
-        "source": "Persona",
-        "verifications": {
-            "liveness": true,
-            "faceMatch": true,
-            "nameMatch": true,
-            "watchlist": "clear",
-            "sanctions": "clear"
-        },
-        "idNumber": "XXXXXXXXX",
-        "at": "2025-02-03T20:10:37-05:00"
+    "phone": "+14165550123",
+    "email": "john.doe@example.com"
+  },
+  "identity": {
+    "source": "Persona",
+    "verifications": {
+      "liveness": true,
+      "faceMatch": true,
+      "nameMatch": true,
+      "watchlist": "clear",
+      "sanctions": "clear"
     },
-    "employment": {
-        "annualIncome": 120000,
-        "incomeType": "EMPLOYMENT",
-        "payCycle": "BI_WEEKLY",
-        "nextExpectedPayDate": "2025-02-15T00:00:00Z",
-        "history": {
-            "length": 3,
-            "verified": true,
-            "advisor_verified": true
-        }
-    },
-    "residence": {
-        "history": {
-            "length": 3,
-            "verified": true,
-            "advisor_verified": true
-        },
-        "current": {
-            "address": {
-                "street": "123 Main St",
-                "city": "Toronto",
-                "provinceState": "ON",
-                "postalCode": "M5V 2T6"
-            },
-            "start": "2022-02-01"
-        }
-    },
-    "assets": {
-        "verified": true,
-        "net_worth": 500000,
-        "down_payment": 100000,
-        "properties": [{
-            "address": "456 Oak St, Toronto, ON",
-            "value": 800000,
-            "mortgages": [{
-                "type": "PRIMARY",
-                "balance": 600000
-            }],
-            "heloc": null
-        }],
-        "closing_costs_covered": true
-    },
-    "credit": {
-        "provider": ["Equifax", "TransUnion"],
-        "score": 750,
-        "payment_history": "good",
-        "bankruptcies": [],
-        "consumer_proposals": [],
-        "debt": {
-            "total": 15000,
-            "monthly": 500
-        }
+    "idNumber": "XXXXXXXXX",
+    "at": "2025-02-03T20:10:37-05:00"
+  },
+  "employment": {
+    "provider": "Atomic",
+    "annualIncome": 120000,
+    "incomeType": "EMPLOYMENT",
+    "payCycle": "BI_WEEKLY",
+    "nextExpectedPayDate": "2025-02-15T00:00:00Z",
+    "history": {
+      "length": 3,
+      "verified": true,
+      "advisor_verified": true
     }
+  },
+  "residences": [
+    {
+      "address": {
+        "street": "123 Main St",
+        "city": "Toronto",
+        "provinceState": "ON",
+        "postalCode": "M5V 2T6"
+      },
+      "start": "2022-02-01",
+      "end": "2023-02-01",
+      "verified": true,
+      "advisor_verified": true
+    }
+  ],
+  "assets": {
+    "provider": "Plaid",
+    "verified": true,
+    "net_worth": 500000,
+    "down_payment": 100000,
+    "properties": [{
+      "address": "456 Oak St, Toronto, ON",
+      "value": 800000,
+      "heloc": null
+    }],
+    "closing_costs_covered": true
+  },
+  "credit": {
+    "provider": "Equifax",
+    "score": 750,
+    "payment_history": "good",
+    "bankruptcies": [],
+    "consumer_proposals": [],
+    "debt": {
+      "total": 15000,
+      "monthly": 500
+    },
+    "mortgages": [{
+      "type": "PRIMARY",
+      "balance": 600000,
+      "property": "456 Oak St, Toronto, ON"
+    }]
+  }
 }
 ```
 
-## Success Criteria
-
-A successful mortgage application requires:
-1. Valid government ID with liveness verification
-2. Complete personal information with credit score ≥700
-3. Verified employment with required documentation
-4. Bank connection with minimum balance >$500
-5. Verified residence history
-6. Verified personal assets
-
-## Risk Assessment
-
-The flow includes automatic risk assessment based on:
-- Identity verification results
-- Credit score threshold
-- Employment verification status
-- Bank account balance
-- Residence history verification
-- Asset verification status
-- Credit check data from Equifax and TransUnion
+The response contains comprehensive mortgage application data including user identification, identity verification through Persona, employment details from Atomic, residence history, asset information from Plaid, and credit report from Equifax with associated mortgage details.
