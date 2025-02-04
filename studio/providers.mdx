@@ -73,6 +73,15 @@ Residence history verification is managed internally by Cove with no external pr
 ```
 Asset verification is handled internally by Cove with no external providers.
 
+### Credit Check
+```json
+{
+    "name": "CREDIT_CHECK",
+    "provider": ["Equifax", "TransUnion"]
+}
+```
+Credit checks are performed through Equifax as primary provider with TransUnion as fallback.
+
 ## Provider Capabilities
 
 | Provider | Primary Use | Capabilities |
@@ -82,6 +91,8 @@ Asset verification is handled internally by Cove with no external providers.
 | Argyle   | Employment Fallback | Employment verification, Income verification, Work history |
 | Plaid    | Banking Primary | Bank account connection, Transaction analysis, Balance verification |
 | Flinks   | Banking Fallback | Bank account connection, Transaction analysis, Balance verification |
+| Equifax  | Credit Reports | Credit reports, Mortgage information |
+| TransUnion | Credit Reports | Credit reports, Mortgage information |
 
 ## Fallback Behavior
 1. For each step, Cove attempts verification with the first provider in the array
