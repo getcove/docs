@@ -1,6 +1,6 @@
 ---
 title: "Assets"
-description: "The assets verification step validates an individual's financial assets and property ownership to determine net worth and verify down payment sources."
+description: "The assets verification step validates an individual's financial assets and property ownership."
 ---
 
 ## Configuration
@@ -18,98 +18,143 @@ description: "The assets verification step validates an individual's financial a
         "if_goto": "6798005e683fb1e8abe7d854",
         "else_goto": "6797fd5e683fb54e8abe7d852"
     },
-    "provider": {
-        "name": "Plaid"
-    }
+    "provider": ["Plaid", "Flinks"]
 }
 ```
 
 ## Config Fields
 
+### Required Fields
 - `id`: Unique identifier for the verification step
 - `name`: Step type identifier (ASSETS)
-- `control_flow`: Logic for the next step based on verification result
-  - `condition`: Defines the decision criteria
-    - `condition_operator`: Comparison operator for the verification status
-    - `condition_field`: Field to evaluate (assets_verified)
-    - `condition_value`: Required verification status
-  - `if_goto`: Next step if condition is met
-  - `else_goto`: Next step if condition is not met
-- `provider`: The asset verification service provider configuration
+
+### Control Flow
+Determines the next step based on verification results:
+- If `assets_verified` is `true`, proceeds to step `6798005e683fb1e8abe7d854`
+- Otherwise, goes to step `6797fd5e683fb54e8abe7d852`
+
+### Providers
+- Primary: Plaid for asset verification and account connections
+- Fallback: Flinks as secondary provider if Plaid connection fails
 
 ## Example Response
 
 ```json
 {
-    "status": "completed",
-    "result": {
+    "assets": {
+        "status": "COMPLETED",
         "assets_verified": true,
-        "verification_id": "asset_ver_789012",
-        "investment_accounts": [
+        "accounts": [
             {
-                "account_id": "inv_acc_789",
-                "institution": "Fidelity",
-                "account_type": "individual",
-                "account_number": "xxxx9012",
-                "current_balance": 60000.00,
-                "vested_balance": 60000.00,
-                "available_balance": 60000.00
+                "account_id": "acc_789012",
+                "institution": {
+                    "name": "Fidelity Investments",
+                    "institution_id": "FID"
+                },
+                "account_type": "INVESTMENT",
+                "account_number_last4": "9012",
+                "balance": {
+                    "current": 60000.00,
+                    "available": 60000.00,
+                    "as_of": "2025-02-03T20:25:05-05:00"
+                },
+                "investment_details": {
+                    "vested_amount": 60000.00,
+                    "portfolio_value": 60000.00
+                }
+            },
+            {
+                "account_id": "acc_789013",
+                "institution": {
+                    "name": "Royal Bank of Canada",
+                    "institution_id": "RBC"
+                },
+                "account_type": "SAVINGS",
+                "account_number_last4": "5678",
+                "balance": {
+                    "current": 15000.00,
+                    "available": 15000.00,
+                    "as_of": "2025-02-03T20:25:05-05:00"
+                }
             }
         ],
         "properties": [
             {
-                "property_id": "prop_123",
+                "property_id": "prop_123456",
                 "address": {
                     "street": "789 Oak Lane",
-                    "city": "Portland",
-                    "state": "OR",
-                    "postal_code": "97201"
+                    "city": "Toronto",
+                    "provinceState": "ON",
+                    "postalCode": "M5V 2T6"
                 },
-                "ownership_type": "primary_residence",
-                "ownership_percentage": 100,
-                "property_type": "single_family",
-                "estimated_value": 450000.00,
-                "purchase_price": 400000.00,
-                "purchase_date": "2020-06-15",
+                "ownership": {
+                    "type": "PRIMARY_RESIDENCE",
+                    "percentage": 100
+                },
+                "property_type": "SINGLE_FAMILY",
+                "valuation": {
+                    "estimated_value": 450000.00,
+                    "purchase_price": 400000.00,
+                    "purchase_date": "2020-06-15",
+                    "as_of": "2025-02-03T20:25:05-05:00"
+                },
                 "liens": [
                     {
-                        "type": "mortgage",
+                        "type": "MORTGAGE",
                         "balance": 350000.00,
                         "monthly_payment": 2100.00,
-                        "holder": "Chase Bank"
+                        "lender": "Royal Bank of Canada"
                     }
                 ]
             }
         ],
         "summary": {
             "total_assets": 525000.00,
-            "total_liquid_assets": 75000.00,
-            "total_property_value": 450000.00,
-            "total_property_equity": 100000.00,
-            "available_for_down_payment": 75000.00
+            "liquid_assets": 75000.00,
+            "property_value": 450000.00,
+            "property_equity": 100000.00,
+            "down_payment_available": 75000.00
+        },
+        "verification": {
+            "provider": "Plaid",
+            "verified_at": "2025-02-03T20:25:05-05:00"
         }
-    },
-    "timestamp": "2025-02-03T11:25:30-05:00"
+    }
 }
 ```
 
 ## Output Fields
 
-- `status`: The completion status of the verification
-- `result`: The verification results containing:
-  - `assets_verified`: Whether all assets were successfully verified
-  - `verification_id`: Unique identifier for this asset verification
-  - `investment_accounts`: List of investment accounts
-    - Account details and balances
-    - Vested and available balances
-  - `properties`: List of owned properties
-    - Property details and location
-    - Ownership information
-    - Current value and purchase details
-    - Associated liens (mortgages)
-  - `summary`: Summary of all asset categories
-    - Total assets across all categories
-    - Total liquid assets (bank and investment accounts)
-    - Property values and equity
-    - Available funds for down payment
-- `timestamp`: Time when the verification was completed
+### Status Information
+- `status`: Current status of the verification (e.g., "COMPLETED")
+- `assets_verified`: Whether all assets were successfully verified
+
+### Account Information
+- `accounts`: List of verified financial accounts
+  - `account_id`: Unique identifier for the account
+  - `institution`: Financial institution details
+  - `account_type`: Type of account (e.g., "INVESTMENT", "SAVINGS")
+  - `balance`: Current account balances and last update time
+  - `investment_details`: Additional details for investment accounts
+
+### Property Information
+- `properties`: List of verified properties
+  - `property_id`: Unique identifier for the property
+  - `address`: Property location details
+  - `ownership`: Type and percentage of ownership
+  - `property_type`: Type of property
+  - `valuation`: Property value information
+  - `liens`: List of liens against the property
+
+### Asset Summary
+- `summary`: Overview of total assets and available funds
+  - `total_assets`: Total value of all assets
+  - `liquid_assets`: Total value of liquid assets
+  - `property_value`: Total value of properties
+  - `property_equity`: Total equity in properties
+  - `down_payment_available`: Funds available for down payment
+
+### Verification Details
+- `verification`: Information about the verification process
+  - `provider`: Which provider performed the verification
+  - `verified_at`: When verification was completed

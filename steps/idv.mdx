@@ -1,6 +1,6 @@
 ---
 title: "ID Verification"
-description: "The ID verification step allows for automated verification of government-issued identification documents. It supports features such as selfie matching, liveness detection, and document expiration validation."
+description: "The ID verification step allows for automated verification of government-issued identification documents and performs background checks."
 ---
 
 ## Configuration
@@ -12,8 +12,11 @@ description: "The ID verification step allows for automated verification of gove
     "options": {
         "require_selfie": true,
         "enable_liveness_detection": true,
-        "require_id_back_side": true,
-        "check_id_expiration": true
+        "require_id_back_side": false,
+        "run_background_check": {
+            "watchlist_check": true,
+            "sanctions_check": true
+        }
     },
     "control_flow": {
         "condition": {
@@ -22,74 +25,95 @@ description: "The ID verification step allows for automated verification of gove
             "condition_value": true
         },
         "if_goto": "6797dfe7a4c4910bc0f1d492",
-        "else_goto": "manual_review"
+        "else_goto": "6797fd5e683fb54e8abe7d852"
     },
-    "provider": {
-        "name": "Persona"
-    }
+    "provider": ["Persona"]
 }
 ```
 
 ## Config Fields
 
+### Required Fields
 - `id`: Unique identifier for the verification step
 - `name`: Step type identifier (ID_VERIFICATION)
-- `options`: Configuration options for the verification process
-  - `require_selfie`: Whether to require a selfie photo
-  - `enable_liveness_detection`: Whether to perform liveness checks
-  - `require_id_back_side`: Whether to require both sides of the ID
-  - `check_id_expiration`: Whether to validate ID expiration date
-- `control_flow`: Logic for the next step based on verification result
-- `provider`: The ID verification service provider configuration
+
+### Options
+- `require_selfie`: Whether to require a selfie photo for identity verification
+- `enable_liveness_detection`: Whether to perform liveness checks to prevent fraud
+- `require_id_back_side`: Whether to require both sides of the ID document
+- `run_background_check`: Configuration for background check options
+  - `watchlist_check`: Whether to check against watchlists
+  - `sanctions_check`: Whether to check against sanctions lists
+
+### Control Flow
+Determines the next step based on verification results:
+- If `id_valid` is `true`, proceeds to step `6797dfe7a4c4910bc0f1d492`
+- Otherwise, goes to step `6797fd5e683fb54e8abe7d852`
+
+### Providers
+Uses Persona for both ID verification and background checks.
 
 ## Example Response
 
 ```json
 {
-    "status": "completed",
-    "result": {
+    "id_verification": {
+        "status": "COMPLETED",
         "id_valid": true,
-        "verification_id": "ver_12345",
-        "document_type": "drivers_license",
-        "expiration_date": "2027-05-15",
-        "document_number": "DL123456789",
-        "name": {
-            "first": "John",
-            "last": "Doe"
+        "document": {
+            "type": "drivers_license",
+            "expiration_date": "2027-05-15",
+            "number": "DL123456789"
         },
-        "date_of_birth": "1990-01-15",
-        "address": {
-            "street": "123 Main St",
-            "city": "Springfield",
-            "state": "IL",
-            "postal_code": "62701",
-            "country": "US"
+        "identity": {
+            "name": {
+                "first": "John",
+                "last": "Doe"
+            },
+            "date_of_birth": "1990-01-15",
+            "address": {
+                "street": "123 Main St",
+                "city": "Toronto",
+                "provinceState": "ON",
+                "postalCode": "M5V 2T6"
+            }
         },
-        "selfie_match": {
-            "match": true,
-            "confidence": 0.95
+        "verification": {
+            "selfie_match": true,
+            "liveness_check": true
         },
-        "liveness_check": {
-            "passed": true,
-            "score": 0.98
+        "background_check": {
+            "watchlist_hit": false,
+            "sanctions_hit": false
         }
-    },
-    "timestamp": "2025-02-02T17:36:27-05:00"
+    }
 }
 ```
 
 ## Output Fields
 
-- `status`: The completion status of the verification
-- `result`: The verification results containing:
-  - `id_valid`: Whether the ID was successfully verified
-  - `verification_id`: Unique identifier for this verification attempt
-  - `document_type`: Type of ID document provided
-  - `expiration_date`: ID document expiration date
-  - `document_number`: ID document number
-  - `name`: Extracted name information
-  - `date_of_birth`: Extracted date of birth
-  - `address`: Extracted address information
-  - `selfie_match`: Results of selfie matching if enabled
-  - `liveness_check`: Results of liveness detection if enabled
-- `timestamp`: Time when the verification was completed
+### Status Information
+- `status`: Current status of the verification (e.g., "COMPLETED")
+- `id_valid`: Whether the ID was successfully verified
+
+### Document Information
+- `document`: Details about the verified ID document
+  - `type`: Type of ID document provided
+  - `expiration_date`: When the document expires
+  - `number`: Document identification number
+
+### Identity Information
+- `identity`: Extracted identity details
+  - `name`: First and last name
+  - `date_of_birth`: Date of birth from ID
+  - `address`: Current address information
+
+### Verification Results
+- `verification`: Results of verification checks
+  - `selfie_match`: Whether the selfie matched the ID photo
+  - `liveness_check`: Whether the liveness check passed
+
+### Background Check Results
+- `background_check`: Results of background screening
+  - `watchlist_hit`: Whether any watchlist matches were found
+  - `sanctions_hit`: Whether any sanctions matches were found

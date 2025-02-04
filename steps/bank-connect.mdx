@@ -1,6 +1,6 @@
 ---
 title: "Bank Connect"
-description: "The bank connect step verifies additional sources of income through bank account connections and documentation, such as child support or other recurring payments."
+description: "The bank connect step verifies bank account information, analyzes transactions, and validates account ownership."
 ---
 
 ## Configuration
@@ -10,10 +10,8 @@ description: "The bank connect step verifies additional sources of income throug
     "id": "6797fe5e683fb1e8abe7d853",
     "name": "BANK_CONNECT",
     "options": {
-        "verify_account_balance": true,
         "analyze_transactions": true,
-        "verify_account_ownership": true,
-        "enable_instant_verification": true
+        "verify_account_ownership": true
     },
     "control_flow": {
         "condition": {
@@ -24,142 +22,111 @@ description: "The bank connect step verifies additional sources of income throug
         "if_goto": "6798015e683fb1e8abe7d855",
         "else_goto": "6797fd5e683fb54e8abe7d852"
     },
-    "provider": {
-        "name": "Plaid",
-        "fallback_provider": "Flinks"
-    }
+    "provider": ["Plaid", "Flinks"]
 }
 ```
 
 ## Config Fields
 
+### Required Fields
 - `id`: Unique identifier for the verification step
 - `name`: Step type identifier (BANK_CONNECT)
-- `options`: Configuration options for bank account verification
-  - `verify_account_balance`: Whether to verify current account balance
-  - `analyze_transactions`: Whether to analyze transaction history
-  - `verify_account_ownership`: Whether to verify account ownership
-  - `enable_instant_verification`: Whether to enable instant account verification
-- `control_flow`: Logic for the next step based on account balance
-  - `condition`: Defines the decision criteria
-    - `condition_operator`: Comparison operator (>)
-    - `condition_field`: Field to evaluate (account_balance)
-    - `condition_value`: Minimum required balance (500)
-  - `if_goto`: Next step if balance requirement is met
-  - `else_goto`: Next step if balance requirement is not met
-- `provider`: The bank connection service provider configuration
-  - `name`: Primary provider name
-  - `fallback_provider`: Secondary provider if primary fails
+
+### Options
+- `analyze_transactions`: Whether to analyze transaction history
+- `verify_account_ownership`: Whether to verify account ownership
+
+### Control Flow
+Determines the next step based on account balance:
+- If `account_balance` is greater than 500, proceeds to step `6798015e683fb1e8abe7d855`
+- Otherwise, goes to step `6797fd5e683fb54e8abe7d852`
+
+### Providers
+- Primary: Plaid for bank account connections and analysis
+- Fallback: Flinks as secondary provider if Plaid connection fails
 
 ## Example Response
 
 ```json
 {
-    "status": "completed",
-    "result": {
-        "account_balance": 15000.00,
-        "verification_id": "bank_ver_123456",
-        "bank_accounts": [
+    "bank_connect": {
+        "status": "COMPLETED",
+        "accounts": [
             {
-                "account_id": "bank_acc_123",
-                "institution": "Chase Bank",
-                "account_type": "checking",
-                "account_number": "xxxx1234",
-                "ownership_verified": true,
-                "current_balance": 15000.00,
-                "available_balance": 14500.00,
-                "transactions": {
-                    "start_date": "2024-12-03",
-                    "end_date": "2025-02-03",
-                    "recurring_deposits": [
+                "account_id": "acc_123456",
+                "institution": {
+                    "name": "Royal Bank of Canada",
+                    "institution_id": "RBC"
+                },
+                "account_type": "CHECKING",
+                "account_number_last4": "1234",
+                "balance": {
+                    "current": 75000.00,
+                    "available": 74500.00,
+                    "as_of": "2025-02-03T20:25:05-05:00"
+                },
+                "ownership": {
+                    "verified": true,
+                    "owners": [
                         {
-                            "description": "Child Support Payment",
-                            "frequency": "monthly",
-                            "typical_amount": 800.00,
-                            "last_deposit": "2025-01-15",
-                            "confidence": 0.95,
-                            "occurrences": [
-                                {
-                                    "date": "2025-01-15",
-                                    "amount": 800.00
-                                },
-                                {
-                                    "date": "2024-12-15",
-                                    "amount": 800.00
-                                }
-                            ]
-                        }
-                    ],
-                    "large_deposits": [
-                        {
-                            "date": "2025-01-15",
-                            "amount": 5000.00,
-                            "description": "Transfer from Savings"
+                            "first_name": "John",
+                            "last_name": "Doe"
                         }
                     ]
                 }
             }
         ],
-        "additional_income": [
-            {
-                "type": "child_support",
-                "amount": 800.00,
-                "frequency": "monthly",
-                "verified": true,
-                "verification_method": "bank_transactions",
-                "supporting_documents": [
-                    {
-                        "type": "court_order",
-                        "document_id": "doc_789",
-                        "date": "2023-06-15",
-                        "verified": true
-                    }
-                ],
-                "start_date": "2023-07-01",
-                "last_received": "2025-01-15",
-                "consistency_score": 0.98
-            }
-        ],
-        "verification_details": {
-            "instant_verification": true,
-            "ownership_verified": true,
-            "provider": "Plaid",
-            "verification_time": "2025-02-03T11:31:04-05:00"
+        "transactions": {
+            "analyzed_period": {
+                "start_date": "2024-11-03",
+                "end_date": "2025-02-03"
+            },
+            "monthly_statistics": {
+                "average_balance": 72000.00,
+                "average_deposits": 8500.00,
+                "average_withdrawals": 6000.00
+            },
+            "recurring_deposits": [
+                {
+                    "description": "PAYROLL - TECH CORP INC",
+                    "frequency": "BI_WEEKLY",
+                    "typical_amount": 4615.38,
+                    "last_date": "2025-01-31",
+                    "next_expected": "2025-02-15"
+                }
+            ]
         },
-        "summary": {
-            "total_monthly_deposits": 12500.00,
-            "verified_additional_income": 800.00,
-            "average_daily_balance": 14500.00
+        "verification": {
+            "provider": "Plaid",
+            "verified_at": "2025-02-03T20:25:05-05:00",
+            "ownership_verified": true
         }
-    },
-    "timestamp": "2025-02-03T11:31:04-05:00"
+    }
 }
 ```
 
 ## Output Fields
 
-- `status`: The completion status of the verification
-- `result`: The verification results containing:
-  - `account_balance`: Current total balance (used for control flow)
-  - `verification_id`: Unique identifier for this bank verification
-  - `bank_accounts`: List of connected bank accounts
-    - Account details and balances
-    - Ownership verification status
-    - Transaction history including:
-      - Recurring deposits identification
-      - Large deposit tracking
-  - `additional_income`: List of verified additional income sources
-    - Income type and amount
-    - Frequency and verification status
-    - Supporting documentation
-    - Payment history and consistency
-  - `verification_details`: Details about the verification process
-    - Instant verification status
-    - Ownership verification status
-    - Provider used
-    - Verification timestamp
-  - `summary`: Summary of bank account activity
-    - Total monthly deposits
-    - Verified additional income
-    - Average daily balance
-- `timestamp`: Time when the verification was completed
+### Status Information
+- `status`: Current status of the bank connection (e.g., "COMPLETED")
+
+### Account Information
+- `accounts`: List of connected bank accounts
+  - `account_id`: Unique identifier for the account
+  - `institution`: Bank institution details
+  - `account_type`: Type of account (e.g., "CHECKING")
+  - `account_number_last4`: Last 4 digits of account number
+  - `balance`: Current account balances
+  - `ownership`: Account ownership verification details
+
+### Transaction Analysis
+- `transactions`: Analysis of account transactions
+  - `analyzed_period`: Time period of analysis
+  - `monthly_statistics`: Monthly averages for balance and transactions
+  - `recurring_deposits`: Identified recurring income sources
+
+### Verification Details
+- `verification`: Information about the verification process
+  - `provider`: Which provider performed the verification
+  - `verified_at`: When verification was completed
+  - `ownership_verified`: Whether account ownership was confirmed
