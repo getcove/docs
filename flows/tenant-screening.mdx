@@ -37,15 +37,7 @@ Verifies financial stability through Plaid or Flinks:
 
 [View Bank Connect Step Details](/steps/bank-connect)
 
-### 4. Credit Report (CREDIT_REPORT)
-Retrieves and analyzes an individual's credit history from major credit bureaus:
-- Credit score assessment
-- Debt-to-income ratio evaluation
-- Credit history verification
-
-[View Credit Report Step Details](/steps/credit-report)
-
-### 5. Residence History (RESIDENCE_HISTORY)
+### 4. Residence History (RESIDENCE_HISTORY)
 Verifies an individual's residential history through document verification:
 - Address verification
 - Duration of residence
@@ -107,16 +99,6 @@ Verifies an individual's residential history through document verification:
         "verify_account_ownership": true
       },
       "provider": ["Plaid", "Flinks"]
-    },
-    {
-      "id": "6797e086a4c4910bc0f1d497",
-      "name": "CREDIT_REPORT",
-      "options": {
-        "check_eviction_history": true,
-        "check_bankruptcies": true,
-        "verify_liabilities": true
-      },
-      "provider": ["Equifax", "TransUnion"]
     },
     {
       "id": "6797e086a4c4910bc0f1d498",
