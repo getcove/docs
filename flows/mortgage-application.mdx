@@ -182,6 +182,71 @@ Evaluates financial assets:
 }
 ```
 
+## Example Response
+
+#### Success (200)
+
+```json
+{
+    "user": {
+        "id": "usr_6797df4ca4c4910bc0f1d48f",
+        "name": {
+            "first": "John",
+            "last": "Doe"
+        },
+        "phone": "+14165550123",
+        "email": "john.doe@example.com"
+    },
+    "identity": {
+        "source": "Persona",
+        "verifications": {
+            "liveness": true,
+            "faceMatch": true,
+            "nameMatch": true
+        },
+        "idNumber": "XXXXXXXXX",
+        "at": "2025-02-03T20:10:37-05:00"
+    },
+    "income": {
+        "annualIncome": 120000,
+        "incomeType": "EMPLOYMENT",
+        "payCycle": "BI_WEEKLY",
+        "nextExpectedPayDate": "2025-02-15T00:00:00Z"
+    },
+    "bank": {
+        "averageBalance": 75000,
+        "verified": true
+    },
+    "rentals": [
+        {
+            "address": {
+                "street": "123 Main St",
+                "city": "Toronto",
+                "provinceState": "ON",
+                "postalCode": "M5V 2T6"
+            },
+            "start": "2022-02-01",
+            "rentAmount": 2500,
+            "landlordName": "Jane Smith",
+            "landlordEmail": "jane.smith@example.com",
+            "landlordPhone": "+14165551234"
+        }
+    ],
+    "assets": {
+        "verified": true,
+        "total": 250000
+    },
+    "credit": {
+        "provider": "Equifax",
+        "score": 750,
+        "debt": {
+            "total": 15000,
+            "monthly": 500
+        }
+    }
+}
+```
+
 ## Success Criteria
 
 A successful mortgage application requires:

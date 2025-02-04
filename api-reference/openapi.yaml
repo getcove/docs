@@ -280,7 +280,7 @@ paths:
   /v2/screening/send:
     post:
       tags:
-      - Screening
+      - ScreeningV2
       summary: Send the screening link to the end user
       description: Send the screening link
       operationId: ScreeningService_SendScreening

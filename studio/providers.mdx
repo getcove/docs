@@ -1,71 +1,98 @@
 ---
 title: 'Providers'
-description: 'Description of your new file.'
+description: 'Learn about the providers available for each verification step in Cove.'
 ---
 
 # Providers in Cove
 
 ## Overview
-The `provider` object in Cove defines the external or internal service responsible for handling each verification step. Some steps may also include a `fallback` to ensure redundancy if the primary provider fails.
+The `provider` field in Cove specifies which verification services are available for each step. When multiple providers are specified, they act as fallbacks in order - if the first provider fails, Cove will try the next one, and so on until a successful verification is achieved.
 
-## Structure of `provider`
-Each step may contain a `provider` object with the following fields:
+## Provider Configuration
+In your flow configuration, providers are specified as an array of strings, where each subsequent provider serves as a fallback:
 
-### 1. `name`
-The primary service provider used for this step. Examples include:
-- `Persona` for ID verification and background checks.
-- `Equifax` for employment and credit reports.
-- `Plaid` for banking data connections.
-- `DocuSign` for document processing.
-
-### 2. `fallback` (Optional)
-Some steps may have a secondary provider to ensure completion in case the primary provider is unavailable. For example:
-- `Equifax` uses `TransUnion` as a fallback for credit reports.
-- `Plaid` uses `Flinks` as a fallback for bank connections.
-
-## Example `provider` Objects
-
-### Example 1: ID Verification
 ```json
-"provider": {
-    "name": "Persona"
+"provider": ["Persona"]  // Single provider, no fallback
+"provider": ["Atomic", "Argyle"]  // Atomic primary, Argyle as fallback
+"provider": []  // No external provider (internal verification)
+```
+
+## Available Providers by Step
+
+### ID Verification
+```json
+{
+    "name": "ID_VERIFICATION",
+    "provider": ["Persona"]
 }
 ```
-- The `Persona` service is responsible for ID verification.
+Persona is the primary provider for identity verification. No fallback provider is available.
 
-### Example 2: Credit Report with Fallback
+### Employment Verification
 ```json
-"provider": {
-    "name": "Equifax",
-    "fallback": "TransUnion"
+{
+    "name": "EMPLOYMENT",
+    "provider": ["Atomic", "Argyle"]
 }
 ```
-- The primary credit report provider is `Equifax`, but if unavailable, `TransUnion` will be used.
+Atomic is the primary provider for employment verification. If Atomic fails, Cove will automatically attempt verification through Argyle.
 
-### Example 3: Bank Connection with Fallback
+### Bank Connection
 ```json
-"provider": {
-    "name": "Plaid",
-    "fallback": "Flinks"
+{
+    "name": "BANK_CONNECT",
+    "provider": ["Plaid", "Flinks"]
 }
 ```
-- The primary provider for banking connections is `Plaid`, with `Flinks` as a backup.
+Plaid is the primary provider for bank connections. If Plaid connection fails, Cove will automatically fall back to Flinks.
 
-## List of Providers Available
+### Personal Information
+```json
+{
+    "name": "PERSONAL_INFO",
+    "provider": []
+}
+```
+Personal information collection is handled internally by Cove with no external providers.
 
-| Step Name           | Primary Provider | Fallback Provider |
-|---------------------|-----------------|-------------------|
-| ID Verification    | Persona         | None              |
-| Employment        | Equifax         | None              |
-| Residence History | None            | None              |
-| Background Check  | Persona         | None              |
-| Credit Report     | Equifax         | TransUnion        |
-| Personal Info     | Internal        | None              |
-| Assets           | Plaid           | None              |
-| Bank Connect     | Plaid           | Flinks            |
-| Income Verification | Argyle       | None              |
-| Document Processing | DocuSign     | None              |
+### Residence History
+```json
+{
+    "name": "RESIDENCE_HISTORY",
+    "provider": []
+}
+```
+Residence history verification is managed internally by Cove with no external providers.
 
-## Conclusion
-The `provider` system ensures that each step in the KYC process is handled by a reliable third-party or internal service. The use of `fallback_provider` in critical steps increases reliability and ensures smooth processing.
+### Personal Assets
+```json
+{
+    "name": "PERSONAL_ASSETS",
+    "provider": []
+}
+```
+Asset verification is handled internally by Cove with no external providers.
 
+## Provider Capabilities
+
+| Provider | Primary Use | Capabilities |
+|----------|------------|--------------|
+| Persona  | Identity Verification | Document verification, Selfie matching, Liveness detection, Background checks |
+| Atomic   | Employment Primary | Employment verification, Income verification, Work history |
+| Argyle   | Employment Fallback | Employment verification, Income verification, Work history |
+| Plaid    | Banking Primary | Bank account connection, Transaction analysis, Balance verification |
+| Flinks   | Banking Fallback | Bank account connection, Transaction analysis, Balance verification |
+
+## Fallback Behavior
+1. For each step, Cove attempts verification with the first provider in the array
+2. If the primary provider fails (e.g., service unavailable or verification failed):
+   - Cove automatically tries the next provider in the array
+   - This continues until either:
+     - A successful verification is achieved
+     - All providers have been attempted
+3. If all providers fail, the step is marked as failed
+
+## Notes
+- The order of providers in the array determines the fallback sequence
+- Steps with empty provider arrays (`[]`) are handled internally by Cove's verification system
+- Provider availability may vary by region and verification type
