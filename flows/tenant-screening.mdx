@@ -68,6 +68,100 @@ Verifies financial assets and stability:
 
 [View Assets Step Details](/steps/assets)
 
+## Example Response
+
+```json
+{
+    "screening_data": {
+        "identity_verification": {
+            "status": "COMPLETED",
+            "source": "Cove",
+            "name": {
+                "first": "John",
+                "last": "Doe"
+            },
+            "phone": "123-456-7890",
+            "email": "john.doe@example.com",
+            "address": {
+                "line1": "123 Main St",
+                "city": "Anytown",
+                "state": "CA",
+                "postalCode": "12345"
+            },
+            "verifications": {
+                "liveness": true,
+                "faceMatch": true,
+                "nameMatch": true
+            },
+            "idNumber": "A123456789",
+            "at": "2025-02-03T20:25:05-05:00"
+        },
+        "employment_verification": {
+            "status": "COMPLETED",
+            "employment_status": "verified",
+            "jobTitle": "Software Engineer",
+            "employer": {
+                "name": "Tech Company",
+                "address": {
+                    "line1": "456 Tech Ave",
+                    "city": "Tech City",
+                    "state": "CA",
+                    "postalCode": "67890"
+                }
+            }
+        },
+        "bank_connect": {
+            "status": "COMPLETED",
+            "account_balance": 750.00,
+            "transactions": [
+                {
+                    "id": "txn_1",
+                    "amount": 100.00,
+                    "date": "2025-01-01",
+                    "description": "Deposit"
+                }
+            ]
+        },
+        "credit_report": {
+            "status": "COMPLETED",
+            "credit_score": 725,
+            "report": [
+                {
+                    "account": "Credit Card",
+                    "balance": 2000.00,
+                    "status": "Good"
+                }
+            ]
+        },
+        "residence_history": {
+            "status": "COMPLETED",
+            "residences": [
+                {
+                    "address": "789 Elm St",
+                    "start": "2020-01-01",
+                    "end": "2021-01-01",
+                    "landlordName": "Jane Smith",
+                    "landlordEmail": "jane.smith@example.com",
+                    "landlordPhone": "987-654-3210"
+                }
+            ]
+        }
+    }
+}
+```
+
+## Output Fields
+
+### Status Information
+- `status`: Overall status of the tenant screening process (e.g., "COMPLETED")
+
+### Verification Details
+- `identity_verification`: Results of identity verification
+- `employment_verification`: Results of employment verification
+- `bank_connect`: Results of bank account verification
+- `credit_report`: Results of credit report verification
+- `residence_history`: Results of residence history verification
+
 ## Flow Configuration
 
 ```json
@@ -162,4 +256,3 @@ The flow includes automatic risk assessment based on:
 - Rental history analysis
 - Asset verification
 - Income stream consistency
-
