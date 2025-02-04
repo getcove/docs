@@ -44,77 +44,40 @@ Determines the next step based on verification results:
     "assets": {
         "status": "COMPLETED",
         "assets_verified": true,
-        "accounts": [
+        "account_balances": [
             {
-                "account_id": "acc_789012",
+                "id": "acc_12345",
+                "type": "CHECKING",
+                "balance": 5432.10,
                 "institution": {
-                    "name": "Fidelity Investments",
-                    "institution_id": "FID"
-                },
-                "account_type": "INVESTMENT",
-                "account_number_last4": "9012",
-                "balance": {
-                    "current": 60000.00,
-                    "available": 60000.00,
-                    "as_of": "2025-02-03T20:25:05-05:00"
-                },
-                "investment_details": {
-                    "vested_amount": 60000.00,
-                    "portfolio_value": 60000.00
+                    "id": "ins_td",
+                    "name": "TD Bank"
                 }
             },
             {
-                "account_id": "acc_789013",
+                "id": "acc_67890",
+                "type": "SAVINGS",
+                "balance": 15000.00,
                 "institution": {
-                    "name": "Royal Bank of Canada",
-                    "institution_id": "RBC"
-                },
-                "account_type": "SAVINGS",
-                "account_number_last4": "5678",
-                "balance": {
-                    "current": 15000.00,
-                    "available": 15000.00,
-                    "as_of": "2025-02-03T20:25:05-05:00"
+                    "id": "ins_td",
+                    "name": "TD Bank"
                 }
             }
         ],
-        "properties": [
+        "monthly_data": [
             {
-                "property_id": "prop_123456",
-                "address": {
-                    "street": "789 Oak Lane",
-                    "city": "Toronto",
-                    "provinceState": "ON",
-                    "postalCode": "M5V 2T6"
-                },
-                "ownership": {
-                    "type": "PRIMARY_RESIDENCE",
-                    "percentage": 100
-                },
-                "property_type": "SINGLE_FAMILY",
-                "valuation": {
-                    "estimated_value": 450000.00,
-                    "purchase_price": 400000.00,
-                    "purchase_date": "2020-06-15",
-                    "as_of": "2025-02-03T20:25:05-05:00"
-                },
-                "liens": [
-                    {
-                        "type": "MORTGAGE",
-                        "balance": 350000.00,
-                        "monthly_payment": 2100.00,
-                        "lender": "Royal Bank of Canada"
-                    }
-                ]
+                "month": "2025-01",
+                "average_balance": 19245.75,
+                "income": 4615.38,
+                "spending": 3200.50
+            },
+            {
+                "month": "2024-12",
+                "average_balance": 18830.87,
+                "income": 4615.38,
+                "spending": 3500.25
             }
         ],
-        "summary": {
-            "total_assets": 525000.00,
-            "liquid_assets": 75000.00,
-            "property_value": 450000.00,
-            "property_equity": 100000.00,
-            "down_payment_available": 75000.00
-        },
         "verification": {
             "provider": "Plaid",
             "verified_at": "2025-02-03T20:25:05-05:00"
@@ -130,29 +93,14 @@ Determines the next step based on verification results:
 - `assets_verified`: Whether all assets were successfully verified
 
 ### Account Information
-- `accounts`: List of verified financial accounts
-  - `account_id`: Unique identifier for the account
-  - `institution`: Financial institution details
-  - `account_type`: Type of account (e.g., "INVESTMENT", "SAVINGS")
-  - `balance`: Current account balances and last update time
-  - `investment_details`: Additional details for investment accounts
+- `account_balances`: List of connected bank accounts
+  - Account details including ID, type, and balance
+  - Institution information
 
-### Property Information
-- `properties`: List of verified properties
-  - `property_id`: Unique identifier for the property
-  - `address`: Property location details
-  - `ownership`: Type and percentage of ownership
-  - `property_type`: Type of property
-  - `valuation`: Property value information
-  - `liens`: List of liens against the property
-
-### Asset Summary
-- `summary`: Overview of total assets and available funds
-  - `total_assets`: Total value of all assets
-  - `liquid_assets`: Total value of liquid assets
-  - `property_value`: Total value of properties
-  - `property_equity`: Total equity in properties
-  - `down_payment_available`: Funds available for down payment
+### Monthly Analysis
+- `monthly_data`: Monthly financial analysis
+  - Average balance for each month
+  - Total income and spending
 
 ### Verification Details
 - `verification`: Information about the verification process

@@ -41,65 +41,52 @@ Determines the next step based on account balance:
 - If `account_balance` is greater than 500, proceeds to step `6798015e683fb1e8abe7d855`
 - Otherwise, goes to step `6797fd5e683fb54e8abe7d852`
 
-### Providers
-- Primary: Plaid for bank account connections and analysis
-- Fallback: Flinks as secondary provider if Plaid connection fails
-
 ## Example Response
 
 ```json
 {
     "bank_connect": {
         "status": "COMPLETED",
+        "account_balance": 750.00,
         "accounts": [
             {
-                "account_id": "acc_123456",
+                "id": "acc_12345",
+                "type": "CHECKING",
+                "name": "Everyday Checking",
+                "balance": 5432.10,
                 "institution": {
-                    "name": "Royal Bank of Canada",
-                    "institution_id": "RBC"
-                },
-                "account_type": "CHECKING",
-                "account_number_last4": "1234",
-                "balance": {
-                    "current": 75000.00,
-                    "available": 74500.00,
-                    "as_of": "2025-02-03T20:25:05-05:00"
-                },
-                "ownership": {
-                    "verified": true,
-                    "owners": [
-                        {
-                            "first_name": "John",
-                            "last_name": "Doe"
-                        }
-                    ]
+                    "id": "ins_td",
+                    "name": "TD Bank"
+                }
+            },
+            {
+                "id": "acc_67890",
+                "type": "SAVINGS",
+                "name": "High Interest Savings",
+                "balance": 15000.00,
+                "institution": {
+                    "id": "ins_td",
+                    "name": "TD Bank"
                 }
             }
         ],
-        "transactions": {
-            "analyzed_period": {
-                "start_date": "2024-11-03",
-                "end_date": "2025-02-03"
+        "transactions": [
+            {
+                "id": "tx_1",
+                "date": "2025-02-01",
+                "amount": -50.00,
+                "description": "Grocery Store"
             },
-            "monthly_statistics": {
-                "average_balance": 72000.00,
-                "average_deposits": 8500.00,
-                "average_withdrawals": 6000.00
-            },
-            "recurring_deposits": [
-                {
-                    "description": "PAYROLL - TECH CORP INC",
-                    "frequency": "BI_WEEKLY",
-                    "typical_amount": 4615.38,
-                    "last_date": "2025-01-31",
-                    "next_expected": "2025-02-15"
-                }
-            ]
-        },
+            {
+                "id": "tx_2",
+                "date": "2025-02-02",
+                "amount": 2000.00,
+                "description": "Paycheck"
+            }
+        ],
         "verification": {
             "provider": "Plaid",
-            "verified_at": "2025-02-03T20:25:05-05:00",
-            "ownership_verified": true
+            "verified_at": "2025-02-03T20:25:05-05:00"
         }
     }
 }
@@ -108,25 +95,19 @@ Determines the next step based on account balance:
 ## Output Fields
 
 ### Status Information
-- `status`: Current status of the bank connection (e.g., "COMPLETED")
+- `status`: Current status of the verification (e.g., "COMPLETED")
+- `account_balance`: Current balance of the account
 
 ### Account Information
 - `accounts`: List of connected bank accounts
-  - `account_id`: Unique identifier for the account
-  - `institution`: Bank institution details
-  - `account_type`: Type of account (e.g., "CHECKING")
-  - `account_number_last4`: Last 4 digits of account number
-  - `balance`: Current account balances
-  - `ownership`: Account ownership verification details
+  - Account details including ID, type, and balance
+  - Institution information
 
-### Transaction Analysis
-- `transactions`: Analysis of account transactions
-  - `analyzed_period`: Time period of analysis
-  - `monthly_statistics`: Monthly averages for balance and transactions
-  - `recurring_deposits`: Identified recurring income sources
+### Transaction Details
+- `transactions`: List of recent transactions
+  - Transaction details including date, amount, and description
 
 ### Verification Details
 - `verification`: Information about the verification process
   - `provider`: Which provider performed the verification
   - `verified_at`: When verification was completed
-  - `ownership_verified`: Whether account ownership was confirmed

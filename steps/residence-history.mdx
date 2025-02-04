@@ -43,70 +43,29 @@ No external providers - residence history verification is handled internally by 
     "residence_history": {
         "status": "COMPLETED",
         "residence_verified": true,
-        "addresses": [
+        "residences": [
             {
-                "type": "CURRENT",
-                "address": {
-                    "street": "123 Main St",
-                    "city": "Toronto",
-                    "provinceState": "ON",
-                    "postalCode": "M5V 2T6"
-                },
-                "duration": {
-                    "start_date": "2023-01-15",
-                    "end_date": null,
-                    "months": 13
-                },
-                "ownership": {
-                    "type": "RENT",
-                    "monthly_payment": 2500
-                },
-                "verification": {
-                    "verified": true,
-                    "verified_at": "2025-02-03T20:25:05-05:00",
-                    "documents": [
-                        {
-                            "type": "LEASE_AGREEMENT",
-                            "verified": true
-                        },
-                        {
-                            "type": "UTILITY_BILL",
-                            "verified": true
-                        }
-                    ]
-                }
+                "address": "789 Oak Lane",
+                "city": "Toronto",
+                "state": "ON",
+                "postalCode": "M5V 2T6",
+                "start_date": "2020-01-01",
+                "end_date": "2021-01-01",
+                "landlord_name": "John Smith",
+                "landlord_phone": "+14165550123"
             },
             {
-                "type": "PREVIOUS",
-                "address": {
-                    "street": "456 Oak Ave",
-                    "city": "Vancouver",
-                    "provinceState": "BC",
-                    "postalCode": "V6B 2W9"
-                },
-                "duration": {
-                    "start_date": "2021-01-01",
-                    "end_date": "2022-12-31",
-                    "months": 24
-                },
-                "ownership": {
-                    "type": "RENT",
-                    "monthly_payment": 2200
-                },
-                "verification": {
-                    "verified": true,
-                    "verified_at": "2025-02-03T20:25:05-05:00",
-                    "documents": [
-                        {
-                            "type": "LEASE_AGREEMENT",
-                            "verified": true
-                        }
-                    ]
-                }
+                "address": "123 Maple St",
+                "city": "Toronto",
+                "state": "ON",
+                "postalCode": "M5V 2T6",
+                "start_date": "2021-01-02",
+                "end_date": "2022-01-01",
+                "landlord_name": "Jane Doe",
+                "landlord_phone": "+14165550124"
             }
         ],
         "verification": {
-            "total_months_verified": 37,
             "verified_at": "2025-02-03T20:25:05-05:00"
         }
     }
@@ -119,19 +78,11 @@ No external providers - residence history verification is handled internally by 
 - `status`: Current status of the verification (e.g., "COMPLETED")
 - `residence_verified`: Whether the residence history was successfully verified
 
-### Address Information
-- `addresses`: List of verified addresses
-  - `type`: Whether it's a current or previous residence
-  - `address`: Address details including street, city, province/state, postal code
-  - `duration`: Period of residence including start date, end date, and total months
-  - `ownership`: Type of residence (e.g., "RENT") and payment information
+### Residence Information
+- `residences`: List of verified residences
+  - Address details including street, city, state, and postal code
+  - Dates of residence and landlord information
 
 ### Verification Details
 - `verification`: Information about the verification process
-  - For each address:
-    - `verified`: Whether the address was verified
-    - `verified_at`: When verification was completed
-    - `documents`: List of verified documents
-  - Overall verification:
-    - `total_months_verified`: Total months of verified residence history
-    - `verified_at`: When the entire history was verified
+  - `verified_at`: When verification was completed

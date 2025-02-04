@@ -39,11 +39,6 @@ description: "The employment verification step validates an individual's current
 ### Control Flow
 Determines the next step based on verification results:
 - If `employment_status` is `verified`, proceeds to step `6798015e683fb1e8abe7d855`
-- Otherwise, goes to step `6797fd5e683fb54e8abe7d852`
-
-### Providers
-- Primary: Atomic for employment and income verification
-- Fallback: Argyle as secondary provider if Atomic verification fails
 
 ## Example Response
 
@@ -52,34 +47,50 @@ Determines the next step based on verification results:
     "employment": {
         "status": "COMPLETED",
         "employment_status": "verified",
-        "employer": {
-            "name": "Tech Corp Inc",
-            "employer_id": "emp_123456",
-            "address": {
-                "street": "123 Tech Plaza",
-                "city": "Toronto",
-                "provinceState": "ON",
-                "postalCode": "M5V 2T6"
-            }
-        },
-        "employment_details": {
-            "start_date": "2023-03-15",
-            "employment_type": "FULL_TIME",
-            "job_title": "Senior Software Engineer",
-            "status": "ACTIVE"
+        "identity": {
+            "firstName": "John",
+            "lastName": "Doe",
+            "dateOfBirth": "1990-01-15T00:00:00Z",
+            "email": "john.doe@example.com",
+            "phone": "+14165550123",
+            "address": "123 Tech Plaza",
+            "city": "Toronto",
+            "state": "ON",
+            "postalCode": "M5V 2T6",
+            "country": "CA"
         },
         "income": {
-            "annual_income": 120000,
-            "pay_cycle": "BI_WEEKLY",
-            "last_paycheck_amount": 4615.38,
-            "last_paycheck_date": "2025-01-31",
-            "next_paycheck_date": "2025-02-15"
+            "income": 4615.38,
+            "incomeType": "SALARY",
+            "annualIncome": 120000,
+            "hourlyIncome": 57.69,
+            "netHourlyRate": 40.38,
+            "payCycle": "BI_WEEKLY",
+            "nextExpectedPayDate": "2025-02-15T00:00:00Z",
+            "currentPayPeriodStart": "2025-02-01T00:00:00Z",
+            "currentPayPeriodEnd": "2025-02-15T00:00:00Z",
+            "unpaidHoursInPayPeriod": 80
+        },
+        "employment": {
+            "employeeType": "FULL_TIME",
+            "employmentStatus": "ACTIVE",
+            "jobTitle": "Senior Software Engineer",
+            "startDate": "2023-03-15T00:00:00Z",
+            "minimumMonthsOfEmployment": 11,
+            "weeklyHours": 40,
+            "employer": {
+                "name": "Tech Corp Inc",
+                "address": {
+                    "line1": "123 Tech Plaza",
+                    "city": "Toronto",
+                    "state": "ON",
+                    "postalCode": "M5V 2T6",
+                    "country": "CA"
+                }
+            }
         },
         "verification": {
-            "method": "PAYROLL_PROVIDER",
             "provider": "Atomic",
-            "pay_slips_verified": true,
-            "employer_confirmed": true,
             "verified_at": "2025-02-03T20:25:05-05:00"
         }
     }
@@ -92,31 +103,26 @@ Determines the next step based on verification results:
 - `status`: Current status of the verification (e.g., "COMPLETED")
 - `employment_status`: Whether employment was successfully verified
 
-### Employer Information
-- `employer`: Details about the employer
-  - `name`: Company name
-  - `employer_id`: Unique employer identifier
-  - `address`: Employer's address information
-
-### Employment Details
-- `employment_details`: Current employment information
-  - `start_date`: Employment start date
-  - `employment_type`: Type of employment (e.g., "FULL_TIME")
-  - `job_title`: Current position
-  - `status`: Current employment status
+### Identity Information
+- `identity`: Personal identification details
+  - Basic information like name, date of birth, contact details
+  - Current address information
 
 ### Income Information
-- `income`: Salary and payment details
-  - `annual_income`: Yearly salary
-  - `pay_cycle`: Payment frequency
-  - `last_paycheck_amount`: Most recent payment amount
-  - `last_paycheck_date`: Date of most recent payment
-  - `next_paycheck_date`: Expected date of next payment
+- `income`: Detailed income information
+  - Current income and income type
+  - Annual and hourly rates
+  - Pay cycle and period information
+  - Unpaid hours in current period
+
+### Employment Details
+- `employment`: Current employment information
+  - Employee type and status
+  - Job title and start date
+  - Work hours and tenure
+  - Employer information and address
 
 ### Verification Details
 - `verification`: Information about the verification process
-  - `method`: How employment was verified
   - `provider`: Which provider performed the verification
-  - `pay_slips_verified`: Whether pay slips were verified
-  - `employer_confirmed`: Whether employer confirmed employment
   - `verified_at`: When verification was completed

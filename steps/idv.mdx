@@ -39,19 +39,13 @@ description: "The ID verification step allows for automated verification of gove
 
 ### Options
 - `require_selfie`: Whether to require a selfie photo for identity verification
-- `enable_liveness_detection`: Whether to perform liveness checks to prevent fraud
-- `require_id_back_side`: Whether to require both sides of the ID document
-- `run_background_check`: Configuration for background check options
-  - `watchlist_check`: Whether to check against watchlists
-  - `sanctions_check`: Whether to check against sanctions lists
+- `enable_liveness_detection`: Whether to enable liveness detection during the verification process
+- `require_id_back_side`: Whether to require the back side of the ID
+- `run_background_check`: Options for running background checks
 
 ### Control Flow
-Determines the next step based on verification results:
+Determines the next step based on ID validity:
 - If `id_valid` is `true`, proceeds to step `6797dfe7a4c4910bc0f1d492`
-- Otherwise, goes to step `6797fd5e683fb54e8abe7d852`
-
-### Providers
-Uses Persona for both ID verification and background checks.
 
 ## Example Response
 
@@ -60,31 +54,31 @@ Uses Persona for both ID verification and background checks.
     "id_verification": {
         "status": "COMPLETED",
         "id_valid": true,
-        "document": {
-            "type": "drivers_license",
-            "expiration_date": "2027-05-15",
-            "number": "DL123456789"
-        },
         "identity": {
-            "name": {
-                "first": "John",
-                "last": "Doe"
-            },
-            "date_of_birth": "1990-01-15",
-            "address": {
-                "street": "123 Main St",
-                "city": "Toronto",
-                "provinceState": "ON",
-                "postalCode": "M5V 2T6"
-            }
+            "firstName": "Jane",
+            "lastName": "Doe",
+            "dateOfBirth": "1992-05-20T00:00:00Z",
+            "id_number": "A123456789",
+            "expiration_date": "2025-12-31T00:00:00Z",
+            "address": "456 Elm Street",
+            "city": "Toronto",
+            "state": "ON",
+            "postalCode": "M5V 2T6",
+            "country": "CA"
         },
         "verification": {
-            "selfie_match": true,
-            "liveness_check": true
+            "provider": "Persona",
+            "verified_at": "2025-02-03T20:25:05-05:00"
         },
-        "background_check": {
-            "watchlist_hit": false,
-            "sanctions_hit": false
+        "background_checks": {
+            "watchlist_check": {
+                "result": "CLEAR",
+                "details": "No matches found"
+            },
+            "sanctions_check": {
+                "result": "CLEAR",
+                "details": "No matches found"
+            }
         }
     }
 }
@@ -96,24 +90,17 @@ Uses Persona for both ID verification and background checks.
 - `status`: Current status of the verification (e.g., "COMPLETED")
 - `id_valid`: Whether the ID was successfully verified
 
-### Document Information
-- `document`: Details about the verified ID document
-  - `type`: Type of ID document provided
-  - `expiration_date`: When the document expires
-  - `number`: Document identification number
-
 ### Identity Information
-- `identity`: Extracted identity details
-  - `name`: First and last name
-  - `date_of_birth`: Date of birth from ID
-  - `address`: Current address information
+- `identity`: Personal identification details
+  - Basic information like name, date of birth, ID number, and expiration date
+  - Current address information
 
-### Verification Results
-- `verification`: Results of verification checks
-  - `selfie_match`: Whether the selfie matched the ID photo
-  - `liveness_check`: Whether the liveness check passed
+### Verification Details
+- `verification`: Information about the verification process
+  - `provider`: Which provider performed the verification
+  - `verified_at`: When verification was completed
 
 ### Background Check Results
-- `background_check`: Results of background screening
-  - `watchlist_hit`: Whether any watchlist matches were found
-  - `sanctions_hit`: Whether any sanctions matches were found
+- `background_checks`: Results of background checks performed
+  - `watchlist_check`: Result of the watchlist check
+  - `sanctions_check`: Result of the sanctions check
