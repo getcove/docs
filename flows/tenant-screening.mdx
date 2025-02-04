@@ -9,144 +9,219 @@ The tenant screening flow is a thorough verification process designed to assess 
 
 ## Flow Steps
 
-### 1. Identity Verification
-Verifies the applicant's identity using government-issued documents.
-- Legal first and last name
-- Date of birth
+### 1. Identity Verification (ID_VERIFICATION)
+Verifies the applicant's identity using Cove:
 - Government-issued ID verification
 - Selfie verification with liveness detection
-- Identity verification record
+- Background check including watchlist and sanctions
+- Automatic validation with conditional routing
 
 [View IDV Step Details](/steps/idv)
 
-### 2. Employment Verification
-Validates current employment and income through Argyle or Atomic.
+### 2. Employment Verification (EMPLOYMENT)
+Validates current employment and income through Argyle or Atomic:
 - Employment status verification
-- Current salary verification
+- Pay slips verification (required)
+- Employer confirmation (required)
 - Income stability assessment
-- Manual document verification option
+- Automatic routing based on verification status
 
 [View Employment Step Details](/steps/employment)
 
-### 3. Bank Connection
-Verifies income sources and financial stability:
-- Primary providers: Plaid, Flinks
-- Secondary providers: MX, Fincity
-- Account balance verification
+### 3. Bank Connection (BANK_CONNECT)
+Verifies financial stability through Plaid or Flinks:
+- Account ownership verification
+- Transaction analysis
 - Income stream verification
 - Manual bank statement upload option
 
 [View Bank Connect Step Details](/steps/bank-connect)
 
-### 4. Credit Report
-Performs a soft credit check to assess financial responsibility:
-- Credit score verification
-- Payment history review
-- Outstanding debt assessment
-- Previous evictions check
-- Bankruptcy history
+### 4. Credit Report (CREDIT_REPORT)
+Retrieves and analyzes an individual's credit history from major credit bureaus:
+- Credit score assessment
+- Debt-to-income ratio evaluation
+- Credit history verification
 
 [View Credit Report Step Details](/steps/credit-report)
 
-### 5. Residence History
-Verifies rental history and landlord references:
-- Previous addresses
+### 5. Residence History (RESIDENCE_HISTORY)
+Verifies an individual's residential history through document verification:
+- Address verification
+- Duration of residence
 - Landlord contact information
-- Payment history verification
-- Property condition reports
-- Eviction history check
 
 [View Residence History Step Details](/steps/residence-history)
 
-### 6. Assets
-Verifies financial assets and stability:
-- Bank account balances
-- Investment accounts
-- Retirement accounts
-- Other liquid assets
-- Asset ownership verification
+## Flow Configuration
 
-[View Assets Step Details](/steps/assets)
+```json
+{
+  "steps": [
+    {
+      "id": "6797df4ca4c4910bc0f1d48f",
+      "name": "ID_VERIFICATION",
+      "options": {
+        "require_selfie": true,
+        "enable_liveness_detection": true,
+        "require_id_back_side": false,
+        "run_background_check": {
+          "watchlist_check": true,
+          "sanctions_check": true
+        }
+      },
+      "control_flow": {
+        "condition": {
+          "condition_operator": "==",
+          "condition_field": "id_valid",
+          "condition_value": true
+        },
+        "if_goto": "6797dfe7a4c4910bc0f1d492",
+        "else_goto": "6797fd5e683fb54e8abe7d852"
+      },
+      "provider": ["Persona"]
+    },
+    {
+      "id": "6797e086a4c4910bc0f1d495",
+      "name": "EMPLOYMENT",
+      "options": {
+        "verify_current_employment": true,
+        "verify_income": true,
+        "require_pay_stubs": true
+      },
+      "control_flow": {
+        "condition": {
+          "condition_operator": "==",
+          "condition_field": "employment_status",
+          "condition_value": "verified"
+        }
+      },
+      "provider": ["Argyle", "Atomic"]
+    },
+    {
+      "id": "6797e086a4c4910bc0f1d496",
+      "name": "BANK_CONNECT",
+      "options": {
+        "verify_account_balance": true,
+        "analyze_transactions": true,
+        "verify_account_ownership": true
+      },
+      "provider": ["Plaid", "Flinks"]
+    },
+    {
+      "id": "6797e086a4c4910bc0f1d497",
+      "name": "CREDIT_REPORT",
+      "options": {
+        "check_eviction_history": true,
+        "check_bankruptcies": true,
+        "verify_liabilities": true
+      },
+      "provider": ["Equifax", "TransUnion"]
+    },
+    {
+      "id": "6797e086a4c4910bc0f1d498",
+      "name": "RESIDENCE_HISTORY",
+      "options": {
+        "history_years": 3,
+        "require_documentation": true,
+        "verify_landlord_references": true
+      }
+    }
+  ],
+  "options":{
+      "send_emails": true,
+      "run_credit_check": {
+          "fetch_debt_data": true,
+          "provider": ["Equifax", "TransUnion"]
+      }
+  }
+}
+```
 
 ## Example Response
 
 ```json
 {
-    "screening_data": {
-        "identity_verification": {
-            "status": "COMPLETED",
-            "source": "Cove",
-            "name": {
-                "first": "John",
-                "last": "Doe"
-            },
-            "phone": "123-456-7890",
-            "email": "john.doe@example.com",
-            "address": {
-                "line1": "123 Main St",
-                "city": "Anytown",
-                "state": "CA",
-                "postalCode": "12345"
-            },
-            "verifications": {
-                "liveness": true,
-                "faceMatch": true,
-                "nameMatch": true
-            },
-            "idNumber": "A123456789",
-            "at": "2025-02-03T20:25:05-05:00"
+  "tenant_screening": {
+    "status": "COMPLETED",
+    "applicant": {
+      "name": {
+        "first": "John",
+        "last": "Doe"
+      },
+      "phone": "123-456-7890",
+      "email": "john.doe@example.com",
+      "address": {
+        "line1": "123 Main St",
+        "city": "Anytown",
+        "state": "CA",
+        "postalCode": "12345"
+      }
+    },
+    "verifications": {
+      "identity": {
+        "status": "COMPLETED",
+        "source": "Cove",
+        "verifications": {
+          "liveness": true,
+          "faceMatch": true,
+          "nameMatch": true
         },
-        "employment_verification": {
-            "status": "COMPLETED",
-            "employment_status": "verified",
-            "jobTitle": "Software Engineer",
-            "employer": {
-                "name": "Tech Company",
-                "address": {
-                    "line1": "456 Tech Ave",
-                    "city": "Tech City",
-                    "state": "CA",
-                    "postalCode": "67890"
-                }
-            }
-        },
-        "bank_connect": {
-            "status": "COMPLETED",
-            "account_balance": 750.00,
-            "transactions": [
-                {
-                    "id": "txn_1",
-                    "amount": 100.00,
-                    "date": "2025-01-01",
-                    "description": "Deposit"
-                }
-            ]
-        },
-        "credit_report": {
-            "status": "COMPLETED",
-            "credit_score": 725,
-            "report": [
-                {
-                    "account": "Credit Card",
-                    "balance": 2000.00,
-                    "status": "Good"
-                }
-            ]
-        },
-        "residence_history": {
-            "status": "COMPLETED",
-            "residences": [
-                {
-                    "address": "789 Elm St",
-                    "start": "2020-01-01",
-                    "end": "2021-01-01",
-                    "landlordName": "Jane Smith",
-                    "landlordEmail": "jane.smith@example.com",
-                    "landlordPhone": "987-654-3210"
-                }
-            ]
+        "idNumber": "A123456789",
+        "at": "2025-02-03T20:25:05-05:00"
+      },
+      "employment": {
+        "status": "COMPLETED",
+        "employment_status": "verified",
+        "jobTitle": "Software Engineer",
+        "employer": {
+          "name": "Tech Company",
+          "address": {
+            "line1": "456 Tech Ave",
+            "city": "Tech City",
+            "state": "CA",
+            "postalCode": "67890"
+          }
         }
+      },
+      "bank_connect": {
+        "status": "COMPLETED",
+        "account_balance": 750.00,
+        "transactions": [
+          {
+            "id": "txn_1",
+            "amount": 100.00,
+            "date": "2025-01-01",
+            "description": "Deposit"
+          }
+        ]
+      },
+      "credit_report": {
+        "status": "COMPLETED",
+        "credit_score": 725,
+        "report": [
+          {
+            "account": "Credit Card",
+            "balance": 2000.00,
+            "status": "Good"
+          }
+        ]
+      },
+      "residence_history": {
+        "status": "COMPLETED",
+        "residences": [
+          {
+            "address": "789 Elm St",
+            "start": "2020-01-01",
+            "end": "2021-01-01",
+            "landlordName": "Jane Smith",
+            "landlordEmail": "jane.smith@example.com",
+            "landlordPhone": "987-654-3210"
+          }
+        ]
+      }
     }
+  }
 }
 ```
 
@@ -156,103 +231,8 @@ Verifies financial assets and stability:
 - `status`: Overall status of the tenant screening process (e.g., "COMPLETED")
 
 ### Verification Details
-- `identity_verification`: Results of identity verification
-- `employment_verification`: Results of employment verification
+- `identity`: Results of identity verification
+- `employment`: Results of employment verification
 - `bank_connect`: Results of bank account verification
 - `credit_report`: Results of credit report verification
 - `residence_history`: Results of residence history verification
-
-## Flow Configuration
-
-```json
-{
-  "flow_id": "tenant_screening_v1",
-  "name": "Tenant Screening Flow",
-  "steps": [
-    {
-      "step": "ID_VERIFICATION",
-      "required": true,
-      "provider": "Persona",
-      "options": {
-        "require_selfie": true,
-        "enable_liveness_detection": true,
-        "require_id_back_side": true,
-        "check_id_expiration": true
-      }
-    },
-    {
-      "step": "EMPLOYMENT",
-      "required": true,
-      "provider": "Argyle",
-      "fallback_provider": "Atomic",
-      "options": {
-        "verify_current_employment": true,
-        "verify_income": true,
-        "require_pay_stubs": true
-      }
-    },
-    {
-      "step": "BANK_CONNECT",
-      "required": true,
-      "providers": ["Plaid", "Flinks"],
-      "fallback_providers": ["MX", "Fincity"],
-      "options": {
-        "verify_account_balance": true,
-        "analyze_transactions": true,
-        "verify_account_ownership": true
-      }
-    },
-    {
-      "step": "CREDIT_REPORT",
-      "required": true,
-      "provider": "Equifax",
-      "fallback_provider": "TransUnion",
-      "options": {
-        "check_eviction_history": true,
-        "check_bankruptcies": true,
-        "verify_liabilities": true
-      }
-    },
-    {
-      "step": "RESIDENCE_HISTORY",
-      "required": true,
-      "options": {
-        "history_years": 3,
-        "require_documentation": true,
-        "verify_landlord_references": true
-      }
-    },
-    {
-      "step": "ASSETS",
-      "required": true,
-      "provider": "Plaid",
-      "options": {
-        "verify_account_balance": true,
-        "analyze_transactions": true,
-        "verify_asset_ownership": true
-      }
-    }
-  ]
-}
-```
-
-## Success Criteria
-
-A successful tenant screening requires:
-1. Verified identity with valid government-issued ID
-2. Stable employment with income meeting minimum requirements
-3. Clean credit history with acceptable credit score
-4. Positive rental history with no evictions
-5. Sufficient income-to-rent ratio
-6. Verified assets and financial stability
-7. All required documentation validated
-
-## Risk Assessment
-
-The flow includes automatic risk assessment based on:
-- Income-to-rent ratio calculation
-- Credit score thresholds
-- Employment stability metrics
-- Rental history analysis
-- Asset verification
-- Income stream consistency
