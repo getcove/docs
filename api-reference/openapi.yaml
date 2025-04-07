@@ -277,11 +277,40 @@ paths:
               schema:
                 $ref: "#/components/schemas/rpcStatus"
       x-codegen-request-body-name: body
+  /v2/screening/run:
+    post:
+      tags:
+      - Screening
+      summary: Run screening
+      description: Run the screening
+      operationId: ScreeningService_RunScreening
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v2RunScreeningRequest'
+        required: true
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2RunScreeningResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpcStatus'
+      security:
+      - ApiTokenAuth: []
+      x-codegen-request-body-name: body
   /v2/screening/send:
     post:
       tags:
-      - ScreeningV2
-      summary: Send the screening link to the end user
+      - Screening
+      summary: Send the screening link to the applicant
       description: Send the screening link
       operationId: ScreeningService_SendScreening
       requestBody:
@@ -306,6 +335,62 @@ paths:
       security:
       - ApiTokenAuth: []
       x-codegen-request-body-name: body
+  /v2/screening/{screeningId}:
+    get:
+      tags:
+      - Screening
+      summary: Get the screening data
+      description: Get the screening data
+      operationId: ScreeningService_GetData
+      parameters:
+      - name: screeningId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2GetDataResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpcStatus'
+      security:
+      - ApiTokenAuth: []
+  /v2/screening/{screeningId}/report:
+    get:
+      tags:
+      - Screening
+      summary: Get the screening report
+      description: Get the screening report
+      operationId: ScreeningService_GetReport
+      parameters:
+      - name: screeningId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2GetReportResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpcStatus'
+      security:
+      - ApiTokenAuth: []
 components:
   schemas:
     protobufAny:
@@ -1141,6 +1226,348 @@ components:
           type: string
         fullAddress:
           type: string
+    BankDataIncomeTransactions:
+      type: object
+      properties:
+        balance:
+          type: number
+          format: double
+        code:
+          $ref: '#/components/schemas/protobufAny'
+        credit:
+          type: integer
+          format: int64
+        date:
+          type: string
+        debit:
+          $ref: '#/components/schemas/protobufAny'
+        description:
+          type: string
+        id:
+          type: string
+    BankDataInfoWithBank:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/GetDataResponseBankDataAddress'
+    EmploymentDataReference:
+      type: object
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+    GetDataResponseBankData:
+      type: object
+      properties:
+        infoWithBank:
+          $ref: '#/components/schemas/BankDataInfoWithBank'
+        incomeTransactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankDataIncomeTransactions'
+        rentTransactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/protobufAny'
+    GetDataResponseBankDataAddress:
+      type: object
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        provinceState:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        fullAddress:
+          type: string
+    GetDataResponseEmploymentData:
+      type: object
+      properties:
+        employmentDetails:
+          $ref: '#/components/schemas/GetDataResponseEmploymentDataEmploymentDetails'
+    GetDataResponseEmploymentDataAddress:
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+    GetDataResponseEmploymentDataEmployer:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/GetDataResponseEmploymentDataAddress'
+    GetDataResponseEmploymentDataEmployment:
+      type: object
+      properties:
+        employeeType:
+          type: string
+        employmentStatus:
+          type: string
+        jobTitle:
+          type: string
+        startDate:
+          type: string
+        minimumMonthsOfEmployment:
+          type: integer
+          format: int64
+        weeklyHours:
+          type: integer
+          format: int64
+        employer:
+          $ref: '#/components/schemas/GetDataResponseEmploymentDataEmployer'
+        reference:
+          $ref: '#/components/schemas/EmploymentDataReference'
+    GetDataResponseEmploymentDataEmploymentDetails:
+      type: object
+      properties:
+        identity:
+          $ref: '#/components/schemas/GetDataResponseEmploymentDataIdentity'
+        proofOfIncome:
+          type: array
+          items:
+            type: string
+        employment:
+          $ref: '#/components/schemas/GetDataResponseEmploymentDataEmployment'
+        income:
+          $ref: '#/components/schemas/GetDataResponseEmploymentDataIncome'
+    GetDataResponseEmploymentDataIdentity:
+      type: object
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+        dateofbirth:
+          type: string
+          format: date-time
+        email:
+          type: string
+        phone:
+          type: string
+        ssn:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postalcode:
+          type: string
+    GetDataResponseEmploymentDataIncome:
+      type: object
+      properties:
+        annualIncome:
+          type: integer
+          format: int64
+    GetDataResponseEquifaxData:
+      type: object
+    GetDataResponseIDData:
+      type: object
+      properties:
+        idValid:
+          type: boolean
+        documentType:
+          type: string
+        expirationDate:
+          type: string
+        idNumber:
+          type: string
+        name:
+          $ref: '#/components/schemas/GetDataResponseIDDataName'
+        email:
+          type: string
+        dateOfBirth:
+          type: string
+        address:
+          $ref: '#/components/schemas/GetDataResponseIDDataAddress'
+        verifications:
+          $ref: '#/components/schemas/GetDataResponseIDDataVerifications'
+        idPhotoUrls:
+          type: array
+          items:
+            type: string
+        selfieUrls:
+          type: array
+          items:
+            type: string
+        watchlistCheck:
+          $ref: '#/components/schemas/IDDataWatchlistCheck'
+    GetDataResponseIDDataAddress:
+      type: object
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        provinceState:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+    GetDataResponseIDDataName:
+      type: object
+      properties:
+        first:
+          type: string
+        last:
+          type: string
+    GetDataResponseIDDataVerifications:
+      type: object
+      properties:
+        liveness:
+          type: boolean
+        faceMatch:
+          type: boolean
+        idValid:
+          type: boolean
+    GetDataResponsePersonalInfoData:
+      type: object
+      properties:
+        citizenship:
+          type: string
+        maritalStatus:
+          type: string
+        sin:
+          type: string
+    GetDataResponseResidenceHistoryData:
+      type: object
+      properties:
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResidenceHistoryDataAddresses'
+    GetDataResponseResidenceHistoryDataAddress:
+      type: object
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        provinceState:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        fullAddress:
+          type: string
+    GetDataResponseScreeningSteps:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+        timestamp:
+          type: string
+        provider:
+          type: string
+        idData:
+          $ref: '#/components/schemas/GetDataResponseIDData'
+        personalData:
+          $ref: '#/components/schemas/GetDataResponsePersonalInfoData'
+        employmentData:
+          $ref: '#/components/schemas/GetDataResponseEmploymentData'
+        bankData:
+          $ref: '#/components/schemas/GetDataResponseBankData'
+        residenceHistoryData:
+          $ref: '#/components/schemas/GetDataResponseResidenceHistoryData'
+    IDDataEntities:
+      type: object
+      properties:
+        aliasType:
+          type: string
+        birthdate:
+          $ref: '#/components/schemas/protobufAny'
+        name:
+          type: string
+    IDDataMatchedLists:
+      type: object
+      properties:
+        countryCode:
+          type: string
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/IDDataEntities'
+        listType:
+          type: string
+        listTypes:
+          type: array
+          items:
+            type: string
+        matchTypes:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+        url:
+          type: string
+    IDDataWatchlistCheck:
+      type: object
+      properties:
+        hasMatch:
+          type: boolean
+        matchedLists:
+          type: array
+          items:
+            $ref: '#/components/schemas/IDDataMatchedLists'
+    ResidenceHistoryDataAddresses:
+      type: object
+      properties:
+        residentialStatus:
+          type: string
+        address:
+          $ref: '#/components/schemas/GetDataResponseResidenceHistoryDataAddress'
+        startDate:
+          type: string
+        endDate:
+          type: string
+        reasonForMoving:
+          type: string
+        rentAmount:
+          type: integer
+          format: int64
+        landlordName:
+          type: string
+        landlordEmail:
+          type: string
+        landlordPhone:
+          type: string
+    SendScreeningRequestOptions:
+      type: object
+      properties:
+        emailDisabled:
+          type: boolean
+        smsDisabled:
+          type: boolean
     screeningv2Payer:
       type: string
       default: PAYER_UNSPECIFIED
@@ -1161,15 +1588,54 @@ components:
           type: string
         lastName:
           type: string
+        options:
+          $ref: '#/components/schemas/SendScreeningRequestOptions'
         payer:
           $ref: '#/components/schemas/screeningv2Payer'
     screeningv2SendScreeningResponse:
       type: object
       properties:
-        userId:
-          type: string
         message:
           type: string
+        userId:
+          type: string
+        screeningId:
+          type: string
+        screeningLink:
+          type: string
+    v2GetDataResponse:
+      type: object
+      properties:
+        user:
+          type: string
+        flowId:
+          type: string
+        screeningSteps:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetDataResponseScreeningSteps'
+        equifaxData:
+          $ref: '#/components/schemas/GetDataResponseEquifaxData'
+    v2GetReportResponse:
+      type: object
+      properties:
+        url:
+          type: string
+    v2RunScreeningRequest:
+      type: object
+      properties:
+        screeningId:
+          type: string
+    v2RunScreeningResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        userId:
+          type: string
+        screeningId:
+          type: string
+
   securitySchemes:
     ApiTokenAuth:
       type: apiKey
