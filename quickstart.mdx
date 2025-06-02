@@ -84,86 +84,23 @@ Authorization: <accessToken>
 
 ---
 
-### Step 3: Create a Property
+### Step 3: Setup a Flow
 
-Before conducting a soft credit check for an applicant, you must create a property record using the `/v1/property` endpoint. This step establishes the property context for the screening process.
-
-#### Endpoint
-
-```md
-POST /v1/property
-```
-
-#### Description
-
-Creates a new property record in the system.
-
-#### Headers
-
-- `Authorization`: `<API Key>`
-- `Content-Type`: `application/json`
-- `Accept`: `application/json`
-
-#### Request Body
-
-```json
-{
-  "name": "<string>",
-  "rent": "<integer>",
-  "address": {
-    "street": "<string>",
-    "city": "<string>",
-    "provinceState": "<string>",
-    "country": "<string>",
-    "postalCode": "<string>",
-    "fullAddress": "<string>"
-  }
-}
-```
-
-#### Example
-
-```sh
-curl -X POST https://sandbox-api.getcove.co/v1/property \
--H "Authorization: your-access-token" \
--H "Content-Type: application/json" \
--H "Accept: application/json" \
--d '{
-  "name": "Sample Property",
-  "rent": 1500,
-  "address": {
-    "street": "123 Main St",
-    "city": "Sample City",
-    "provinceState": "Sample State",
-    "country": "Sample Country",
-    "postalCode": "12345",
-    "fullAddress": "123 Main St, Sample City, Sample State, Sample Country, 12345"
-  }
-}'
-```
-
-- **Success (200)**:
-
-  ```json
-  {
-    "propertyId": "<string>"
-  }
-  ```
-
-#### Notes
-
-- The `propertyId` from this response is required for the next step.
+Before you can create a screening, you need to setup a flow. You can do this in the dashboard (https://sandbox.cove.dev/).
+Remember: Flows allow you to create custom screening processes tailored to your specific needs. Instead of using predefined checks, 
+you can define a sequence of steps and reuse them across multiple screenings. Once you have created a flow, note the `flowID`.
+You will use it in the next step.
 
 ---
 
 ### Step 4: Send Screening Link
 
-Once the property is created, you can initiate a screening process by sending a link to the applicant. Use the `/v1/screening/send` endpoint for this.
+You can initiate a screening process by sending a link to the applicant. Use the `/v2/screening/send` endpoint for this.
 
 #### Endpoint
 
 ```
-POST /v1/screening/send
+POST /v2/screening/send
 ```
 
 #### Description
@@ -180,12 +117,18 @@ Generates and sends a screening link to the applicant, enabling them to complete
 
 ```json
 {
-  "checkType": "CHECK_TYPE_DEEP_CHECK",
+  "flowId": "<string>",
   "email": "<string>",
   "phone": "<string>",
   "firstName": "<string>",
   "lastName": "<string>",
-  "propertyId": "<string>",
+  "metadata": {
+    "customKey": "<any>"
+  },
+  "options": {
+    "emailDisabled": "<boolean>",
+    "smsDisabled": "<boolean>"
+  },
   "payer": "PAYER_SELF"
 }
 ```
@@ -193,17 +136,23 @@ Generates and sends a screening link to the applicant, enabling them to complete
 #### Example
 
 ```sh
-curl -X POST https://sandbox-api.getcove.co/v1/screening/send \
+curl -X POST https://sandbox-api.getcove.co/v2/screening/send \
 -H "Authorization: your-access-token" \
 -H "Content-Type: application/json" \
 -H "Accept: application/json" \
 -d '{
-  "checkType": "CHECK_TYPE_DEEP_CHECK",
+  "flowId": "flow-id-from-previous-step",
   "email": "applicant@example.com",
   "phone": "+14160001111",
   "firstName": "John",
   "lastName": "Doe",
-  "propertyId": "property-id-from-previous-step",
+  "metadata": {
+    "customKey": "customValue"
+  },
+  "options": {
+    "emailDisabled": false,
+    "smsDisabled": false
+  },
   "payer": "PAYER_SELF"
 }'
 ```
@@ -212,31 +161,103 @@ curl -X POST https://sandbox-api.getcove.co/v1/screening/send \
 
   ```json
   {
+    "message": "<string>",
     "userId": "<string>",
-    "message": "<string>"
+    "screeningId": "<string>",
+    "screeningLink": "<string>"
   }
   ```
 
 #### Notes
 
 - Provide accurate applicant information to ensure the screening link reaches the right individual.
-- The `userId` from this response will be required for retrieving the screening results.
+- The `screeningId` from this response will be required for retrieving the screening results or for other requests related to the screening.
+- If you set `emailDisabled` to `true`, the applicant will not receive an email.
+If you set `smsDisabled` to `true`, the applicant will not receive an SMS. You will be responsible for sharing the `screeningLink` with the applicant.
 
 ---
 
-### Step 5: Retrieve Screening Data
+### Step 5: Generate an iFrame for the Screening (Optional)
 
-Once the applicant completes the screening, you can fetch their results using the `/v1/screening/data/:userId` endpoint.
+If you prefer to embed the screening process directly into your application, you can generate an iFrame for the screening link.
+Use the `screeningLink` obtained from the previous step to create an iFrame. It will go in the `src` attribute of the iFrame.
+
+#### Example
+
+```html
+<iframe 
+  title="Cove Embed"
+  id="cove-embed"
+  allow="camera; microphone; accelerometer"
+  sandbox="allow-scripts allow-same-origin allow-forms"
+  height="800"
+  width="100%"
+  src="{url}" 
+></iframe>
+
+<script>
+  // For security, verify the origin
+  if (
+    event.origin !== 'https://app.cove.dev' &&
+    event.origin !== 'https://sandbox.cove.dev' &&
+    event.origin !== 'http://localhost:3000' &&
+    event.origin !== 'http://localhost:3001'
+  ) {
+    return;
+  }
+
+  window.addEventListener('message', function(event) {
+    const coveEmbed = document.getElementById('cove-embed');
+    coveEmbed?.contentWindow?.postMessage(event.data, "*");
+
+    // For security, verify the origin
+    if (
+      event.origin !== 'https://app.cove.dev' &&
+      event.origin !== 'https://sandbox.cove.dev' &&
+      event.origin !== 'http://localhost:3000'
+    ) {
+      return;
+    }
+
+    if (
+      event.data.source === "cove-embed" &&
+      event.data.status === "USER_COMPLETE"
+    ) {
+      console.log("message:", event.data);
+      coveEmbed.remove();
+    }
+  });
+</script>
+```
+
+---
+
+### Step 6: Get Screening Results
+
+There are two ways to get screening results. You can either retrieve the raw screening data or you can retrieve a PDF report of the screening.
+You can also do both. The raw data is useful for programmatic access, while the PDF report is useful for sharing with stakeholders or for record-keeping.
+
+- [Step 6.1: Retrieve Screening Data](#step-61-retrieve-screening-data)
+- [Step 6.2: Retrieve Screening Report PDF](#step-62-retrieve-screening-report-pdf)
+
+
+---
+
+<a id="step-61-retrieve-screening-data"></a>
+
+### Step 6.1: Retrieve Screening Data
+
+Once the applicant completes the screening, you can fetch their results using the `/v2/screening/:screeningId` endpoint.
 
 #### Endpoint
 
 ```
-GET /v1/screening/data/:userId
+GET /v2/screening/:screeningId
 ```
 
 #### Description
 
-Retrieves detailed screening results for a specific applicant.
+Retrieves detailed screening results for a specific session.
 
 #### Headers
 
@@ -245,12 +266,12 @@ Retrieves detailed screening results for a specific applicant.
 
 #### URL Parameters
 
-- `userId`: (Required) Unique identifier for the applicant.
+- `screeningId`: (Required) Unique identifier for the session.
 
 #### Example
 
 ```sh
-curl -X GET https://sandbox-api.getcove.co/v1/screening/data/<userId> \
+curl -X GET https://sandbox-api.getcove.co/v2/screening/<screeningId> \
 -H "Authorization: your-access-token" \
 -H "Accept: application/json"
 ```
@@ -259,14 +280,202 @@ curl -X GET https://sandbox-api.getcove.co/v1/screening/data/<userId> \
 
   ```json
   {
-    "screening": { ... },
-    "user": { ... }
+    "user": "<string>",
+    "flowId": "<string>",
+    "metadata": { ... },
+    "screeningSteps": { ... },
+    "data": { ... }
   }
   ```
 
 #### Notes
 
 - Use this endpoint to evaluate the applicant’s suitability based on their screening data.
+
+---
+
+<a id="step-62-retrieve-screening-report-pdf"></a>
+
+### Step 6.2: Retrieve Screening Report PDF
+
+Once the applicant completes the screening, you can also fetch their results as a PDF
+report using the `/v2/screening/:screeningId/report` endpoint.
+
+#### Endpoint
+
+```
+GET /v2/screening/:screeningId/report
+```
+
+#### Description
+
+Retrieves detailed screening results for a specific session as a PDF report.
+
+#### Headers
+
+- `Authorization`: `<API Key>`
+- `Accept`: `application/json`
+
+#### URL Parameters
+
+- `screeningId`: (Required) Unique identifier for the session.
+
+#### Example
+
+```sh
+curl -X GET https://sandbox-api.getcove.co/v2/screening/<screeningId>/report \
+-H "Authorization: your-access-token" \
+-H "Accept: application/json"
+```
+
+- **Success (200)**:
+
+  ```json
+  {
+    "url": "<string>"
+  }
+  ```
+
+#### Notes
+
+- Use this endpoint to evaluate the applicant’s suitability based on their screening data.
+
+---
+
+### Step 7: Run Manual Credit Check (If Applicable)
+
+If an applicant's credit check was not successful after they've completed the screening application, or if you are using your own
+consent form and application and are not using other nodes in the flow, you can run a credit check for the applicant yourself.
+
+- [Step 7.1: Add Data for Credit Check](#step-71-add-data-for-credit-check)
+- [Step 7.2: Run the Credit Check](#step-72-run-the-credit-check)
+
+<a id="step-71-add-data-for-credit-check"></a>
+
+### Part 7.1: Add Data for Credit Check
+
+Before running a credit check, you must add the applicant’s data to their account.
+
+```
+POST /v1/user/:userId
+```
+
+#### Description
+
+Update user's information for the screening.
+
+#### Headers
+
+- `Authorization`: `<API Key>`
+- `Content-Type`: `application/json`
+- `Accept`: `application/json`
+
+#### Request Body
+
+```json
+{
+  "firstName": "<string>",
+  "lastName": "<string>",
+  "address": {
+    "street": "<string>",
+    "city": "<string>",
+    "provinceState": "<string>",
+    "country": "<string>",
+    "postalCode": "<string>"
+  },
+  "sin": "<string>",
+  "dateOfBirth": "<string>"
+}
+```
+
+#### Example
+
+```sh
+curl -X POST https://sandbox-api.getcove.co/v1/user/<userId> \
+-H "Authorization: your-access-token" \
+-H "Content-Type: application/json" \
+-H "Accept: application/json" \
+-d '{
+  "firstName": "John",
+  "lastName": "Doe",
+  "address": {
+    "street": "123 Main St",
+    "city": "Toronto",
+    "provinceState": "ON",
+    "country": "Canada",
+    "postalCode": "M5H 2N2"
+  },
+  "sin": "123-456-789",
+  "dateOfBirth": "1990-01-01"
+}'
+```
+
+- **Success (200)**:
+
+  ```json
+  {
+    "message": "<string>",
+    "userId": "<string>"
+  }
+  ```
+
+#### Notes
+
+- Ensure that the `userId` corresponds to the applicant you are screening.
+
+<a id="step-72-run-the-credit-check"></a>
+
+### Step 7.2: Run the Credit Check
+
+Once the applicant’s data is added, run the credit check.
+
+```
+POST /v2/screening/run
+```
+
+#### Description
+
+Run the screening for the applicant using the provided user data.
+
+#### Headers
+
+- `Authorization`: `<API Key>`
+- `Content-Type`: `application/json`
+- `Accept`: `application/json`
+
+#### Request Body
+
+```json
+{
+  "screeningId": "<string>"
+}
+```
+
+#### Example
+
+```sh
+curl -X POST https://sandbox-api.getcove.co/v2/screening/run \
+-H "Authorization: your-access-token" \
+-H "Content-Type: application/json" \
+-H "Accept: application/json" \
+-d '{
+  "screeningId": "screening-id-from-earlier-step"
+}'
+```
+
+- **Success (200)**:
+
+  ```json
+  {
+    "message": "<string>",
+    "userId": "<string>",
+    "screeningId": "<string>"
+  }
+  ```
+
+#### Notes
+
+- You are responsible for ensuring compliance with consent laws when running a credit check yourself.
 
 ---
 
