@@ -16,7 +16,7 @@ View a complete sample report: [Deep Check Sample Report](/public/deep-check-sam
 ## Endpoint
 
 ```http
-GET /v1/screening/report/{userId}
+GET /v2/screening/{screeningId}/report
 ```
 
 ## Authentication
@@ -25,9 +25,9 @@ All requests must include an API token in the Authorization header.
 
 ## Path Parameters
 
-| Parameter | Type   | Description                                      |
-|-----------|--------|--------------------------------------------------|
-| userId    | string | The unique identifier of the applicant to screen |
+|  Parameter  | Type   | Description                                    |
+|-------------|--------|------------------------------------------------|
+| screeningId | string | The unique identifier of the screening session |
 
 ## Response
 
@@ -53,9 +53,9 @@ The generated PDF report typically includes:
 
 | Status Code | Description                                                  |
 |-------------|--------------------------------------------------------------|
-| 400         | Bad Request - Invalid userId or malformed request            |
-| 401         | Unauthorized - Missing or invalid API token                   |
-| 404         | Not Found - Report not found for the specified user          |
+| 400         | Bad Request - Invalid screeningId or malformed request       |
+| 401         | Unauthorized - Missing or invalid API token                  |
+| 404         | Not Found - Report not found for the specified session       |
 | 500         | Internal Server Error - Something went wrong on our end      |
 
 ## Usage Notes
