@@ -1,6 +1,6 @@
 ---
 title: "Screening Data"
-description: "Retrieve detailed screening data for a specific applicant."
+description: "Retrieve detailed screening data for a specific session."
 ---
 
 # Screening Data API
@@ -12,7 +12,7 @@ View the OpenAPI specification for this endpoint at [Get Screening Data](/api-re
 ## Endpoint
 
 ```http
-GET /v1/screening/data/{userId}
+GET /v2/screening/data/{screeningId}
 ```
 
 ## Authentication
@@ -21,15 +21,11 @@ All requests must include an API token in the Authorization header.
 
 ## Path Parameters
 
-| Parameter | Type   | Description                                      |
-|-----------|--------|--------------------------------------------------|
-| userId    | string | The unique identifier of the applicant to screen |
+|  Parameter  | Type   | Description                                    |
+|-------------|--------|------------------------------------------------|
+| screeningId | string | The unique identifier of the screening session |
 
-## Response
-
-The response includes two main objects:
-
-### Screening Object
+## Response Object
 
 Contains the comprehensive screening results including:
 
@@ -38,134 +34,203 @@ Contains the comprehensive screening results including:
 - Bank account details
 - Landlord reviews
 - Risk assessment flags
+- The metadata you provided when creating the screening session
 
 ```json
 {
-  "id": "string",
-  "checkType": "string",
-  "coveScore": "number",
-  "creditScore": "integer",
-  "rent": "integer",
-  "monthlyIncome": "number",
-  "monthlyDebt": "number",
-  "totalDebt": "number",
-  "debtLimit": "number",
-  "landlordReviews": [
-    {
-      "email": "string",
-      "phone": "string",
-      "wouldRentToThemAgain": "integer",
-      "paysRentOnTime": "integer",
-      "cleanliness": "integer",
-      "didNotDamageProperty": "integer",
-      "additionalDetails": "string"
-    }
-  ],
-  "monthlyData": [
-    {
-      "averageBalance": "number",
-      "income": "number",
-      "month": "string",
-      "spending": "number"
-    }
-  ],
-  "greenFlags": ["string"],
-  "redFlags": ["object"],
-  "rentTransactions": [
+  "user": "string",
+  "flowId": "string",
+  "metadata": {
+    "additionalProp1": "string",
+    "additionalProp2": "string",
+    "additionalProp3": "string"
+  },
+  "screeningSteps": [
     {
       "id": "string",
-      "type": "string", // "DEBIT" or "CREDIT"
-      "amount": "number",
-      "isoCurrencyCode": "string",
-      "description": "string",
-      "date": "string" // ISO 8601 date
-    }
-  ],
-  "updatedAt": "string" // date-time
-}
-```
-
-### User Object
-
-Contains the applicant's personal information and submitted documentation:
-
-```json
-{
-  "id": "string",
-  "phoneNumber": "string",
-  "email": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "dateOfBirth": "string",
-  "checkComplete": "boolean",
-  "currentAddress": {
-    "line1": "string",
-    "line2": "string",
-    "city": "string",
-    "state": "string",
-    "postalCode": "string",
-    "country": "string"
-  },
-  "employmentDetails": {
-    "identity": {
-      "firstName": "string",
-      "lastName": "string",
-      "dateOfBirth": "string",
-      "email": "string",
-      "phone": "string",
-      "ssn": "string",
-      "address": "string",
-      "city": "string",
-      "state": "string",
-      "postalCode": "string"
-    },
-    "income": {
-      "income": "number",
-      "incomeType": "string",
-      "annualIncome": "integer",
-      "hourlyIncome": "number",
-      "netHourlyRate": "number",
-      "payCycle": "string"
-    },
-    "employment": {
-      "employeeType": "string",
-      "employmentStatus": "string",
-      "jobTitle": "string",
-      "startDate": "string",
-      "minimumMonthsOfEmployment": "integer",
-      "weeklyHours": "integer",
-      "employer": {
-        "name": "string",
+      "name": "string",
+      "status": "string",
+      "timestamp": "string",
+      "provider": "string",
+      "idData": {
+        "idValid": true,
+        "documentType": "string",
+        "expirationDate": "string",
+        "idNumber": "string",
+        "name": {
+          "first": "string",
+          "last": "string"
+        },
+        "email": "string",
+        "dateOfBirth": "string",
         "address": {
-          "line1": "string",
-          "line2": "string",
+          "street": "string",
           "city": "string",
-          "state": "string",
+          "provinceState": "string",
           "postalCode": "string",
           "country": "string"
+        },
+        "verifications": {
+          "liveness": true,
+          "faceMatch": true,
+          "idValid": true
+        },
+        "idPhotoUrls": [
+          "string"
+        ],
+        "selfieUrls": [
+          "string"
+        ],
+        "watchlistCheck": {
+          "hasMatch": true,
+          "matchedLists": [
+            {
+              "countryCode": "string",
+              "entities": [
+                {
+                  "aliasType": "string",
+                  "birthdate": {
+                    "@type": "string",
+                    "additionalProp1": {},
+                    "additionalProp2": {},
+                    "additionalProp3": {}
+                  },
+                  "name": "string"
+                }
+              ],
+              "listType": "string",
+              "listTypes": [
+                "string"
+              ],
+              "matchTypes": [
+                "string"
+              ],
+              "name": "string",
+              "url": "string"
+            }
+          ]
         }
+      },
+      "personalData": {
+        "citizenship": "string",
+        "maritalStatus": "string"
+      },
+      "employmentData": {
+        "employmentDetails": {
+          "identity": {
+            "firstname": "string",
+            "lastname": "string",
+            "dateofbirth": "2025-06-02T20:35:02.095Z",
+            "email": "string",
+            "phone": "string",
+            "ssn": "string",
+            "address": "string",
+            "city": "string",
+            "state": "string",
+            "postalcode": "string"
+          },
+          "proofOfIncome": [
+            "string"
+          ],
+          "employment": {
+            "employeeType": "string",
+            "employmentStatus": "string",
+            "jobTitle": "string",
+            "startDate": "string",
+            "minimumMonthsOfEmployment": 0,
+            "weeklyHours": 0,
+            "employer": {
+              "name": "string",
+              "address": {
+                "line1": "string",
+                "line2": "string",
+                "city": "string",
+                "state": "string",
+                "postalCode": "string",
+                "country": "string"
+              }
+            },
+            "reference": {
+              "firstname": "string",
+              "lastname": "string",
+              "phone": "string",
+              "email": "string"
+            }
+          },
+          "income": {
+            "annualIncome": 0
+          }
+        }
+      },
+      "bankData": {
+        "infoWithBank": {
+          "name": "string",
+          "address": {
+            "street": "string",
+            "city": "string",
+            "provinceState": "string",
+            "country": "string",
+            "postalCode": "string",
+            "fullAddress": "string"
+          }
+        },
+        "incomeTransactions": [
+          {
+            "balance": 0,
+            "code": {
+              "@type": "string",
+              "additionalProp1": {},
+              "additionalProp2": {},
+              "additionalProp3": {}
+            },
+            "credit": 0,
+            "date": "string",
+            "debit": {
+              "@type": "string",
+              "additionalProp1": {},
+              "additionalProp2": {},
+              "additionalProp3": {}
+            },
+            "description": "string",
+            "id": "string"
+          }
+        ],
+        "rentTransactions": [
+          {
+            "@type": "string",
+            "additionalProp1": {},
+            "additionalProp2": {},
+            "additionalProp3": {}
+          }
+        ]
+      },
+      "residenceHistoryData": {
+        "addresses": [
+          {
+            "residentialStatus": "string",
+            "address": {
+              "street": "string",
+              "city": "string",
+              "provinceState": "string",
+              "country": "string",
+              "postalCode": "string",
+              "fullAddress": "string"
+            },
+            "startDate": "string",
+            "endDate": "string",
+            "reasonForMoving": "string",
+            "rentAmount": 0,
+            "landlordName": "string",
+            "landlordEmail": "string",
+            "landlordPhone": "string"
+          }
+        ]
       }
     }
-  },
-  "rentals": [
-    {
-      "address": {
-        "line1": "string",
-        "line2": "string",
-        "city": "string",
-        "state": "string",
-        "postalCode": "string",
-        "country": "string"
-      },
-      "start": "string",
-      "reasonForMoving": "string",
-      "rentAmount": "integer",
-      "landlordName": "string",
-      "landlordEmail": "string",
-      "landlordPhone": "string",
-      "id": "string"
-    }
-  ]
+  ],
+  "data": {
+    "equifaxCredit": {}
+  }
 }
 ```
 
@@ -173,7 +238,7 @@ Contains the applicant's personal information and submitted documentation:
 
 | Status Code | Description                                                  |
 |-------------|--------------------------------------------------------------|
-| 400         | Bad Request - Invalid userId or malformed request            |
-| 401         | Unauthorized - Missing or invalid API token                   |
+| 400         | Bad Request - Invalid screeningId or malformed request       |
+| 401         | Unauthorized - Missing or invalid API token                  |
 | 404         | Not Found - Screening data not found for the specified user  |
 | 500         | Internal Server Error - Something went wrong on our end      |
