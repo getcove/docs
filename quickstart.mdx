@@ -352,7 +352,7 @@ consent form and application and are not using other nodes in the flow, you can 
 
 <a id="step-71-add-data-for-credit-check"></a>
 
-### Part 7.1: Add Data for Credit Check
+### Step 7.1: Add Data for Credit Check
 
 Before running a credit check, you must add the applicant’s data to their account.
 
@@ -476,6 +476,77 @@ curl -X POST https://sandbox-api.getcove.co/v2/screening/run \
 #### Notes
 
 - You are responsible for ensuring compliance with consent laws when running a credit check yourself.
+
+---
+
+### Step 8: Re-send a Specific Screening Step (If Skipped)
+
+If an applicant skipped a step (e.g., bank verification) or needs to re-complete a part of the screening,
+you can re-send the screening link for that specific step using the `/v2/screening/resend-step` endpoint.
+
+#### Endpoint
+
+```
+POST /v2/screening/resend-step
+```
+
+#### Description
+
+Re-sends the screening link for a specific step in the flow to the applicant. This is helpful if a step
+was skipped or needs to be redone (e.g., `FINANCIAL_VERIFICATION`).
+
+#### Headers
+
+- `Authorization`: `<API Key>`
+- `Content-Type`: `application/json`
+- `Accept`: `application/json`
+
+#### Request Body
+
+```json
+{
+  "screeningId": "<string>",
+  "skippedStepName": "<string>", 
+  "options": {
+    "emailDisabled": "<boolean>",
+    "smsDisabled": "<boolean>"
+  }
+}
+```
+
+#### Example
+
+```sh
+curl -X POST https://sandbox-api.getcove.co/v2/screening/resend-step \
+-H "Authorization: Bearer your-access-token" \
+-H "Content-Type: application/json" \
+-H "Accept: application/json" \
+-d '{
+  "screeningId": "your-screening-id",
+  "skippedStepName": "FINANCIAL_VERIFICATION",
+  "options": {
+    "emailDisabled": true,
+    "smsDisabled": true
+  }
+}'
+```
+
+- **Success (200)**:
+
+  ```json
+  {
+    "message": "Flow screening sent successfully",
+    "user_id": "6830d7964f5de74a4e600869",
+    "retry_link": "https://sandbox.cove.dev/s/6830d7964f5de74a4e60086b?resent=FINANCIAL_VERIFICATION&login-code=abc123&email=user%40example.com"
+  }
+  ```
+
+#### Notes
+
+- The `retry_link` can be used to direct the applicant to the specific step that was skipped.
+- Valid values for `skippedStepName` include `FINANCIAL_VERIFICATION`, `ID_VERIFICATION`, `EMPLOYMENT`, `CREDIT_CHECK`, `RESIDENCE_HISTORY`,
+`CUSTOM_FORM`, and `PERSONAL_INFO` with more being added in the future.
+- This feature is particularly useful when an applicant abandons the process or encounters an issue with a specific step.
 
 ---
 
