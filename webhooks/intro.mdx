@@ -49,8 +49,11 @@ Each webhook notification includes a JSON payload with the following structure:
     "org": {
         "id": "org_987654321"
     },
-    "property": {
-        "id": "prop_123456"
+    "screening": {
+        "id": "screen_123456",
+        "metadata": {
+            "custom_key": "custom_value"
+        }
     },
     "listor": {
         "id": "lst_789012"
@@ -66,8 +69,9 @@ Each webhook notification includes a JSON payload with the following structure:
   - `status`: Current status of the screening (see [Status Values](/webhooks/status))
 - `org`: Organization information
   - `id`: Organization identifier
-- `property`: Property information
-  - `id`: Property identifier
+- `screening`: Screening information
+  - `id`: Screening identifier
+  - `metadata`: Custom metadata associated with the screening
 - `listor`: Listor information
   - `id`: Listor identifier
 

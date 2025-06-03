@@ -1,14 +1,41 @@
 openapi: 3.0.1
 info:
-  title: proto/screening/v1/screening.proto
+  title: proto/screening/v2/screening.proto
   version: version not set
 servers:
-  - url: https://sandbox-api.getcove.co/
+- url: /
 security:
-  - ApiTokenAuth: []
+- ApiTokenAuth: []
 tags:
-  - name: ScreeningService
+- name: ScreeningService
 paths:
+  /v1/auth/login:
+    post:
+      tags:
+      - Auth
+      summary: Login to the Cove API
+      description: Login to the Cove API
+      operationId: AuthService_Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v1LoginRequest'
+        required: true
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1LoginResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpcStatus'
+      x-codegen-request-body-name: body
   /v1/flows:
     get:
       tags:
@@ -62,7 +89,7 @@ paths:
   /v1/flows/steps/list:
     get:
       tags:
-      - Step
+      - Flow
       summary: List steps
       description: List steps
       operationId: FlowService_ListSteps
@@ -108,44 +135,15 @@ paths:
                 $ref: '#/components/schemas/rpcStatus'
       security:
       - ApiTokenAuth: []
-  /v1/property:
-    post:
-      tags:
-      - Property
-      summary: Create a property
-      description: Create a property
-      operationId: PropertyService_CreateProperty
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/v1CreatePropertyRequest'
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1CreatePropertyResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/rpcStatus'
-      security:
-      - ApiTokenAuth: []
-      x-codegen-request-body-name: body
-  /v1/property/{propertyId}:
+  /v1/screening/data/{userId}:
     get:
       tags:
-      - Property
-      summary: Get the property
-      description: Get the property
-      operationId: PropertyService_GetProperty
+      - Screening V1
+      summary: Get the screening data
+      description: Get the screening data
+      operationId: ScreeningService_GetScreeningData
       parameters:
-      - name: propertyId
+      - name: userId
         in: path
         required: true
         schema:
@@ -156,7 +154,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v1GetPropertyResponse'
+                $ref: '#/components/schemas/v1GetScreeningDataResponse'
         default:
           description: An unexpected error response.
           content:
@@ -165,74 +163,46 @@ paths:
                 $ref: '#/components/schemas/rpcStatus'
       security:
       - ApiTokenAuth: []
-  /v1/screening/data/{userId}:
-    get:
-      tags:
-        - Screening
-      summary: Get the screening data
-      description: Get the screening data
-      operationId: ScreeningService_GetScreeningData
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/v1GetScreeningDataResponse"
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/rpcStatus"
-      security:
-        - ApiTokenAuth: []
   /v1/screening/report/{userId}:
     get:
       tags:
-        - Screening
+      - Screening V1
       summary: Get the screening report
       description: Get the screening report
       operationId: ScreeningService_GetScreeningReport
       parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         "200":
           description: A successful response.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/v1GetScreeningReportResponse"
+                $ref: '#/components/schemas/v1GetScreeningReportResponse'
         default:
           description: An unexpected error response.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/rpcStatus"
+                $ref: '#/components/schemas/rpcStatus'
       security:
-        - ApiTokenAuth: []
-  /v1/screening/send:
+      - ApiTokenAuth: []
+  /v2/screening/resend-step:
     post:
       tags:
-        - Screening
-      summary: Send the screening link to the end user
-      description: Send the screening link
-      operationId: ScreeningService_SendScreening
+      - Screening V2
+      summary: Re-send the screening link for a specific step
+      description: Re-send the screening link for a specific step to the applicant
+      operationId: ScreeningService_ResendScreeningStep
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/screeningv1SendScreeningRequest"
+              $ref: '#/components/schemas/v2ResendScreeningStepRequest'
         required: true
       responses:
         "200":
@@ -240,47 +210,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/screeningv1SendScreeningResponse"
+                $ref: '#/components/schemas/v2ResendScreeningStepResponse'
         default:
           description: An unexpected error response.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/rpcStatus"
+                $ref: '#/components/schemas/rpcStatus'
       security:
-        - ApiTokenAuth: []
-      x-codegen-request-body-name: body
-  /v1/rent-reporting/report:
-    post:
-      tags:
-        - Rent Reporting
-      summary: Report rent
-      description: Report rent payments of a renter to Credit Agencies
-      operationId: RentReportingService_Report
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/v1ReportRequest"
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/v1ReportResponse"
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/rpcStatus"
+      - ApiTokenAuth: []
       x-codegen-request-body-name: body
   /v2/screening/run:
     post:
       tags:
-      - Screening
+      - Screening V2
       summary: Run screening
       description: Run the screening
       operationId: ScreeningService_RunScreening
@@ -309,7 +252,7 @@ paths:
   /v2/screening/send:
     post:
       tags:
-      - Screening
+      - Screening V2
       summary: Send the screening link to the applicant
       description: Send the screening link
       operationId: ScreeningService_SendScreening
@@ -317,7 +260,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/screeningv2SendScreeningRequest'
+              $ref: '#/components/schemas/v2SendScreeningRequest'
         required: true
       responses:
         "200":
@@ -325,7 +268,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/screeningv2SendScreeningResponse'
+                $ref: '#/components/schemas/v2SendScreeningResponse'
         default:
           description: An unexpected error response.
           content:
@@ -338,7 +281,7 @@ paths:
   /v2/screening/{screeningId}:
     get:
       tags:
-      - Screening
+      - Screening V2
       summary: Get the screening data
       description: Get the screening data
       operationId: ScreeningService_GetData
@@ -366,7 +309,7 @@ paths:
   /v2/screening/{screeningId}/report:
     get:
       tags:
-      - Screening
+      - Screening V2
       summary: Get the screening report
       description: Get the screening report
       operationId: ScreeningService_GetReport
@@ -391,236 +334,70 @@ paths:
                 $ref: '#/components/schemas/rpcStatus'
       security:
       - ApiTokenAuth: []
+  /v1/user/{userId}:
+    post:
+      tags:
+      - User
+      summary: Update user information
+      description: Update user's information for the screening
+      operationId: UserService_UpdateUser
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserServiceUpdateUserBody'
+        required: true
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1UpdateUserResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpcStatus'
+      security:
+      - ApiTokenAuth: []
+      x-codegen-request-body-name: body
+  /v1/rent-reporting/report:
+    post:
+      tags:
+      - Rent Reporting
+      summary: Report rent
+      description: Report rent payments of a renter to Credit Agencies
+      operationId: RentReportingService_Report
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v1ReportRequest'
+        required: true
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1ReportResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpcStatus'
+      x-codegen-request-body-name: body
 components:
   schemas:
-    protobufAny:
-      type: object
-      properties:
-        "@type":
-          type: string
-          description: >-
-            A URL/resource name that uniquely identifies the type of the
-            serialized
-
-            protocol buffer message. This string must contain at least
-
-            one "/" character. The last segment of the URL's path must represent
-
-            the fully qualified name of the type (as in
-
-            `path/google.protobuf.Duration`). The name should be in a canonical
-            form
-
-            (e.g., leading "." is not accepted).
-
-
-            In practice, teams usually precompile into the binary all types that
-            they
-
-            expect it to use in the context of Any. However, for URLs which use
-            the
-
-            scheme `http`, `https`, or no scheme, one can optionally set up a
-            type
-
-            server that maps type URLs to message definitions as follows:
-
-
-            * If no scheme is provided, `https` is assumed.
-
-            * An HTTP GET on the URL must yield a [google.protobuf.Type][]
-              value in binary format, or produce an error.
-            * Applications are allowed to cache lookup results based on the
-              URL, or have them precompiled into a binary to avoid any
-              lookup. Therefore, binary compatibility needs to be preserved
-              on changes to types. (Use versioned type names to manage
-              breaking changes.)
-
-            Note: this functionality is not currently available in the official
-
-            protobuf release, and it is not used for type URLs beginning with
-
-            type.googleapis.com. As of May 2023, there are no widely used type
-            server
-
-            implementations and no plans to implement one.
-
-
-            Schemes other than `http`, `https` (or the empty scheme) might be
-
-            used with implementation specific semantics.
-      additionalProperties:
-        type: object
-      description: >-
-        `Any` contains an arbitrary serialized protocol buffer message along
-        with a
-
-        URL that describes the type of the serialized message.
-
-
-        Protobuf library provides support to pack/unpack Any values in the form
-
-        of utility functions or additional generated methods of the Any type.
-
-
-        Example 1: Pack and unpack a message in C++.
-
-            Foo foo = ...;
-            Any any;
-            any.PackFrom(foo);
-            ...
-            if (any.UnpackTo(&foo)) {
-              ...
-            }
-
-        Example 2: Pack and unpack a message in Java.
-
-            Foo foo = ...;
-            Any any = Any.pack(foo);
-            ...
-            if (any.is(Foo.class)) {
-              foo = any.unpack(Foo.class);
-            }
-            // or ...
-            if (any.isSameTypeAs(Foo.getDefaultInstance())) {
-              foo = any.unpack(Foo.getDefaultInstance());
-            }
-
-         Example 3: Pack and unpack a message in Python.
-
-            foo = Foo(...)
-            any = Any()
-            any.Pack(foo)
-            ...
-            if any.Is(Foo.DESCRIPTOR):
-              any.Unpack(foo)
-              ...
-
-         Example 4: Pack and unpack a message in Go
-
-             foo := &pb.Foo{...}
-             any, err := anypb.New(foo)
-             if err != nil {
-               ...
-             }
-             ...
-             foo := &pb.Foo{}
-             if err := any.UnmarshalTo(foo); err != nil {
-               ...
-             }
-
-        The pack methods provided by protobuf library will by default use
-
-        'type.googleapis.com/full.type.name' as the type URL and the unpack
-
-        methods only use the fully qualified type name after the last '/'
-
-        in the type URL, for example "foo.bar.com/x/y.z" will yield type
-
-        name "y.z".
-
-
-        JSON
-
-        ====
-
-        The JSON representation of an `Any` value uses the regular
-
-        representation of the deserialized, embedded message, with an
-
-        additional field `@type` which contains the type URL. Example:
-
-            package google.profile;
-            message Person {
-              string first_name = 1;
-              string last_name = 2;
-            }
-
-            {
-              "@type": "type.googleapis.com/google.profile.Person",
-              "firstName": <string>,
-              "lastName": <string>
-            }
-
-        If the embedded message type is well-known and has a custom JSON
-
-        representation, that representation will be embedded adding a field
-
-        `value` which holds the custom JSON in addition to the `@type`
-
-        field. Example (for message [google.protobuf.Duration][]):
-
-            {
-              "@type": "type.googleapis.com/google.protobuf.Duration",
-              "value": "1.212s"
-            }
-    rpcStatus:
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-        details:
-          type: array
-          items:
-            $ref: '#/components/schemas/protobufAny'
-    protopropertyv1CoveAddress:
-      type: object
-      properties:
-        street:
-          type: string
-        city:
-          type: string
-        provinceState:
-          type: string
-        country:
-          type: string
-        postalCode:
-          type: string
-        fullAddress:
-          type: string
-    v1CreatePropertyRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        rent:
-          type: integer
-          format: int32
-        address:
-          $ref: '#/components/schemas/protopropertyv1CoveAddress'
-    v1CreatePropertyResponse:
-      type: object
-      properties:
-        propertyId:
-          type: string
-    v1GetPropertyResponse:
-      type: object
-      properties:
-        propertyId:
-          type: string
-        name:
-          type: string
-        rent:
-          type: integer
-          format: int32
-        address:
-          $ref: '#/components/schemas/protopropertyv1CoveAddress'
-    protorent_reportingv1CoveAddress:
-      type: object
-      properties:
-        street:
-          type: string
-        city:
-          type: string
-        provinceState:
-          type: string
-        country:
-          type: string
-        postalCode:
-          type: string
     flowv1Flow:
       type: object
       properties:
@@ -632,6 +409,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/v1Step'
+        options:
+          $ref: '#/components/schemas/v1FlowOptions'
     v1CreateFlowRequest:
       type: object
       properties:
@@ -651,6 +430,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/v1StepCreationDTO'
+        options:
+          $ref: '#/components/schemas/v1FlowOptions'
+    v1FlowOptions:
+      type: object
+      properties:
+        runCreditCheck:
+          $ref: '#/components/schemas/v1RunCreditCheck'
     v1GetFlowResponse:
       type: object
       properties:
@@ -670,11 +456,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/v1Step'
-    v1Options:
+    v1RunCreditCheck:
       type: object
       properties:
-        skippable:
-          type: boolean
+        provider:
+          type: array
+          items:
+            type: string
     v1Step:
       type: object
       properties:
@@ -683,549 +471,19 @@ components:
         name:
           type: string
         options:
-          $ref: '#/components/schemas/v1Options'
+          $ref: '#/components/schemas/v1StepOptions'
     v1StepCreationDTO:
       type: object
       properties:
         id:
           type: string
         options:
-          $ref: '#/components/schemas/v1Options'
-    v1AccountStatus:
-      type: string
-      default: ACCOUNT_STATUS_UNSPECIFIED
-      enum:
-        - ACCOUNT_STATUS_UNSPECIFIED
-        - ACCOUNT_STATUS_IN_GOOD_STANDING
-        - ACCOUNT_STATUS_30_DAYS_PAST_DUE
-        - ACCOUNT_STATUS_60_DAYS_PAST_DUE
-        - ACCOUNT_STATUS_90_DAYS_PAST_DUE
-        - ACCOUNT_STATUS_120_DAYS_PAST_DUE
-        - ACCOUNT_STATUS_150_DAYS_PAST_DUE
-        - ACCOUNT_STATUS_180_DAYS_PAST_DUE
-    v1ECOACode:
-      type: string
-      default: ECOA_CODE_UNSPECIFIED
-      enum:
-        - ECOA_CODE_UNSPECIFIED
-        - ECOA_CODE_INDIVIDUAL
-        - ECOA_CODE_JOINT
-    v1ReportRequest:
+          $ref: '#/components/schemas/v1StepOptions'
+    v1StepOptions:
       type: object
       properties:
-        leaseStartDate:
-          type: string
-        leaseEndDate:
-          type: string
-        rentAmount:
-          type: string
-          format: uint64
-        rentPaid:
-          type: string
-          format: uint64
-        currentBalanceDue:
-          type: number
-          format: double
-        amountPastDue:
-          type: number
-          format: double
-        accountStatus:
-          $ref: "#/components/schemas/v1AccountStatus"
-        paymentHistoryProfile:
-          type: string
-        dateOfFirstDelinquency:
-          type: string
-        lastName:
-          type: string
-        firstName:
-          type: string
-        middleName:
-          type: string
-        dateOfBirth:
-          type: string
-        phone:
-          type: string
-        email:
-          type: string
-        ecoaCode:
-          $ref: "#/components/schemas/v1ECOACode"
-        address:
-          $ref: "#/components/schemas/protorent_reportingv1CoveAddress"
-    v1ReportResponse:
-      type: object
-      properties:
-        message:
-          type: string
-        id:
-          type: string
-    ScreeningLandlordReview:
-      type: object
-      properties:
-        email:
-          type: string
-        phone:
-          type: string
-        wouldRentToThemAgain:
-          type: integer
-          format: int64
-        paysRentOnTime:
-          type: integer
-          format: int64
-        cleanliness:
-          type: integer
-          format: int64
-        didNotDamageProperty:
-          type: integer
-          format: int64
-        additionalDetails:
-          type: string
-    ScreeningMonthlyData:
-      type: object
-      properties:
-        averageBalance:
-          type: number
-          format: double
-        income:
-          type: number
-          format: double
-        month:
-          type: string
-        spending:
-          type: number
-          format: double
-    ScreeningRentTransaction:
-      type: object
-      properties:
-        id:
-          type: string
-        type:
-          title: '"DEBIT" or "CREDIT"'
-          type: string
-        amount:
-          type: number
-          format: double
-        isoCurrencyCode:
-          type: string
-        description:
-          type: string
-        date:
-          title: ISO 8601 date
-          type: string
-    UserCommonAddress:
-      type: object
-      properties:
-        line1:
-          type: string
-        line2:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        postalCode:
-          type: string
-        country:
-          type: string
-    UserEmployer:
-      type: object
-      properties:
-        name:
-          type: string
-        address:
-          $ref: "#/components/schemas/UserCommonAddress"
-    UserEmployment:
-      type: object
-      properties:
-        employeeType:
-          type: string
-        employmentStatus:
-          type: string
-        jobTitle:
-          type: string
-        startDate:
-          type: string
-          format: date-time
-        minimumMonthsOfEmployment:
-          type: integer
-          format: int64
-        weeklyHours:
-          type: integer
-          format: int64
-        employer:
-          $ref: "#/components/schemas/UserEmployer"
-    UserEmploymentDetails:
-      type: object
-      properties:
-        identity:
-          $ref: "#/components/schemas/UserIdentity"
-        income:
-          $ref: "#/components/schemas/UserIncome"
-        employment:
-          $ref: "#/components/schemas/UserEmployment"
-        paystubs:
-          $ref: "#/components/schemas/protobufAny"
-    UserIdentity:
-      type: object
-      properties:
-        firstName:
-          type: string
-        lastName:
-          type: string
-        dateOfBirth:
-          type: string
-          format: date-time
-        email:
-          type: string
-        phone:
-          type: string
-        ssn:
-          type: string
-        address:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        postalCode:
-          type: string
-    UserIdentityVerification:
-      type: object
-      properties:
-        source:
-          type: string
-        name:
-          $ref: "#/components/schemas/UserName"
-        phone:
-          type: string
-        email:
-          type: string
-        address:
-          $ref: "#/components/schemas/UserCommonAddress"
-        verifications:
-          $ref: "#/components/schemas/UserVerifications"
-        idNumber:
-          type: string
-        at:
-          type: string
-          format: date-time
-    UserIncome:
-      type: object
-      properties:
-        income:
-          type: number
-          format: double
-        incomeType:
-          type: string
-        annualIncome:
-          type: integer
-          format: int64
-        hourlyIncome:
-          type: number
-          format: double
-        netHourlyRate:
-          type: number
-          format: double
-        payCycle:
-          type: string
-        nextExpectedPayDate:
-          type: string
-          format: date-time
-        currentPayPeriodStart:
-          type: string
-          format: date-time
-        currentPayPeriodEnd:
-          type: string
-          format: date-time
-        unpaidHoursInPayPeriod:
-          type: integer
-          format: int64
-    UserName:
-      type: object
-      properties:
-        first:
-          type: string
-        last:
-          type: string
-    UserRentals:
-      type: object
-      properties:
-        address:
-          $ref: "#/components/schemas/v1UserCoveAddress"
-        start:
-          type: string
-        reasonForMoving:
-          type: string
-        rentAmount:
-          type: integer
-          format: int64
-        landlordName:
-          type: string
-        landlordEmail:
-          type: string
-        landlordPhone:
-          type: string
-        id:
-          type: string
-    UserVerifications:
-      type: object
-      properties:
-        liveness:
+        skippable:
           type: boolean
-        faceMatch:
-          type: boolean
-        nameMatch:
-          type: boolean
-    screeningv1Payer:
-      type: string
-      default: PAYER_UNSPECIFIED
-      enum:
-        - PAYER_UNSPECIFIED
-        - PAYER_SELF
-        - PAYER_APPLICANT
-    screeningv1SendScreeningRequest:
-      type: object
-      properties:
-        checkType:
-          $ref: "#/components/schemas/v1CheckType"
-        email:
-          type: string
-        phone:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-        propertyId:
-          type: string
-        payer:
-          $ref: "#/components/schemas/screeningv1Payer"
-    screeningv1SendScreeningResponse:
-      type: object
-      properties:
-        userId:
-          type: string
-        message:
-          type: string
-    v1CheckType:
-      type: string
-      default: CHECK_TYPE_UNSPECIFIED
-      enum:
-        - CHECK_TYPE_UNSPECIFIED
-        - CHECK_TYPE_LITE_CHECK
-        - CHECK_TYPE_DEEP_CHECK
-    v1GetScreeningDataResponse:
-      type: object
-      properties:
-        screening:
-          $ref: "#/components/schemas/v1Screening"
-        user:
-          $ref: "#/components/schemas/v1User"
-    v1GetScreeningReportResponse:
-      type: object
-      properties:
-        url:
-          type: string
-    v1Screening:
-      type: object
-      properties:
-        id:
-          type: string
-        autoLoansMonthlyPayments:
-          type: string
-        autoLoansTotalBalance:
-          type: string
-        checkType:
-          type: string
-        coveScore:
-          type: number
-          format: double
-        creditScore:
-          type: integer
-          format: int64
-        rent:
-          type: integer
-          format: int64
-        monthlyIncome:
-          type: number
-          format: double
-        monthlyDebt:
-          type: number
-          format: double
-        totalDebt:
-          type: number
-          format: double
-        debtLimit:
-          type: number
-          format: double
-        equifaxResult:
-          type: object
-          properties: {}
-        flinksAttributes:
-          type: object
-          properties: {}
-        flinksBankAccounts:
-          type: array
-          items:
-            type: object
-            properties: {}
-        greenFlags:
-          type: array
-          items:
-            type: string
-        incomeTransactions:
-          type: array
-          items:
-            type: object
-            properties: {}
-        landlordReviews:
-          type: array
-          items:
-            $ref: "#/components/schemas/ScreeningLandlordReview"
-        monthlyData:
-          type: array
-          items:
-            $ref: "#/components/schemas/ScreeningMonthlyData"
-        mortgageLoansMonthlyPayments:
-          type: string
-        mortgageLoansTotalBalance:
-          type: string
-        nonSufficientFunds:
-          type: array
-          items:
-            type: object
-            properties: {}
-        normBAB:
-          type: number
-          format: double
-        normCSC:
-          type: number
-          format: double
-        normECS:
-          type: number
-          format: double
-        normMI:
-          type: number
-          format: double
-        otherCreditMonthlyPayments:
-          type: string
-        otherCreditTotalBalance:
-          type: string
-        otherDebtsMonthlyPayments:
-          type: string
-        otherDebtsTotalBalance:
-          type: string
-        plaidItems:
-          type: array
-          items:
-            type: object
-            properties: {}
-        redFlags:
-          type: array
-          items:
-            type: object
-            properties: {}
-        reportStatus:
-          type: string
-        revolvingCreditMonthlyPayments:
-          type: string
-        revolvingCreditTotalBalance:
-          type: string
-        scanStatus:
-          type: object
-          properties: {}
-        studentLoansMonthlyPayments:
-          type: string
-        studentLoansTotalBalance:
-          type: string
-        totalCurrentBankBalance:
-          type: number
-          format: double
-        rentTransactions:
-          type: array
-          items:
-            $ref: "#/components/schemas/ScreeningRentTransaction"
-        updatedAt:
-          type: string
-          format: date-time
-    v1User:
-      type: object
-      properties:
-        id:
-          type: string
-        phoneNumber:
-          type: string
-        proofOfIncome:
-          type: array
-          items:
-            type: string
-        checkComplete:
-          type: boolean
-        idPhotoUrls:
-          type: array
-          items:
-            type: string
-        selfieUrls:
-          type: array
-          items:
-            type: string
-        rentals:
-          type: array
-          items:
-            $ref: "#/components/schemas/UserRentals"
-        addressOnId:
-          $ref: "#/components/schemas/v1UserCoveAddress"
-        currentAddress:
-          $ref: "#/components/schemas/v1UserCoveAddress"
-        dateOfBirth:
-          type: string
-        firstName:
-          type: string
-        identityVerification:
-          $ref: "#/components/schemas/UserIdentityVerification"
-        lastName:
-          type: string
-        email:
-          type: string
-        employmentAnnualSalary:
-          type: number
-          format: double
-        employmentCompanyName:
-          type: string
-        employmentCompanyPosition:
-          type: string
-        employmentReferenceFirstName:
-          type: string
-        employmentReferenceLastName:
-          type: string
-        employmentReferencePhoneNumber:
-          type: string
-        employmentReferenceWorkEmail:
-          type: string
-        employmentStartDate:
-          type: string
-        employmentStatus:
-          type: string
-        reasonForMoving:
-          type: string
-        residentialStatus:
-          type: string
-        employmentDetails:
-          $ref: "#/components/schemas/UserEmploymentDetails"
-    v1UserCoveAddress:
-      type: object
-      properties:
-        street:
-          type: string
-        city:
-          type: string
-        provinceState:
-          type: string
-        country:
-          type: string
-        postalCode:
-          type: string
-        fullAddress:
-          type: string
     BankDataIncomeTransactions:
       type: object
       properties:
@@ -1382,8 +640,6 @@ components:
         annualIncome:
           type: integer
           format: int64
-    GetDataResponseEquifaxData:
-      type: object
     GetDataResponseIDData:
       type: object
       properties:
@@ -1450,8 +706,7 @@ components:
         citizenship:
           type: string
         maritalStatus:
-          type: string
-        sin:
+          title: string sin = 3;
           type: string
     GetDataResponseResidenceHistoryData:
       type: object
@@ -1475,6 +730,13 @@ components:
           type: string
         fullAddress:
           type: string
+    GetDataResponseScreeningData:
+      type: object
+      properties:
+        equifaxCredit:
+          title: optional EquifaxCreditData equifax_credit = 1;
+          type: object
+          properties: {}
     GetDataResponseScreeningSteps:
       type: object
       properties:
@@ -1561,48 +823,774 @@ components:
           type: string
         landlordPhone:
           type: string
-    SendScreeningRequestOptions:
+    protobufAny:
       type: object
       properties:
-        emailDisabled:
-          type: boolean
-        smsDisabled:
-          type: boolean
-    screeningv2Payer:
-      type: string
-      default: PAYER_UNSPECIFIED
-      enum:
-      - PAYER_UNSPECIFIED
-      - PAYER_SELF
-      - PAYER_APPLICANT
-    screeningv2SendScreeningRequest:
-      type: object
-      properties:
-        flowId:
+        '@type':
           type: string
+          description: |-
+            A URL/resource name that uniquely identifies the type of the serialized
+            protocol buffer message. This string must contain at least
+            one "/" character. The last segment of the URL's path must represent
+            the fully qualified name of the type (as in
+            `path/google.protobuf.Duration`). The name should be in a canonical form
+            (e.g., leading "." is not accepted).
+
+            In practice, teams usually precompile into the binary all types that they
+            expect it to use in the context of Any. However, for URLs which use the
+            scheme `http`, `https`, or no scheme, one can optionally set up a type
+            server that maps type URLs to message definitions as follows:
+
+            * If no scheme is provided, `https` is assumed.
+            * An HTTP GET on the URL must yield a [google.protobuf.Type][]
+              value in binary format, or produce an error.
+            * Applications are allowed to cache lookup results based on the
+              URL, or have them precompiled into a binary to avoid any
+              lookup. Therefore, binary compatibility needs to be preserved
+              on changes to types. (Use versioned type names to manage
+              breaking changes.)
+
+            Note: this functionality is not currently available in the official
+            protobuf release, and it is not used for type URLs beginning with
+            type.googleapis.com. As of May 2023, there are no widely used type server
+            implementations and no plans to implement one.
+
+            Schemes other than `http`, `https` (or the empty scheme) might be
+            used with implementation specific semantics.
+      additionalProperties:
+        type: object
+      description: |-
+        `Any` contains an arbitrary serialized protocol buffer message along with a
+        URL that describes the type of the serialized message.
+
+        Protobuf library provides support to pack/unpack Any values in the form
+        of utility functions or additional generated methods of the Any type.
+
+        Example 1: Pack and unpack a message in C++.
+
+            Foo foo = ...;
+            Any any;
+            any.PackFrom(foo);
+            ...
+            if (any.UnpackTo(&foo)) {
+              ...
+            }
+
+        Example 2: Pack and unpack a message in Java.
+
+            Foo foo = ...;
+            Any any = Any.pack(foo);
+            ...
+            if (any.is(Foo.class)) {
+              foo = any.unpack(Foo.class);
+            }
+            // or ...
+            if (any.isSameTypeAs(Foo.getDefaultInstance())) {
+              foo = any.unpack(Foo.getDefaultInstance());
+            }
+
+         Example 3: Pack and unpack a message in Python.
+
+            foo = Foo(...)
+            any = Any()
+            any.Pack(foo)
+            ...
+            if any.Is(Foo.DESCRIPTOR):
+              any.Unpack(foo)
+              ...
+
+         Example 4: Pack and unpack a message in Go
+
+             foo := &pb.Foo{...}
+             any, err := anypb.New(foo)
+             if err != nil {
+               ...
+             }
+             ...
+             foo := &pb.Foo{}
+             if err := any.UnmarshalTo(foo); err != nil {
+               ...
+             }
+
+        The pack methods provided by protobuf library will by default use
+        'type.googleapis.com/full.type.name' as the type URL and the unpack
+        methods only use the fully qualified type name after the last '/'
+        in the type URL, for example "foo.bar.com/x/y.z" will yield type
+        name "y.z".
+
+        JSON
+        ====
+        The JSON representation of an `Any` value uses the regular
+        representation of the deserialized, embedded message, with an
+        additional field `@type` which contains the type URL. Example:
+
+            package google.profile;
+            message Person {
+              string first_name = 1;
+              string last_name = 2;
+            }
+
+            {
+              "@type": "type.googleapis.com/google.profile.Person",
+              "firstName": <string>,
+              "lastName": <string>
+            }
+
+        If the embedded message type is well-known and has a custom JSON
+        representation, that representation will be embedded adding a field
+        `value` which holds the custom JSON in addition to the `@type`
+        field. Example (for message [google.protobuf.Duration][]):
+
+            {
+              "@type": "type.googleapis.com/google.protobuf.Duration",
+              "value": "1.212s"
+            }
+    protobufNullValue:
+      type: string
+      description: |-
+        `NullValue` is a singleton enumeration to represent the null value for the
+        `Value` type union.
+
+        The JSON representation for `NullValue` is JSON `null`.
+
+         - NULL_VALUE: Null value.
+      default: NULL_VALUE
+      enum:
+      - NULL_VALUE
+    rpcStatus:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/protobufAny'
+    v1LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    v1LoginResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+    FlinksBankAccountBalance:
+      type: object
+      properties:
+        available:
+          type: number
+          format: double
+        current:
+          type: number
+          format: double
+        limit:
+          type: string
+          format: int64
+    FlinksBankAccountHolder:
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/FlinksBankAccountHolderAddress'
+        email:
+          type: string
+        name:
+          type: string
+        phoneNumber:
+          type: string
+    FlinksBankAccountHolderAddress:
+      type: object
+      properties:
+        city:
+          type: string
+        civicAddress:
+          type: string
+        country:
+          type: string
+        poBox:
+          type: string
+        postalCode:
+          type: string
+        province:
+          type: string
+    FlinksBankAccountTransaction:
+      type: object
+      properties:
+        balance:
+          type: number
+          format: double
+        credit:
+          title: google.protobuf.Value code = 2;
+          type: number
+          format: double
+        date:
+          type: string
+        debit:
+          type: number
+          format: double
+        description:
+          type: string
+        id:
+          type: string
+    ScreeningCustomFormData:
+      type: object
+      properties:
+        question:
+          type: string
+        value:
+          type: string
+        type:
+          type: string
+    ScreeningLandlordReview:
+      type: object
+      properties:
         email:
           type: string
         phone:
           type: string
+        wouldRentToThemAgain:
+          type: integer
+          format: int64
+        paysRentOnTime:
+          type: integer
+          format: int64
+        cleanliness:
+          type: integer
+          format: int64
+        didNotDamageProperty:
+          type: integer
+          format: int64
+        additionalDetails:
+          type: string
+    ScreeningMonthlyData:
+      type: object
+      properties:
+        averageBalance:
+          type: number
+          format: double
+        income:
+          type: number
+          format: double
+        month:
+          type: string
+        spending:
+          type: number
+          format: double
+    ScreeningRentTransaction:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          title: '"DEBIT" or "CREDIT"'
+          type: string
+        amount:
+          type: number
+          format: double
+        isoCurrencyCode:
+          type: string
+        description:
+          type: string
+        date:
+          title: ISO 8601 date
+          type: string
+    ScreeningScanStatus:
+      type: object
+      properties:
+        criminalScan:
+          type: string
+        criminalScanLabel:
+          type: string
+        fraudScan:
+          type: string
+        fraudScanLabel:
+          type: string
+        globalClearanceScan:
+          type: string
+        globalClearanceScanLabel:
+          type: string
+        knownAffiliationScan:
+          type: string
+        knownAffiliationScanLabel:
+          title: Fixed typo here
+          type: string
+        ofacGlobalTerroristScan:
+          type: string
+        ofacGlobalTerroristScanLabel:
+          type: string
+        otherScan:
+          type: string
+        otherScanLabel:
+          type: string
+        politicallyExposedPersonScan:
+          type: string
+        politicallyExposedPersonScanLabel:
+          type: string
+        publicCourtRecords:
+          type: string
+        publicCourtRecordsLabel:
+          type: string
+        publicProfileScan:
+          type: string
+        publicProfileScanLabel:
+          type: string
+        publicSafetyScan:
+          type: string
+        publicSafetyScanLabel:
+          type: string
+        sexOffenderScan:
+          type: string
+        sexOffenderScanLabel:
+          type: string
+    UserCommonAddress:
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+    UserIdentityVerification:
+      type: object
+      properties:
+        source:
+          type: string
+        name:
+          $ref: '#/components/schemas/v1UserName'
+        phone:
+          type: string
+        email:
+          type: string
+        address:
+          $ref: '#/components/schemas/UserCommonAddress'
+        verifications:
+          $ref: '#/components/schemas/v1UserVerifications'
+        idNumber:
+          type: string
+        at:
+          type: string
+          format: date-time
+    UserRentals:
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/v1UserCoveAddress'
+        start:
+          type: string
+        reasonForMoving:
+          type: string
+        rentAmount:
+          type: integer
+          format: int64
+        landlordName:
+          type: string
+        landlordEmail:
+          type: string
+        landlordPhone:
+          type: string
+        id:
+          type: string
+    v1FlinksBankAccount:
+      type: object
+      properties:
+        accountNumber:
+          type: string
+        accountType:
+          type: string
+        balance:
+          $ref: '#/components/schemas/FlinksBankAccountBalance'
+        category:
+          type: string
+        currency:
+          type: string
+        holder:
+          $ref: '#/components/schemas/FlinksBankAccountHolder'
+        id:
+          type: string
+        institutionNumber:
+          type: string
+        title:
+          title: google.protobuf.Value last_four_digits = 9;
+          type: string
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlinksBankAccountTransaction'
+        transitNumber:
+          type: string
+        type:
+          type: string
+    v1GetScreeningDataResponse:
+      type: object
+      properties:
+        screening:
+          $ref: '#/components/schemas/v1Screening'
+        user:
+          $ref: '#/components/schemas/v1User'
+    v1GetScreeningReportResponse:
+      type: object
+      properties:
+        url:
+          type: string
+    v1IncomeTransaction:
+      type: object
+      properties:
+        accountId:
+          type: string
+        amount:
+          type: number
+          format: double
+        date:
+          type: string
+        isoCurrencyCode:
+          type: string
+        originalDescription:
+          type: string
+        pending:
+          type: boolean
+        transactionId:
+          type: string
+    v1NSF:
+      type: object
+      properties:
+        dateReported:
+          type: string
+          format: date-time
+        creditorEntity:
+          type: string
+        nsfamount:
+          type: number
+          format: double
+        details:
+          type: string
+        verificationDate:
+          type: string
+          format: date-time
+    v1Screening:
+      type: object
+      properties:
+        id:
+          type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+        checkType:
+          type: string
+        coveScore:
+          type: number
+          format: double
+        creditScore:
+          type: integer
+          format: int64
+        equifaxResult:
+          type: object
+          properties: {}
+        flinksBankAccounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1FlinksBankAccount'
+        greenFlags:
+          type: array
+          items:
+            type: string
+        incomeTransactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1IncomeTransaction'
+        landlordReviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScreeningLandlordReview'
+        monthlyData:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScreeningMonthlyData'
+        nonSufficientFunds:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1NSF'
+        normBAB:
+          type: number
+          format: double
+        normCSC:
+          type: number
+          format: double
+        normECS:
+          type: number
+          format: double
+        normMI:
+          type: number
+          format: double
+        redFlags:
+          type: array
+          items:
+            type: string
+        reportStatus:
+          type: string
+        scanStatus:
+          $ref: '#/components/schemas/ScreeningScanStatus'
+        rentTransactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScreeningRentTransaction'
+        updatedAt:
+          type: string
+          format: date-time
+        customFormData:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScreeningCustomFormData'
+        monthlyIncome:
+          type: number
+          format: double
+        monthlyDebt:
+          type: number
+          format: double
+        debtLimit:
+          type: number
+          format: double
+        rent:
+          type: integer
+          format: int64
+        autoLoansMonthlyPayments:
+          type: number
+          format: double
+        autoLoansTotalBalance:
+          type: number
+          format: double
+        revolvingCreditMonthlyPayments:
+          type: number
+          format: double
+        revolvingCreditTotalBalance:
+          type: number
+          format: double
+        otherCreditMonthlyPayments:
+          type: number
+          format: double
+        otherCreditTotalBalance:
+          type: number
+          format: double
+        otherDebtsMonthlyPayments:
+          type: number
+          format: double
+        otherDebtsTotalBalance:
+          type: number
+          format: double
+        mortgageLoansMonthlyPayments:
+          type: number
+          format: double
+        mortgageLoansTotalBalance:
+          type: number
+          format: double
+        studentLoansMonthlyPayments:
+          type: number
+          format: double
+        studentLoansTotalBalance:
+          type: number
+          format: double
+        totalCurrentBankBalance:
+          type: number
+          format: double
+        totalDebt:
+          type: number
+          format: double
+    v1User:
+      type: object
+      properties:
+        id:
+          type: string
+        phoneNumber:
+          type: string
+        proofOfIncome:
+          type: array
+          items:
+            type: string
+        checkComplete:
+          type: boolean
+        idPhotoUrls:
+          type: array
+          items:
+            type: string
+        selfieUrls:
+          type: array
+          items:
+            type: string
+        rentals:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserRentals'
+        addressOnId:
+          $ref: '#/components/schemas/v1UserCoveAddress'
+        currentAddress:
+          $ref: '#/components/schemas/v1UserCoveAddress'
+        dateOfBirth:
+          type: string
+        firstName:
+          type: string
+        identityVerification:
+          $ref: '#/components/schemas/UserIdentityVerification'
+        lastName:
+          type: string
+        email:
+          type: string
+        employmentAnnualSalary:
+          type: number
+          format: double
+        employmentCompanyName:
+          type: string
+        employmentCompanyPosition:
+          type: string
+        employmentReferenceFirstName:
+          type: string
+        employmentReferenceLastName:
+          type: string
+        employmentReferencePhoneNumber:
+          type: string
+        employmentReferenceWorkEmail:
+          type: string
+        employmentStartDate:
+          type: string
+        employmentStatus:
+          type: string
+        reasonForMoving:
+          type: string
+        residentialStatus:
+          type: string
+        employmentDetails:
+          $ref: '#/components/schemas/v1UserEmploymentDetails'
+    v1UserCoveAddress:
+      type: object
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        provinceState:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        fullAddress:
+          type: string
+    v1UserEmployer:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/UserCommonAddress'
+    v1UserEmployment:
+      type: object
+      properties:
+        employeeType:
+          type: string
+        employmentStatus:
+          type: string
+        jobTitle:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        minimumMonthsOfEmployment:
+          type: integer
+          format: int64
+        weeklyHours:
+          type: integer
+          format: int64
+        employer:
+          $ref: '#/components/schemas/v1UserEmployer'
+    v1UserEmploymentDetails:
+      type: object
+      properties:
+        identity:
+          $ref: '#/components/schemas/v1UserIdentity'
+        income:
+          $ref: '#/components/schemas/v1UserIncome'
+        employment:
+          $ref: '#/components/schemas/v1UserEmployment'
+    v1UserIdentity:
+      type: object
+      properties:
         firstName:
           type: string
         lastName:
           type: string
-        options:
-          $ref: '#/components/schemas/SendScreeningRequestOptions'
-        payer:
-          $ref: '#/components/schemas/screeningv2Payer'
-    screeningv2SendScreeningResponse:
+        dateOfBirth:
+          type: string
+          format: date-time
+        email:
+          type: string
+        phone:
+          type: string
+        ssn:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postalCode:
+          type: string
+    v1UserIncome:
       type: object
       properties:
-        message:
+        income:
+          type: number
+          format: double
+        incomeType:
           type: string
-        userId:
+        annualIncome:
           type: string
-        screeningId:
+          format: uint64
+        hourlyIncome:
+          type: number
+          format: double
+        netHourlyRate:
+          type: number
+          format: double
+        payCycle:
           type: string
-        screeningLink:
+        nextExpectedPayDate:
           type: string
+          format: date-time
+        currentPayPeriodStart:
+          type: string
+          format: date-time
+        currentPayPeriodEnd:
+          type: string
+          format: date-time
+    v1UserName:
+      type: object
+      properties:
+        first:
+          type: string
+        last:
+          type: string
+    v1UserVerifications:
+      type: object
+      properties:
+        liveness:
+          type: boolean
+        faceMatch:
+          type: boolean
+        nameMatch:
+          type: boolean
     v2GetDataResponse:
       type: object
       properties:
@@ -1610,16 +1598,45 @@ components:
           type: string
         flowId:
           type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
         screeningSteps:
           type: array
           items:
             $ref: '#/components/schemas/GetDataResponseScreeningSteps'
-        equifaxData:
-          $ref: '#/components/schemas/GetDataResponseEquifaxData'
+        data:
+          $ref: '#/components/schemas/GetDataResponseScreeningData'
     v2GetReportResponse:
       type: object
       properties:
         url:
+          type: string
+    v2Payer:
+      type: string
+      default: PAYER_UNSPECIFIED
+      enum:
+      - PAYER_UNSPECIFIED
+      - PAYER_SELF
+      - PAYER_APPLICANT
+    v2ResendScreeningStepRequest:
+      type: object
+      properties:
+        screeningId:
+          type: string
+        skippedStepName:
+          type: string
+        options:
+          $ref: '#/components/schemas/v2ScreeningRequestOptions'
+    v2ResendScreeningStepResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        userId:
+          type: string
+        retryLink:
           type: string
     v2RunScreeningRequest:
       type: object
@@ -1635,7 +1652,176 @@ components:
           type: string
         screeningId:
           type: string
-
+    v2ScreeningRequestOptions:
+      type: object
+      properties:
+        emailDisabled:
+          type: boolean
+        smsDisabled:
+          type: boolean
+    v2SendScreeningRequest:
+      type: object
+      properties:
+        flowId:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+        options:
+          $ref: '#/components/schemas/v2ScreeningRequestOptions'
+        payer:
+          $ref: '#/components/schemas/v2Payer'
+    v2SendScreeningResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        userId:
+          type: string
+        screeningId:
+          type: string
+        screeningLink:
+          type: string
+    UserServiceUpdateUserBody:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        address:
+          $ref: '#/components/schemas/protouserv1CoveAddress'
+        sin:
+          type: string
+        dateOfBirth:
+          type: string
+    protouserv1CoveAddress:
+      type: object
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        provinceState:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+    v1UpdateUserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        userId:
+          type: string
+    v1SendScreeningStatusRequest:
+      type: object
+      properties:
+        applicantId:
+          type: string
+        orgId:
+          type: string
+        screeningId:
+          type: string
+        listorId:
+          type: string
+        status:
+          type: string
+    v1SendScreeningStatusResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    protorent_reportingv1CoveAddress:
+      type: object
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        provinceState:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+    v1AccountStatus:
+      type: string
+      default: ACCOUNT_STATUS_UNSPECIFIED
+      enum:
+      - ACCOUNT_STATUS_UNSPECIFIED
+      - ACCOUNT_STATUS_IN_GOOD_STANDING
+      - ACCOUNT_STATUS_30_DAYS_PAST_DUE
+      - ACCOUNT_STATUS_60_DAYS_PAST_DUE
+      - ACCOUNT_STATUS_90_DAYS_PAST_DUE
+      - ACCOUNT_STATUS_120_DAYS_PAST_DUE
+      - ACCOUNT_STATUS_150_DAYS_PAST_DUE
+      - ACCOUNT_STATUS_180_DAYS_PAST_DUE
+    v1ECOACode:
+      type: string
+      default: ECOA_CODE_UNSPECIFIED
+      enum:
+      - ECOA_CODE_UNSPECIFIED
+      - ECOA_CODE_INDIVIDUAL
+      - ECOA_CODE_JOINT
+    v1ReportRequest:
+      type: object
+      properties:
+        leaseStartDate:
+          type: string
+        leaseEndDate:
+          type: string
+        rentAmount:
+          type: string
+          format: uint64
+        rentPaid:
+          type: string
+          format: uint64
+        currentBalanceDue:
+          type: number
+          format: double
+        amountPastDue:
+          type: number
+          format: double
+        accountStatus:
+          $ref: '#/components/schemas/v1AccountStatus'
+        paymentHistoryProfile:
+          type: string
+        dateOfFirstDelinquency:
+          type: string
+        lastName:
+          type: string
+        firstName:
+          type: string
+        middleName:
+          type: string
+        dateOfBirth:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        ecoaCode:
+          $ref: '#/components/schemas/v1ECOACode'
+        address:
+          $ref: '#/components/schemas/protorent_reportingv1CoveAddress'
+    v1ReportResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        id:
+          type: string
   securitySchemes:
     ApiTokenAuth:
       type: apiKey
