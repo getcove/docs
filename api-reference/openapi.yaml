@@ -736,7 +736,8 @@ components:
         equifaxCredit:
           title: optional EquifaxCreditData equifax_credit = 1;
           type: object
-          properties: {}
+        scanStatus:
+          $ref: '#/components/schemas/v2GetDataResponseScanStatus'
     GetDataResponseScreeningSteps:
       type: object
       properties:
@@ -1119,6 +1120,53 @@ components:
           type: string
         knownAffiliationScanLabel:
           title: Fixed typo here
+          type: string
+        ofacGlobalTerroristScan:
+          type: string
+        ofacGlobalTerroristScanLabel:
+          type: string
+        otherScan:
+          type: string
+        otherScanLabel:
+          type: string
+        politicallyExposedPersonScan:
+          type: string
+        politicallyExposedPersonScanLabel:
+          type: string
+        publicCourtRecords:
+          type: string
+        publicCourtRecordsLabel:
+          type: string
+        publicProfileScan:
+          type: string
+        publicProfileScanLabel:
+          type: string
+        publicSafetyScan:
+          type: string
+        publicSafetyScanLabel:
+          type: string
+        sexOffenderScan:
+          type: string
+        sexOffenderScanLabel:
+          type: string
+    v2GetDataResponseScanStatus:
+      type: object
+      properties:
+        criminalScan:
+          type: string
+        criminalScanLabel:
+          type: string
+        fraudScan:
+          type: string
+        fraudScanLabel:
+          type: string
+        globalClearanceScan:
+          type: string
+        globalClearanceScanLabel:
+          type: string
+        knownAffiliationScan:
+          type: string
+        knownAffiliationScanLabel:
           type: string
         ofacGlobalTerroristScan:
           type: string
