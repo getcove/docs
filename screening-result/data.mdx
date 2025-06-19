@@ -202,6 +202,14 @@ Contains the comprehensive screening results including:
             "additionalProp2": {},
             "additionalProp3": {}
           }
+        ],
+        "monthlySummary": [
+          {
+            "month": "string",
+            "averageBalance": 0,
+            "income": 0,
+            "spending": 0
+          }
         ]
       },
       "residenceHistoryData": {
@@ -222,7 +230,25 @@ Contains the comprehensive screening results including:
             "rentAmount": 0,
             "landlordName": "string",
             "landlordEmail": "string",
-            "landlordPhone": "string"
+            "landlordPhone": "string",
+            "landlordReview": {
+              "email": "string",
+              "phone": "string",
+              "wouldRentToThemAgain": 1,
+              "paysRentOnTime": 1,
+              "cleanliness": 1,
+              "didNotDamageProperty": 1,
+              "additionalDetails": "string"
+            }
+          }
+        ]
+      },
+      "customFormData": {
+        "entries": [
+          {
+            "question": "string",
+            "value": "string",
+            "type": "string"
           }
         ]
       }
