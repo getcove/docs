@@ -534,6 +534,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/protobufAny'
+        monthlySummary:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/BankDataMonthlySummary'
     GetDataResponseBankDataAddress:
       type: object
       properties:
@@ -761,6 +766,8 @@ components:
           $ref: '#/components/schemas/GetDataResponseBankData'
         residenceHistoryData:
           $ref: '#/components/schemas/GetDataResponseResidenceHistoryData'
+        customFormData:
+          $ref: '#/components/schemas/GetDataResponseCustomFormDataWrapper'
     IDDataEntities:
       type: object
       properties:
@@ -824,6 +831,8 @@ components:
           type: string
         landlordPhone:
           type: string
+        landlordReview:
+          $ref: '#/components/schemas/GetDataResponseResidenceHistoryDataLandlordReview'
     protobufAny:
       type: object
       properties:
@@ -1231,6 +1240,58 @@ components:
         at:
           type: string
           format: date-time
+    BankDataMonthlySummary:
+      type: object
+      properties:
+        month:
+          type: string
+        averageBalance:
+          type: number
+          format: double
+        income:
+          type: number
+          format: double
+        spending:
+          type: number
+          format: double
+    GetDataResponseResidenceHistoryDataLandlordReview:
+      type: object
+      properties:
+        email:
+          type: string
+        phone:
+          type: string
+        wouldRentToThemAgain:
+          type: integer
+          format: int64
+        paysRentOnTime:
+          type: integer
+          format: int64
+        cleanliness:
+          type: integer
+          format: int64
+        didNotDamageProperty:
+          type: integer
+          format: int64
+        additionalDetails:
+          type: string
+    GetDataResponseCustomFormDataWrapper:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/v2GetDataResponseCustomFormData'
+    v2GetDataResponseCustomFormData:
+      type: object
+      properties:
+        question:
+          type: string
+        value:
+          type: string
+        type:
+          type: string
     UserRentals:
       type: object
       properties:
