@@ -743,6 +743,11 @@ components:
           type: object
         scanStatus:
           $ref: '#/components/schemas/v2GetDataResponseScanStatus'
+        publicRecords:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/v2GetDataResponsePublicRecord'
     GetDataResponseScreeningSteps:
       type: object
       properties:
@@ -1158,6 +1163,21 @@ components:
           type: string
         sexOffenderScanLabel:
           type: string
+    v1ScreeningPublicRecord:
+      type: object
+      properties:
+        topic:
+          type: string
+        matchConfidence:
+          type: number
+          format: double
+        landlordName:
+          type: string
+        amountOwed:
+          type: number
+          format: double
+        url:
+          type: string
     v2GetDataResponseScanStatus:
       type: object
       properties:
@@ -1204,6 +1224,21 @@ components:
         sexOffenderScan:
           type: string
         sexOffenderScanLabel:
+          type: string
+    v2GetDataResponsePublicRecord:
+      type: object
+      properties:
+        topic:
+          type: string
+        matchConfidence:
+          type: number
+          format: double
+        landlordName:
+          type: string
+        amountOwed:
+          type: number
+          format: double
+        url:
           type: string
     UserCommonAddress:
       type: object
@@ -1475,6 +1510,11 @@ components:
         rent:
           type: integer
           format: int64
+        publicRecords:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/v1ScreeningPublicRecord'
         autoLoansMonthlyPayments:
           type: number
           format: double
