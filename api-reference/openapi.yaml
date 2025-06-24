@@ -1740,6 +1740,11 @@ components:
           type: boolean
         nameMatch:
           type: boolean
+    GetDataResponseUserInfo:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
     v2GetDataResponse:
       type: object
       properties:
@@ -1747,8 +1752,8 @@ components:
           type: string
         flowId:
           type: string
-        phoneNumber:
-          type: string
+        userInfo:
+          $ref: '#/components/schemas/GetDataResponseUserInfo'
         metadata:
           type: object
           additionalProperties:
