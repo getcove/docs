@@ -90,6 +90,12 @@
       ]
     },
     {
+      "group": "Rent Reporting",
+      "pages": [
+        "rent-reporting/intro"
+      ]
+    },
+    {
       "group": "API Reference",
       "pages": [
         "api-reference/intro"

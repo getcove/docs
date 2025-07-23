@@ -1,0 +1,246 @@
+---
+title: "Rent Reporting Quickstart"
+description: "Welcome to the Cove Rent Reporting API Quickstart! This guide provides a detailed walkthrough of how to report rent payments to credit agencies."
+---
+
+# Cove Rent Reporting API Quickstart
+
+## Introduction
+
+The Cove Rent Reporting API enables landlords and property managers to report tenant rent payments to credit agencies, helping tenants build their credit history. This guide provides a detailed walkthrough of how to use the API to report rent payments.
+
+## Base URL
+
+```md
+https://sandbox-api.getcove.co
+```
+
+## Detailed Workflow
+
+### Step 1: Request Login Credentials
+
+To begin using the Cove Rent Reporting API, you need login credentials. Send an email to [concierge@getcove.co](mailto:concierge@getcove.co) requesting access to your account and the dashboard.
+Once you receive your credentials, you can authenticate and start making API calls.
+
+---
+
+### Step 2: Authenticate
+
+Before accessing other endpoints, you must authenticate using the `/v1/auth/login` endpoint to obtain an access token.
+
+#### Endpoint
+
+```md
+POST /v1/auth/login
+```
+
+#### Description
+
+This endpoint validates your username and password. If successful, it returns an `accessToken` that you must include in all subsequent API calls.
+
+#### Request Headers
+
+- `Content-Type`: `application/json`
+- `Accept`: `application/json`
+
+#### Request Body
+
+```json
+{
+  "username": "<string>",
+  "password": "<string>"
+}
+```
+
+#### Example
+
+```sh
+curl -X POST https://sandbox-api.getcove.co/v1/auth/login \
+-H "Content-Type: application/json" \
+-H "Accept: application/json" \
+-d '{
+  "username": "your-username",
+  "password": "your-password"
+}'
+```
+
+- **Success (200)**:
+
+  ```json
+  {
+    "accessToken": "<string>"
+  }
+  ```
+
+- **Error (401)**: Unauthorized.
+
+#### Usage of Token
+
+Include the `accessToken` in the `Authorization` header for all subsequent requests:
+
+```md
+Authorization: <accessToken>
+```
+
+---
+
+### Step 3: Report Rent Payments
+
+Once authenticated, you can report rent payments to credit agencies using the `/v1/rent-reporting/report` endpoint. This is the core functionality that helps tenants build their credit history.
+
+#### Endpoint
+
+```md
+POST /v1/rent-reporting/report
+```
+
+#### Description
+
+Reports rent payments of a renter to Credit Agencies. This endpoint allows you to submit comprehensive rental payment information including lease details, payment history, and tenant information.
+
+#### Headers
+
+- `Authorization`: `<API Key>`
+- `Content-Type`: `application/json`
+- `Accept`: `application/json`
+
+#### Request Body
+
+```json
+{
+  "leaseStartDate": "<string>",
+  "leaseEndDate": "<string>",
+  "rentAmount": "<string>",
+  "rentPaid": "<string>",
+  "currentBalanceDue": "<number>",
+  "amountPastDue": "<number>",
+  "accountStatus": "<AccountStatus>",
+  "paymentHistoryProfile": "<string>",
+  "dateOfFirstDelinquency": "<string>",
+  "lastName": "<string>",
+  "firstName": "<string>",
+  "middleName": "<string>",
+  "dateOfBirth": "<string>",
+  "phone": "<string>",
+  "email": "<string>",
+  "ecoaCode": "<ECOACode>",
+  "address": {
+    "street": "<string>",
+    "city": "<string>",
+    "provinceState": "<string>",
+    "country": "<string>",
+    "postalCode": "<string>"
+  }
+}
+```
+
+#### Field Descriptions
+
+- **Lease Information**:
+  - `leaseStartDate`: Start date of the lease agreement
+  - `leaseEndDate`: End date of the lease agreement
+  - `rentAmount`: Total monthly rent amount (in cents)
+  - `rentPaid`: Amount of rent paid (in cents)
+
+- **Payment Status**:
+  - `currentBalanceDue`: Current outstanding balance
+  - `amountPastDue`: Amount that is past due
+  - `accountStatus`: Current status of the account (see Account Status values below)
+  - `paymentHistoryProfile`: Payment history summary
+  - `dateOfFirstDelinquency`: Date of first missed payment (if applicable)
+
+- **Tenant Information**:
+  - `firstName`, `lastName`, `middleName`: Tenant's full name
+  - `dateOfBirth`: Tenant's date of birth
+  - `phone`: Tenant's phone number
+  - `email`: Tenant's email address
+  - `ecoaCode`: Equal Credit Opportunity Act code (see ECOA Code values below)
+  - `address`: Tenant's address information
+
+#### Account Status Values
+
+- `ACCOUNT_STATUS_IN_GOOD_STANDING`: Account is current
+- `ACCOUNT_STATUS_30_DAYS_PAST_DUE`: 30 days past due
+- `ACCOUNT_STATUS_60_DAYS_PAST_DUE`: 60 days past due
+- `ACCOUNT_STATUS_90_DAYS_PAST_DUE`: 90 days past due
+- `ACCOUNT_STATUS_120_DAYS_PAST_DUE`: 120 days past due
+- `ACCOUNT_STATUS_150_DAYS_PAST_DUE`: 150 days past due
+- `ACCOUNT_STATUS_180_DAYS_PAST_DUE`: 180 days past due
+
+#### ECOA Code Values
+
+- `ECOA_CODE_INDIVIDUAL`: Individual account
+- `ECOA_CODE_JOINT`: Joint account
+
+#### Example
+
+```sh
+curl -X POST https://sandbox-api.getcove.co/v1/rent-reporting/report \
+-H "Authorization: your-access-token" \
+-H "Content-Type: application/json" \
+-H "Accept: application/json" \
+-d '{
+  "leaseStartDate": "2024-01-01",
+  "leaseEndDate": "2024-12-31",
+  "rentAmount": "150000",
+  "rentPaid": "150000",
+  "currentBalanceDue": 0,
+  "amountPastDue": 0,
+  "accountStatus": "ACCOUNT_STATUS_IN_GOOD_STANDING",
+  "paymentHistoryProfile": "Current",
+  "dateOfFirstDelinquency": "",
+  "lastName": "Smith",
+  "firstName": "John",
+  "middleName": "A",
+  "dateOfBirth": "1990-05-15",
+  "phone": "+14160001111",
+  "email": "john.smith@example.com",
+  "ecoaCode": "ECOA_CODE_INDIVIDUAL",
+  "address": {
+    "street": "123 Main St",
+    "city": "Toronto",
+    "provinceState": "ON",
+    "country": "Canada",
+    "postalCode": "M5V 3A8"
+  }
+}'
+```
+
+- **Success (200)**:
+
+  ```json
+  {
+    "message": "Rent report submitted successfully",
+    "id": "report-12345"
+  }
+  ```
+
+#### Notes
+
+- Ensure all tenant information is accurate to avoid reporting errors
+- The `rentAmount` and `rentPaid` fields should be provided in cents (e.g., $1,500.00 = "150000")
+- Date fields should be in ISO format (YYYY-MM-DD)
+- The report ID can be used for tracking and reference purposes
+
+---
+
+## API Reference
+
+For complete API documentation and additional endpoints, visit our comprehensive API reference:
+
+[https://docs.cove.dev/api-reference/rent-reporting/report-rent](https://docs.cove.dev/api-reference/rent-reporting/report-rent)
+
+---
+
+## Additional Information
+
+- All endpoints require HTTPS communication
+- Errors are returned in JSON format with appropriate HTTP status codes
+- Rent reporting helps tenants build credit history through timely payments
+- Reports are submitted to major credit agencies
+
+---
+
+## Need Help?
+
+For further assistance with rent reporting or API integration, contact [concierge@getcove.co](mailto:concierge@getcove.co).
