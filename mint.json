@@ -30,6 +30,10 @@
       "name": "API Reference",
       "url": "api-reference",
       "openapi": "/api-reference/openapi.yaml"
+    },
+    {
+      "name": "React SDK",
+      "url": "sdks"
     }
   ],
   "anchors": [
@@ -99,6 +103,12 @@
       "group": "API Reference",
       "pages": [
         "api-reference/intro"
+      ]
+    },
+    {
+      "group": "React SDK",
+      "pages": [
+        "sdks/react-sdk"
       ]
     }
   ],
