@@ -57,8 +57,9 @@ Here are example prompts that can be used to guide AI systems in effectively uti
 #### Applicant Data Summary and Analysis
 
 ```
-Fetch the applicant screening data using the GetReportData tool with screening ID {SCREENING_ID}. 
-Create a concise summary of the applicant's profile including:
+Please provide a concise summary of the applicant with screening ID {SCREENING_ID}.
+
+Include key information about:
 - Credit score and history
 - Income verification results
 - Employment status
@@ -66,23 +67,23 @@ Create a concise summary of the applicant's profile including:
 - Background check results
 
 Highlight any potential concerns or exceptional qualifications. 
-After presenting the summary, be prepared to answer follow-up questions about specific aspects of the applicant's data.
+I may have follow-up questions about specific aspects of the applicant's profile.
 ```
 
 #### Automated Applicant Qualification
 
 ```
-Review the applicant data using GetReportData with screening ID {SCREENING_ID}.
-Apply the following qualification criteria:
-- If credit score is above 700 AND
-- Income is at least 3x the monthly rent AND
-- No eviction history AND
-- Employment is verified
-Then automatically mark the report as ACCEPTED with reasoning "Applicant meets all qualification criteria."
+Evaluate the applicant with screening ID {SCREENING_ID} based on these qualification criteria:
 
-If any criteria are not met, mark as IN_REVIEW with detailed reasoning about which criteria were not satisfied.
+Approval criteria:
+- Credit score above 700
+- Income at least 3x the monthly rent
+- No eviction history
+- Verified employment
 
-If there are serious issues (credit score below 550, eviction history, or criminal record), mark as REJECTED with specific reasoning.
+If all criteria are met, accept the applicant. If some criteria aren't met, mark for review with specific details about which requirements weren't satisfied.
+
+For applicants with serious issues (credit score below 550, eviction history, or criminal record), reject with specific reasoning.
 ```
 
 ### Coming Soon
