@@ -1,0 +1,98 @@
+---
+title: "Cove MCP Server"
+description: "Learn how to integrate AI assistants with Cove's services using the Model Context Protocol (MCP) server."
+---
+
+# Cove MCP Server
+
+## Introduction
+
+The Cove Model Context Protocol (MCP) server allows AI assistants to interact with Cove's services programmatically. This enables AI agents to help manage and submit rent reports, retrieve screening results, and perform other operations without requiring direct human interaction with the Cove API.
+
+## What is MCP?
+
+The Model Context Protocol (MCP) is a standard that connects AI systems with external tools and data sources. It allows AI assistants to:
+
+- Access real-time data from Cove's systems
+- Perform actions on behalf of users (with proper authorization)
+- Retrieve and analyze reports and screening results
+- Submit and manage rent reporting data
+
+## Server Configuration
+
+### Sandbox Environment
+
+To access the Cove MCP server in the sandbox environment, use the following configuration:
+
+```json
+{
+  "cove": {
+    "serverUrl": "https://sandbox-api.getcove.co/mcp",
+    "headers": {
+      "Authorization": "Bearer YOUR_API_KEY"
+    }
+  }
+}
+```
+
+### Production Access
+
+For production access to the Cove MCP server, please send an email to [team@cove.dev](mailto:team@cove.dev) with your request. The Cove team will provide you with the necessary credentials and configuration details.
+
+## Available Functionality
+
+The Cove MCP server currently provides the following functionality:
+
+### Rent Reporting
+
+- `GetReportData`: Retrieve detailed information about a rent report using its screening ID
+- `MarkReport`: Update a report's status (ACCEPTED, REJECTED, or IN_REVIEW) with reasoning
+
+### Coming Soon
+
+We are continuously expanding our MCP capabilities. Future updates will include:
+
+- Screening result retrieval and analysis
+- Tenant verification workflows
+- Custom reporting options
+
+## Implementation Examples
+
+### Retrieving Report Data
+
+AI assistants can retrieve report data using the `GetReportData` function:
+
+```javascript
+// Example of how an AI assistant would call the function
+const reportData = await mcp.cove.GetReportData({
+  screeningID: "screening-12345"
+});
+
+// The AI can then analyze and present this data to users
+```
+
+### Marking a Report
+
+AI assistants can update report statuses using the `MarkReport` function:
+
+```javascript
+// Example of how an AI assistant would call the function
+const result = await mcp.cove.MarkReport({
+  screeningID: "screening-12345",
+  status: "ACCEPTED",
+  reasoning: "All required information is present and verified."
+});
+```
+
+## Security and Permissions
+
+When integrating with the Cove MCP server:
+
+- Ensure proper authentication is maintained
+- Store API keys securely and never expose them in client-side code
+- Follow the principle of least privilege when requesting access
+- Implement proper error handling for failed requests
+
+## Need Help?
+
+For further assistance with the Cove MCP server or API integration, contact [team@cove.dev](mailto:team@cove.dev).
