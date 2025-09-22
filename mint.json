@@ -32,6 +32,10 @@
       "openapi": "/api-reference/openapi.yaml"
     },
     {
+      "name": "MCP Server",
+      "url": "mcp"
+    },
+    {
       "name": "React SDK",
       "url": "sdks"
     }
