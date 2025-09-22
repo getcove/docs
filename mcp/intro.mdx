@@ -45,10 +45,45 @@ For production access to the Cove MCP server, please send an email to [team@cove
 
 The Cove MCP server currently provides the following functionality:
 
-### Rent Reporting
+### Applicant Data Analysis and Qualification
 
-- `GetReportData`: Retrieve detailed information about a rent report using its screening ID
-- `MarkReport`: Update a report's status (ACCEPTED, REJECTED, or IN_REVIEW) with reasoning
+- `GetReportData`: Retrieve detailed information about an applicant screening report using its screening ID
+- `MarkReport`: Update a screening report's status (ACCEPTED, REJECTED, or IN_REVIEW) with reasoning
+
+### Example Prompts
+
+Here are example prompts that can be used to guide AI systems in effectively utilizing the Cove MCP tools:
+
+#### Applicant Data Summary and Analysis
+
+```
+Fetch the applicant screening data using the GetReportData tool with screening ID {SCREENING_ID}. 
+Create a concise summary of the applicant's profile including:
+- Credit score and history
+- Income verification results
+- Employment status
+- Rental history
+- Background check results
+
+Highlight any potential concerns or exceptional qualifications. 
+After presenting the summary, be prepared to answer follow-up questions about specific aspects of the applicant's data.
+```
+
+#### Automated Applicant Qualification
+
+```
+Review the applicant data using GetReportData with screening ID {SCREENING_ID}.
+Apply the following qualification criteria:
+- If credit score is above 700 AND
+- Income is at least 3x the monthly rent AND
+- No eviction history AND
+- Employment is verified
+Then automatically mark the report as ACCEPTED with reasoning "Applicant meets all qualification criteria."
+
+If any criteria are not met, mark as IN_REVIEW with detailed reasoning about which criteria were not satisfied.
+
+If there are serious issues (credit score below 550, eviction history, or criminal record), mark as REJECTED with specific reasoning.
+```
 
 ### Coming Soon
 
@@ -56,16 +91,6 @@ We are continuously expanding our MCP capabilities. Future updates will include:
 
 - Creation of custom fintech products (workflows)
 - Advanced customization options for existing workflows
-
-## Implementation Examples
-
-### Retrieving Report Data
-
-AI systems and agents can retrieve rent report data using the `GetReportData` tool by providing a screening ID. This tool returns comprehensive information about the rent report that can be analyzed and presented to users.
-
-### Marking a Report
-
-AI systems and agents can update report statuses using the `MarkReport` tool. This tool allows AI systems to set a report's status as ACCEPTED, REJECTED, or IN_REVIEW along with providing reasoning for the status change.
 
 ## Security and Permissions
 
