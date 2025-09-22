@@ -1,16 +1,19 @@
 ---
 title: "Mortgage Application Flow"
-description: "A comprehensive mortgage application flow that includes identity verification, financial assessment, employment verification, and background checks to evaluate mortgage eligibility."
+description: "A comprehensive mortgage application flow that includes identity verification, financial assessment, employment verification, and background checks to evaluate mortgage eligibility.
+"
 ---
 
-## Overview
+## Overview 
 
 The mortgage application flow is a thorough verification process designed to assess an applicant's eligibility for a mortgage. This flow combines multiple verification steps to evaluate creditworthiness, verify income sources, and assess financial stability.
 
 ## Flow Steps
 
 ### 1. Identity Verification (ID_VERIFICATION)
+
 Verifies the applicant's identity using Persona:
+
 - Selfie verification with liveness detection
 - Government-issued ID verification (front side required)
 - Background check including watchlist and sanctions
@@ -19,7 +22,9 @@ Verifies the applicant's identity using Persona:
 [View IDV Step Details](/steps/idv)
 
 ### 2. Personal Information (PERSONAL_INFO)
+
 Collects essential personal information:
+
 - Email address (required)
 - Citizenship status (required)
 - Marital status (required)
@@ -28,7 +33,9 @@ Collects essential personal information:
 [View Personal Info Step Details](/steps/personal-info)
 
 ### 3. Employment Verification (EMPLOYMENT)
+
 Validates employment through Atomic or Argyle:
+
 - Pay slips verification (required)
 - Employer confirmation (required)
 - Employment status verification
@@ -39,16 +46,20 @@ Validates employment through Atomic or Argyle:
 [View Employment Step Details](/steps/employment)
 
 ### 4. Bank Connection (BANK_CONNECT)
+
 Verifies financial stability through Plaid or Flinks:
+
 - Account ownership verification
 - Transaction analysis
-- Minimum balance verification (>$500)
+- Minimum balance verification (\>\$500)
 - Automatic routing based on balance
 
 [View Bank Connect Step Details](/steps/bank-connect)
 
 ### 5. Residence History (RESIDENCE_HISTORY)
+
 Documents residence history:
+
 - Previous addresses
 - Residence verification status
 - Three-year residence history verification (required)
@@ -58,7 +69,9 @@ Documents residence history:
 [View Residence History Step Details](/steps/residence-history)
 
 ### 6. Assets (PERSONAL_ASSETS)
+
 Evaluates financial assets:
+
 - Asset verification status
 - Net worth verification (required)
 - Property ownership verification (required)
@@ -307,4 +320,3 @@ Retrieves the mortgage screening data for a specific user.
 ```
 
 The response contains comprehensive mortgage application data including user identification, identity verification through Persona, employment details from Atomic, residence history, asset information from Plaid, and credit report from Equifax with associated mortgage details.
-

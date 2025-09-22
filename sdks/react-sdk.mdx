@@ -1,0 +1,85 @@
+---
+title: "Getting Started"
+description: "Official React SDK for embedding Cove flows with a single component."
+---
+
+## Requirements
+
+- React 17 or higher (supports React 17, 18, 19).
+
+## Installation
+
+```bash
+npm install @getcove/react-sdk
+# or
+yarn add @getcove/react-sdk
+# or
+pnpm add @getcove/react-sdk
+```
+
+## Step 1: Get an embed URL
+
+Use the screening link you receive after sending a screening to an applicant. See [Quickstart – Step 4: Send Screening Link](quickstart#step-4%3A-send-screening-link). The returned `screeningLink` becomes the `url` prop for the component.
+
+## Step 2: Embed the Cove flow
+
+### React example
+
+```tsx
+import { CoveEmbed, type CoveEmbedMessage } from '@getcove/react-sdk';
+
+export function Example() {
+  const url = 'https://sandbox.cove.dev/s/<your-screening-id>'; // Use your screeningLink from API
+
+  const handleComplete = (data: CoveEmbedMessage) => {
+    // Called when the user finishes the flow
+    console.log('Flow complete:', data);
+  };
+
+  const handleMessage = (data: CoveEmbedMessage) => {
+    // Called for all postMessage events from the embed
+    console.log('Message:', data);
+  };
+
+  return (
+    <CoveEmbed
+      url={url}
+      height={700}
+      width="100%"
+      onComplete={handleComplete}
+      onMessage={handleMessage}
+    />
+  );
+}
+```
+
+### Next.js example
+
+> Why client-side only?
+> - The embed communicates with your app using `window.postMessage`, which requires a browser environment.
+> - Server-side rendering has no access to `window`/`document`, so rendering the component on the server will throw errors like "window is not defined" or cause hydration mismatches.
+> - In Next.js, add `'use client'` at the top of the file and use a dynamic import with `ssr: false` to ensure the component only renders on the client.
+
+```tsx
+'use client';
+import dynamic from 'next/dynamic';
+import type { CoveEmbedMessage } from '@getcove/react-sdk';
+
+const CoveEmbed = dynamic(() => import('@getcove/react-sdk').then(m => m.CoveEmbed), {
+  ssr: false,
+});
+
+export default function Page() {
+  const url = 'https://sandbox.cove.dev/s/<your-screening-id>'; // Use your screeningLink from API
+
+  const onComplete = (data: CoveEmbedMessage) => {
+    console.log('Complete:', data);
+  };
+
+  return <CoveEmbed url={url} height={800} width="100%" onComplete={onComplete} />;
+}
+```
+
+## Releases
+
+- View complete release notes and version history on [GitHub Releases](https://github.com/getcove/cove-js-sdk/releases).
