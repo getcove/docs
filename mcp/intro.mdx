@@ -1,22 +1,24 @@
 ---
 title: "Cove MCP Server"
-description: "Learn how to integrate AI assistants with Cove's services using the Model Context Protocol (MCP) server."
+description: "Learn how to integrate AI systems and agents with Cove's services using the Model Context Protocol (MCP) server."
 ---
 
 # Cove MCP Server
 
 ## Introduction
 
-The Cove Model Context Protocol (MCP) server allows AI assistants to interact with Cove's services programmatically. This enables AI agents to help manage and submit rent reports, retrieve screening results, and perform other operations without requiring direct human interaction with the Cove API.
+The Cove Model Context Protocol (MCP) server allows AI systems and agents to interact with Cove's services programmatically. This enables AI applications, agentic systems, and other tools to help manage and submit rent reports, retrieve screening results, and perform other operations without requiring direct human interaction with the Cove API.
 
 ## What is MCP?
 
-The Model Context Protocol (MCP) is a standard that connects AI systems with external tools and data sources. It allows AI assistants to:
+The Model Context Protocol (MCP) is a standard that connects AI applications and agentic systems with external tools and data sources. It allows AI systems to:
 
 - Access real-time data from Cove's systems
 - Perform actions on behalf of users (with proper authorization)
 - Retrieve and analyze reports and screening results
 - Submit and manage rent reporting data
+
+For more information about the Model Context Protocol standard, visit the [official MCP documentation](https://modelcontextprotocol.io/docs).
 
 ## Server Configuration
 
@@ -52,37 +54,18 @@ The Cove MCP server currently provides the following functionality:
 
 We are continuously expanding our MCP capabilities. Future updates will include:
 
-- Screening result retrieval and analysis
-- Tenant verification workflows
-- Custom reporting options
+- Creation of custom fintech products (workflows)
+- Advanced customization options for existing workflows
 
 ## Implementation Examples
 
 ### Retrieving Report Data
 
-AI assistants can retrieve report data using the `GetReportData` function:
-
-```javascript
-// Example of how an AI assistant would call the function
-const reportData = await mcp.cove.GetReportData({
-  screeningID: "screening-12345"
-});
-
-// The AI can then analyze and present this data to users
-```
+AI systems and agents can retrieve rent report data using the `GetReportData` tool by providing a screening ID. This tool returns comprehensive information about the rent report that can be analyzed and presented to users.
 
 ### Marking a Report
 
-AI assistants can update report statuses using the `MarkReport` function:
-
-```javascript
-// Example of how an AI assistant would call the function
-const result = await mcp.cove.MarkReport({
-  screeningID: "screening-12345",
-  status: "ACCEPTED",
-  reasoning: "All required information is present and verified."
-});
-```
+AI systems and agents can update report statuses using the `MarkReport` tool. This tool allows AI systems to set a report's status as ACCEPTED, REJECTED, or IN_REVIEW along with providing reasoning for the status change.
 
 ## Security and Permissions
 
