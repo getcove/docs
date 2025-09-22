@@ -1,0 +1,107 @@
+---
+title: "Cove MCP Server"
+description: "Learn how to integrate AI systems and agents with Cove's services using the Model Context Protocol (MCP) server."
+---
+
+# Cove MCP Server
+
+## Introduction
+
+The Cove Model Context Protocol (MCP) server allows AI systems and agents to interact with Cove's services programmatically. This enables AI applications, agentic systems, and other tools to help manage and submit rent reports, retrieve screening results, and perform other operations without requiring direct human interaction with the Cove API.
+
+## What is MCP?
+
+The Model Context Protocol (MCP) is a standard that connects AI applications and agentic systems with external tools and data sources. It allows AI systems to:
+
+- Access real-time data from Cove's systems
+- Perform actions on behalf of users (with proper authorization)
+- Retrieve and analyze reports and screening results
+- Submit and manage rent reporting data
+
+For more information about the Model Context Protocol standard, visit the [official MCP documentation](https://modelcontextprotocol.io/docs).
+
+## Server Configuration
+
+### Sandbox Environment
+
+To access the Cove MCP server in the sandbox environment, use the following configuration:
+
+```json
+{
+  "cove": {
+    "serverUrl": "https://sandbox-api.getcove.co/mcp",
+    "headers": {
+      "Authorization": "Bearer YOUR_API_KEY"
+    }
+  }
+}
+```
+
+### Production Access
+
+For production access to the Cove MCP server, please send an email to [team@cove.dev](mailto:team@cove.dev) with your request. The Cove team will provide you with the necessary credentials and configuration details.
+
+## Available Functionality
+
+The Cove MCP server currently provides the following functionality:
+
+### Applicant Data Analysis and Qualification
+
+- `GetReportData`: Retrieve detailed information about an applicant screening report using its screening ID
+- `MarkReport`: Update a screening report's status (ACCEPTED, REJECTED, or IN_REVIEW) with reasoning
+
+### Example Prompts
+
+Here are example prompts that can be used to guide AI systems in effectively utilizing the Cove MCP tools:
+
+#### Applicant Data Summary and Analysis
+
+```
+Please provide a concise summary of the applicant with screening ID {SCREENING_ID}.
+
+Include key information about:
+- Credit score and history
+- Income verification results
+- Employment status
+- Rental history
+- Background check results
+
+Highlight any potential concerns or exceptional qualifications. 
+I may have follow-up questions about specific aspects of the applicant's profile.
+```
+
+#### Automated Applicant Qualification
+
+```
+Evaluate the applicant with screening ID {SCREENING_ID} based on these qualification criteria:
+
+Approval criteria:
+- Credit score above 700
+- Income at least 3x the monthly rent
+- No eviction history
+- Verified employment
+
+If all criteria are met, accept the applicant. If some criteria aren't met, mark for review with specific details about which requirements weren't satisfied.
+
+For applicants with serious issues (credit score below 550, eviction history, or criminal record), reject with specific reasoning.
+```
+
+### Coming Soon
+
+We are continuously expanding our MCP capabilities. Future updates will include:
+
+- Creation of custom fintech products (workflows)
+- Advanced customization options for existing workflows
+
+## Security and Permissions
+
+When integrating with the Cove MCP server:
+
+- Ensure proper authentication is maintained
+- Store API keys securely and never expose them in client-side code
+- Follow the principle of least privilege when requesting access
+- Implement proper error handling for failed requests
+
+## Need Help?
+
+For further assistance with the Cove MCP server or API integration, contact [team@cove.dev](mailto:team@cove.dev).

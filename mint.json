@@ -100,6 +100,12 @@
       ]
     },
     {
+      "group": "MCP Server",
+      "pages": [
+        "mcp/intro"
+      ]
+    },
+    {
       "group": "API Reference",
       "pages": [
         "api-reference/intro"
