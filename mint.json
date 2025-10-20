@@ -18,12 +18,12 @@
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:concierge@getcove.co"
+      "url": "mailto:team@cove.dev"
     }
   ],
   "topbarCtaButton": {
     "name": "Dashboard",
-    "url": "https://app.getcove.co"
+    "url": "https://app.cove.dev"
   },
   "tabs": [
     {
