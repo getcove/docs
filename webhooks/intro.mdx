@@ -55,6 +55,9 @@ Each webhook notification includes a JSON payload with the following structure:
             "custom_key": "custom_value"
         }
     },
+    "monitoring": {
+      "match": "watchlist"
+    },
     "listor": {
         "id": "lst_789012"
     }
@@ -72,6 +75,8 @@ Each webhook notification includes a JSON payload with the following structure:
 - `screening`: Screening information
   - `id`: Screening identifier
   - `metadata`: Custom metadata associated with the screening
+- `monitoring`: Continuous Monitoring Update
+  - `match`: The check that matched
 - `listor`: Listor information
   - `id`: Listor identifier
 
