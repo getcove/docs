@@ -40,7 +40,7 @@ Retrieves all available steps that can be used in a flow.
 ### **Example Request**
 
 ```sh
-curl -X GET https://sandbox-api.getcove.co/v1/flows/steps/list \
+curl -X GET https://sandbox-api.cove.dev/v1/flows/steps/list \
 -H "Authorization: your-access-token" \
 -H "Accept: application/json"
 ```
@@ -96,7 +96,7 @@ Creates a custom screening flow with the selected steps.
 ### **Example Request**
 
 ```sh
-curl -X POST https://sandbox-api.getcove.co/v1/flows \
+curl -X POST https://sandbox-api.cove.dev/v1/flows \
 -H "Authorization: your-access-token" \
 -H "Content-Type: application/json" \
 -H "Accept: application/json" \
@@ -157,7 +157,7 @@ Sends a screening request using a predefined flow.
 ### **Example Request**
 
 ```sh
-curl -X POST https://sandbox-api.getcove.co/v2/screening/send \
+curl -X POST https://sandbox-api.cove.dev/v2/screening/send \
 -H "Authorization: your-access-token" \
 -H "Content-Type: application/json" \
 -H "Accept: application/json" \

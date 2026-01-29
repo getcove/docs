@@ -12,7 +12,7 @@ The Cove API enables easy screening of users. This guide provides a detailed wal
 ## Base URL
 
 ```md
-https://sandbox-api.getcove.co
+https://sandbox-api.cove.dev
 ```
 
 ## Detailed Workflow
@@ -55,7 +55,7 @@ This endpoint validates your username and password. If successful, it returns an
 #### Example
 
 ```sh
-curl -X POST https://sandbox-api.getcove.co/v1/auth/login \
+curl -X POST https://sandbox-api.cove.dev/v1/auth/login \
 -H "Content-Type: application/json" \
 -H "Accept: application/json" \
 -d '{
@@ -136,7 +136,7 @@ Generates and sends a screening link to the applicant, enabling them to complete
 #### Example
 
 ```sh
-curl -X POST https://sandbox-api.getcove.co/v2/screening/send \
+curl -X POST https://sandbox-api.cove.dev/v2/screening/send \
 -H "Authorization: your-access-token" \
 -H "Content-Type: application/json" \
 -H "Accept: application/json" \
@@ -271,7 +271,7 @@ Retrieves detailed screening results for a specific session.
 #### Example
 
 ```sh
-curl -X GET https://sandbox-api.getcove.co/v2/screening/<screeningId> \
+curl -X GET https://sandbox-api.cove.dev/v2/screening/<screeningId> \
 -H "Authorization: your-access-token" \
 -H "Accept: application/json"
 ```
@@ -323,7 +323,7 @@ Retrieves detailed screening results for a specific session as a PDF report.
 #### Example
 
 ```sh
-curl -X GET https://sandbox-api.getcove.co/v2/screening/<screeningId>/report \
+curl -X GET https://sandbox-api.cove.dev/v2/screening/<screeningId>/report \
 -H "Authorization: your-access-token" \
 -H "Accept: application/json"
 ```
@@ -391,7 +391,7 @@ Update user's information for the screening.
 #### Example
 
 ```sh
-curl -X POST https://sandbox-api.getcove.co/v1/user/<userId> \
+curl -X POST https://sandbox-api.cove.dev/v1/user/<userId> \
 -H "Authorization: your-access-token" \
 -H "Content-Type: application/json" \
 -H "Accept: application/json" \
@@ -454,7 +454,7 @@ Run the screening for the applicant using the provided user data.
 #### Example
 
 ```sh
-curl -X POST https://sandbox-api.getcove.co/v2/screening/run \
+curl -X POST https://sandbox-api.cove.dev/v2/screening/run \
 -H "Authorization: your-access-token" \
 -H "Content-Type: application/json" \
 -H "Accept: application/json" \
@@ -517,7 +517,7 @@ was skipped or needs to be redone (e.g., `FINANCIAL_VERIFICATION`).
 #### Example
 
 ```sh
-curl -X POST https://sandbox-api.getcove.co/v2/screening/resend-step \
+curl -X POST https://sandbox-api.cove.dev/v2/screening/resend-step \
 -H "Authorization: Bearer your-access-token" \
 -H "Content-Type: application/json" \
 -H "Accept: application/json" \
@@ -554,7 +554,7 @@ curl -X POST https://sandbox-api.getcove.co/v2/screening/resend-step \
 
 - All endpoints require HTTPS communication.
 - Errors are returned in JSON format with appropriate HTTP status codes.
-- For detailed documentation, visit the [Cove API Docs](https://getcove.co/api).
+- For detailed documentation, visit the [Cove API Docs](https://docs.cove.dev).
 
 ---
 

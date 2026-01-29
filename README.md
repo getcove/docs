@@ -36,7 +36,7 @@ To start using the Cove API, you'll need to configure:
 
 #### 1. **Request API Credentials**
 
-To interact with Cove’s API, you’ll need valid login credentials. Contact [concierge@getcove.co]() to request your credentials.
+To interact with Cove’s API, you’ll need valid login credentials. Contact [team@cove.dev](mailto:team@cove.dev) to request your credentials.
 
 #### 2. **Authentication**
 
@@ -81,7 +81,7 @@ The Cove API provides functionality to:
 #### Request
 
 ```http
-POST https://sandbox-api.getcove.co/v1/auth/login
+POST https://sandbox-api.cove.dev/v1/auth/login
 Content-Type: application/json
 
 {
@@ -93,7 +93,7 @@ Content-Type: application/json
 #### Response
 
 ```json
-POST https://sandbox-api.getcove.co/v1/auth/login
+POST https://sandbox-api.cove.dev/v1/auth/login
 Content-Type: application/json
 
 {
@@ -120,6 +120,6 @@ Use this access token in all subsequent requests as part of the `Authorization` 
 
 * View the complete documentation for all endpoints and usage examples: [Cove API Documentation](https://www.postman.com/getcove/external/collection/6lv6roh/cove-api)
 
-* Contact support: [concierge@getcove.co]()
+* Contact support: [team@cove.dev]()
 
 Start building with the Cove API today!
