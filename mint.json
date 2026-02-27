@@ -42,9 +42,9 @@
   ],
   "anchors": [
     {
-        "name": "Postman Collection",
-        "icon": "code",
-        "url": "https://www.postman.com/getcove/external/collection/6lv6roh/cove-api"
+      "name": "Postman Collection",
+      "icon": "code",
+      "url": "https://www.postman.com/getcove/external/collection/6lv6roh/cove-api"
     }
   ],
   "navigation": [
@@ -53,15 +53,6 @@
       "pages": [
         "introduction",
         "quickstart"
-      ]
-    },
-    {
-      "group": "Custom Flows",
-      "pages": [
-        "studio/custom-flows",
-        "studio/providers",
-        "studio/options",
-        "studio/control-flow"
       ]
     },
     {

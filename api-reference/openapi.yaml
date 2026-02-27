@@ -36,6 +36,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/rpcStatus'
       x-codegen-request-body-name: body
+  /v1/auth/embed/mint-embed-token:
+    post:
+      tags:
+      - Auth
+      summary: Mint a one-time embed token
+      description: Validates a signed partner token and mints a short-lived embed token
+      operationId: AuthService_MintEmbedToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v1MintEmbedTokenRequest'
+        required: true
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1MintEmbedTokenResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpcStatus'
+      x-codegen-request-body-name: body
   /v1/flows:
     get:
       tags:
@@ -334,6 +361,34 @@ paths:
                 $ref: '#/components/schemas/rpcStatus'
       security:
       - ApiTokenAuth: []
+  /v2/screening/{screeningId}/financial-accounts:
+    get:
+      tags:
+      - Screening V2
+      summary: Get financial accounts
+      description: Get all financial accounts, balances, and transactions for a screening
+      operationId: ScreeningService_GetFinancialAccounts
+      parameters:
+      - name: screeningId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2GetFinancialAccountsResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpcStatus'
+      security:
+      - ApiTokenAuth: []
   /v1/user/{userId}:
     post:
       tags:
@@ -369,6 +424,33 @@ paths:
       security:
       - ApiTokenAuth: []
       x-codegen-request-body-name: body
+    delete:
+      tags:
+      - User
+      summary: Delete applicant
+      description: Delete an applicant
+      operationId: UserService_DeleteApplicant
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1DeleteApplicantResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpcStatus'
+      security:
+      - ApiTokenAuth: []
   /v1/rent-reporting/report:
     post:
       tags:
@@ -395,6 +477,69 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/rpcStatus'
+      x-codegen-request-body-name: body
+  /v1/financial-data/{screeningId}/accounts:
+    get:
+      tags:
+      - Financial Data
+      summary: Get linked account summaries
+      description: Returns linked account summaries without transactions, historical balances, or investments
+      operationId: FinancialDataService_GetAccountsSummary
+      parameters:
+      - name: screeningId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1GetAccountsSummaryResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpcStatus'
+      security:
+      - ApiTokenAuth: []
+  /v1/financial-data/{screeningId}/transactions:
+    post:
+      tags:
+      - Financial Data
+      summary: Get linked account transactions
+      description: Returns transactions from linked account data with filtering, pagination, and sorting
+      operationId: FinancialDataService_GetTransactions
+      parameters:
+      - name: screeningId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v1GetTransactionsRequest'
+        required: true
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1GetTransactionsResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rpcStatus'
+      security:
+      - ApiTokenAuth: []
       x-codegen-request-body-name: body
 components:
   schemas:
@@ -996,6 +1141,27 @@ components:
       properties:
         accessToken:
           type: string
+    v1MintEmbedTokenRequest:
+      type: object
+      required:
+      - partnerToken
+      - externalUserEmail
+      properties:
+        partnerToken:
+          type: string
+          description: Signed partner token (keep server-side only)
+        externalUserEmail:
+          type: string
+          format: email
+          description: Email of the user to mint a token for
+    v1MintEmbedTokenResponse:
+      type: object
+      properties:
+        embedToken:
+          type: string
+        expiresAtUnix:
+          type: integer
+          format: int64
     FlinksBankAccountBalance:
       type: object
       properties:
@@ -1769,6 +1935,89 @@ components:
       properties:
         url:
           type: string
+    v2GetFinancialAccountsResponse:
+      type: object
+      properties:
+        financialInstitutions:
+          type: array
+          items:
+            $ref: '#/components/schemas/v2FinancialInstitution'
+    v2FinancialInstitution:
+      type: object
+      properties:
+        itemId:
+          type: string
+        institutionName:
+          type: string
+        institutionId:
+          type: string
+        dateLastUpdated:
+          type: string
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/v2FinancialAccount'
+    v2FinancialAccount:
+      type: object
+      properties:
+        accountId:
+          type: string
+        balances:
+          $ref: '#/components/schemas/v2AccountBalances'
+        daysAvailable:
+          type: number
+          format: double
+        mask:
+          type: string
+        name:
+          type: string
+        officialName:
+          type: string
+        subtype:
+          type: string
+        type:
+          type: string
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/v2FinancialTransaction'
+    v2AccountBalances:
+      type: object
+      properties:
+        available:
+          type: number
+          format: double
+        current:
+          type: number
+          format: double
+        isoCurrencyCode:
+          type: string
+        limit:
+          type: number
+          format: double
+        marginLoanAmount:
+          type: number
+          format: double
+        unofficialCurrencyCode:
+          type: string
+    v2FinancialTransaction:
+      type: object
+      properties:
+        accountId:
+          type: string
+        amount:
+          type: number
+          format: double
+        date:
+          type: string
+        isoCurrencyCode:
+          type: string
+        originalDescription:
+          type: string
+        pending:
+          type: boolean
+        transactionId:
+          type: string
     v2Payer:
       type: string
       default: PAYER_UNSPECIFIED
@@ -1879,6 +2128,162 @@ components:
         message:
           type: string
         userId:
+          type: string
+    v1DeleteApplicantResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        success:
+          type: boolean
+    v1GetAccountsSummaryResponse:
+      type: object
+      properties:
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1AccountSummary'
+    v1AccountSummary:
+      type: object
+      properties:
+        itemId:
+          type: string
+        institutionId:
+          type: string
+        institutionName:
+          type: string
+        dateLastUpdated:
+          type: string
+          format: date-time
+        accountId:
+          type: string
+        mask:
+          type: string
+        name:
+          type: string
+        officialName:
+          type: string
+        type:
+          type: string
+        subtype:
+          type: string
+        daysAvailable:
+          type: number
+          format: double
+        verificationStatus:
+          type: string
+        persistentAccountId:
+          type: string
+        balances:
+          $ref: '#/components/schemas/v1AccountBalancesSummary'
+    v1AccountBalancesSummary:
+      type: object
+      properties:
+        available:
+          type: number
+          format: double
+        current:
+          type: number
+          format: double
+        isoCurrencyCode:
+          type: string
+        limit:
+          type: number
+          format: double
+        unofficialCurrencyCode:
+          type: string
+    v1GetTransactionsRequest:
+      type: object
+      properties:
+        filter:
+          $ref: '#/components/schemas/v1TransactionFilter'
+        pageSize:
+          type: integer
+          format: int32
+        cursor:
+          type: string
+        orderBy:
+          type: string
+          enum:
+          - ORDER_BY_UNSPECIFIED
+          - ORDER_BY_TIME
+          - ORDER_BY_AMOUNT
+        orderDirection:
+          type: string
+          enum:
+          - ORDER_DIRECTION_UNSPECIFIED
+          - ORDER_DIRECTION_DESC
+          - ORDER_DIRECTION_ASC
+    v1TransactionFilter:
+      type: object
+      properties:
+        accountIds:
+          type: array
+          items:
+            type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        debitOrCredit:
+          type: string
+          enum:
+          - DEBIT_OR_CREDIT_UNSPECIFIED
+          - DEBIT_OR_CREDIT_DEBIT
+          - DEBIT_OR_CREDIT_CREDIT
+        minAmount:
+          type: number
+          format: double
+        maxAmount:
+          type: number
+          format: double
+        search:
+          type: string
+        categories:
+          type: array
+          items:
+            type: string
+        merchant:
+          type: string
+    v1GetTransactionsResponse:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1Transaction'
+        nextCursor:
+          type: string
+        count:
+          type: integer
+          format: int32
+    v1Transaction:
+      type: object
+      properties:
+        transactionId:
+          type: string
+        accountId:
+          type: string
+        amount:
+          type: number
+          format: double
+        date:
+          type: string
+        isoCurrencyCode:
+          type: string
+        originalDescription:
+          type: string
+        pending:
+          type: boolean
+        unofficialCurrencyCode:
+          type: string
+        category:
+          type: array
+          items:
+            type: string
+        merchantName:
           type: string
     v1SendScreeningStatusRequest:
       type: object
