@@ -1,0 +1,90 @@
+---
+title: "Embedded Dashboard"
+description: "Embed the Cove screening dashboard in your app using the React SDK."
+---
+
+## Installation
+
+```bash
+npm install @getcove/react-sdk
+# or
+yarn add @getcove/react-sdk
+# or
+pnpm add @getcove/react-sdk
+```
+
+## Step 1: Get a partner token
+
+Contact [team@cove.dev](mailto:team@cove.dev) to receive your `partner_token`. This token is used server-side to mint short-lived embed tokens.
+
+## Step 2: Exchange partner token for an embed token
+
+Call this endpoint from your **backend**. The `externalUserEmail` is the email of the agent who will view the dashboard.
+
+```bash
+curl -X POST "https://api.cove.dev/v1/auth/embed/mint-embed-token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "partnerToken": "<YOUR_PARTNER_TOKEN>",
+    "externalUserEmail": "agent@yourcompany.com"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "embedToken": "<COVE_EMBED_TOKEN>",
+  "expiresAtUnix": 1730000000
+}
+```
+
+## Step 3: Embed the dashboard
+
+Fetch a fresh embed token from your backend each time the user opens the dashboard, then mount the component.
+
+> **Next.js:** Add `'use client'` at the top of any file that renders `CoveEmbeddedDashboard`.
+
+```tsx
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { CoveEmbeddedDashboard } from "@getcove/react-sdk";
+
+// Replace with your backend call to POST /v1/auth/embed/mint-embed-token (see step 2).
+// Must be called every time the user opens the dashboard — embed tokens are short-lived.
+async function fetchEmbedToken(): Promise<string> {
+  // Your backend should exchange the partner_token + external_user_email for an embed_token
+  // and return it here. Do not call mint-embed-token from the browser.
+  throw new Error("Not implemented");
+}
+
+// On button click: fetch a fresh token, then mount into the target div
+async function onScreeningTabClick() {
+  const embedToken = await fetchEmbedToken();
+  const target = document.querySelector(".cove-dashboard-embed-target");
+
+  if (target) {
+    const root = createRoot(target as HTMLElement);
+    root.render(
+      <CoveEmbeddedDashboard
+        embedToken={embedToken}
+        width="100%"
+        height={700}
+        onMessage={(data) => console.log("Dashboard message:", data)}
+      />
+    );
+  }
+}
+```
+
+## Important notes
+
+- Keep `partner_token` **server-side only**. Do not expose it in browser code.
+- Call `mint-embed-token` each time the dashboard loads to get a fresh `embed_token`.
+
+## Environments
+
+| | Dashboard | API |
+|---|---|---|
+| **Sandbox** | sandbox.cove.dev | sandbox-api.cove.dev |
+| **Live** | app.cove.dev | api.cove.dev |

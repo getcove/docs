@@ -37,7 +37,7 @@
     },
     {
       "name": "React SDK",
-      "url": "sdks"
+      "url": "sdk"
     }
   ],
   "anchors": [
@@ -118,7 +118,8 @@
     {
       "group": "React SDK",
       "pages": [
-        "sdks/react-sdk"
+        "sdk/react-sdk",
+        "sdk/embedded-dashboard"
       ]
     }
   ],
